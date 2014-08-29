@@ -1,0 +1,23 @@
+<head>
+	<title>Booking</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+
+<body>
+	<div class="container">
+		<nav class="navbar navbar-default" role="navigation">
+			<div class="container-fluid">
+				<a class="title" href="#">Booking</a>
+				<form class="navbar-form navbar-right" role="">
+					<button type="button" id="newAppointButton" class="btn btn-default">New Booking</button>
+				</form>
+			</div>
+		</nav>
+		<div id="main">
+			{{> bookinglist}}
+			{{> appointmentEditModal}}
+		</div>
+	</div>
+</body>
+
+
