@@ -57,6 +57,7 @@ srp@1.0.0
 standard-app-packages@1.0.0
 stylus@1.0.3
 templating@1.0.4
+tsega:bootstrap3-datetimepicker@0.2.0
 ui@1.0.0
 underscore@1.0.0
 webapp@1.0.2

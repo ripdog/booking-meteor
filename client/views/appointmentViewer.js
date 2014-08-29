@@ -3,6 +3,7 @@ Template.bookinglist.helpers({
 	width: "700px"
 });
 Template.bookinglist.rendered = render;
+queryPointer = collections.apptList.find({date: Session.get("date")})
 //appointmentList.find({date: Session.get("date")})
 function render(){
 	var pxPerMinute = Math.ceil(Session.get("height")/((Session.get("endTime").getHours() -
@@ -20,4 +21,8 @@ function render(){
 		ctx.stroke();
 		if (counter >= canvas.height){break;}
 	}
-}
+	for booking in queryPointer
+	{
+		console.log(booking);
+	};
+};
