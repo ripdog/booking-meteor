@@ -6,16 +6,29 @@
 			<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
 			<h4 class="modal-title">Add New Booking</h4>
 		  </div>
-		  <div class="modal-body">
-			{{> quickForm collection="appointmentList" id="appointmentEditModal" type="insert"}}
-		  </div>
-		  <div class="modal-footer">
-			<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-			<button type="button" class="btn btn-primary" id="saveAppointChanges">Save changes</button>
-		  </div>
+			{{> insertAppointmentForm}}
 		</div>
 	  </div>
 	</div>
+</template>
+
+<template name="insertAppointmentForm">
+	{{#autoForm collection=appointmentList id="insertAppointmentFormInner" type="insert"}}
+	<div class="modal-body">
+		<fieldset>
+
+			{{> afQuickField name='firstname'}}
+			{{> afQuickField name='lastname'}}
+			{{> afQuickField name='notes' rows=6}}
+			{{> afQuickField name='date' max=maxDate min=minDate}}
+			{{> afQuickField name='length'}}
+		</fieldset>
+	</div>
+	<div class="modal-footer">
+		<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+		<button type="submit" class="btn btn-primary" id="saveAppointChanges">Save changes</button>
+	</div>
+	{{/autoForm}}
 </template>
 
 <!-- <template name="appointmentEditModal">

@@ -1,5 +1,5 @@
 Meteor.startup(function() {
-	AutoForm.debug();
+// 	AutoForm.debug();
 	Session.setDefault("height", 900);
 	Session.setDefault("appntlength", 15);//in minutes
 	Session.setDefault("date", new Date());
@@ -8,20 +8,7 @@ Meteor.startup(function() {
 											 currentDate.getDay(), 8, 0, 0));//0800
 	Session.setDefault("endTime", new Date(currentDate.getFullYear(), currentDate.getMonth(),
 										   currentDate.getDay(), 17, 0, 0));//1700
-	appointmentList = new Meteor.Collection("appointmentList");
-	appointmentList.attachSchema(new SimpleSchema({
-		firstname: {
-			type: String,
-			label: "First Name",
-			max: 100
-		},
-		lastname: {
-			type: String,
-			label: "Last Name",
-			max: 100
-		}
-	})
-	)
+
 }
 );
 function Appointment (type) {
@@ -34,4 +21,31 @@ function Appointment (type) {
 	this.length =  15;
 	this._id = new Meteor.Collection.ObjectID();
 }
+appointmentList = new Meteor.Collection("appointmentList");
+appointmentList.attachSchema(new SimpleSchema({
+	firstname: {
+		type: String,
+		label: "First Name",
+		max: 100
+	},
+	lastname: {
+		type: String,
+		label: "Last Name",
+		max: 100
+	},
+	notes: {
+		type: String,
+		label: "Notes",
+		optional: true
+	},
+	date: {
+		type: Date,
+		label: "Date & Time"
+	},
+	length: {
+		type: Number,
+		defaultValue: Session.get("defaultAppointmentLength")
+	}
+}));
 classes = {appointment: Appointment};
+collections = {apptList: appointmentList}
