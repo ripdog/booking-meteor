@@ -31,25 +31,27 @@ Template.insertAppointmentForm.rendered = function() {
 };
 AutoForm.hooks({
 	insertAppointmentFormInner: {
-// 		docToForm: function(doc){
-// 			console.log("its docToForm tiem!!!!");
-// 			console.log(doc);
-// 			if (doc.time._dateobj) {
-// 				console.log("doc.time instanceof Time == True");
-// 				doc.time = moment(doc.time._dateobj).format("hh:mm a");
-// 			}
-// 			console.log(doc);
-// 			return doc;
-// 		},
-// 		formToDoc: function(doc){
-// 			console.log("It's formToDoc!")
-// 			console.log(doc)
-// 			if (typeof doc.time === "string") {
-// 				doc.time = new Time(doc.time);
-// 			}
-// 			console.log(doc)
-// 			return doc;
-// 		},
+		docToForm: function(doc){
+			console.log("its docToForm tiem!!!!");
+			console.log(doc);
+			if (doc.date instanceof Date) {
+				//Session.set("editingDate", doc.date);//is this client code?
+				doc.time = moment(doc.date).format("H:mm A");
+			}
+			console.log(doc);
+			return doc;
+		},
+		formToDoc: function(doc){
+			console.log("It's formToDoc!")
+			console.log(doc)
+			if (typeof doc.time === "string") {
+				var datestring = moment(doc.date).format("YYYY-MM-DD ") + doc.time;
+				console.log(datestring)
+				doc.date = moment(datestring, "YYYY-MM-DD HH:mm A").toDate();
+			}
+			console.log(doc)
+			return doc;
+		},
 		after: {
 			insert: function(error, result) {
 				if (error) {
