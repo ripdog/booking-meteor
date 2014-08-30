@@ -16,12 +16,16 @@
 	{{#autoForm collection=appointmentList id="insertAppointmentFormInner" type="insert"}}
 	<div class="modal-body">
 		<fieldset>
-
-			{{> afQuickField name='firstname'}}
+			<h6>New appointment for {{currentDate}}</h6>
 			{{> afQuickField name='lastname'}}
-			{{> afQuickField name='notes' rows=6}}
-			{{> afQuickField name='date' max=maxDate min=minDate}}
-			{{> afQuickField name='length'}}
+			{{> afQuickField name='firstname'}}
+			<div class="form-group">
+				<label for='time'>Choose Appointment Time</label>
+				{{> afQuickField name='time' template='bootstraptimepicker'}}
+			</div>
+			{{> afQuickField name='notes' rows=2}}
+			{{> afQuickField name='length' step=5 value=length}}
+			{{> afQuickField name='date' value=sessionDate}}
 		</fieldset>
 	</div>
 	<div class="modal-footer">
