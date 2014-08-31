@@ -25,28 +25,9 @@ function render(comp){
 	///////////////////////////////////////////////
 	Session.get("height");
 	this.autorun = Deps.autorun(function() {
-		var pxPerMinute = Math.ceil(Session.get("height")/((Session.get("endTime").getHours() -
-						Session.get("startTime").getHours())*60));//Basis of our pixel counting.
-		console.log("Px Per Minute: " + pxPerMinute);
-		canvas = document.getElementById('bookinglistcanvas');
-		var ctx = canvas.getContext('2d');
-		var lineCounter = (pxPerMinute * Session.get("appntlength"));
-		var textCounter = moment(Session.get("startTime"));
-		while (true) {//first, draw the guidelines.
-			ctx.beginPath();
-			ctx.moveTo(0,lineCounter);
-			ctx.lineTo(canvas.width,lineCounter);
-			ctx.stroke();
-			var text = textCounter.format("HH:mm A");
-			var textPoint = lineCounter - (pxPerMinute*Session.get("appntlength"))*0.4;
-			ctx.fillText(text, 0, textPoint);
-			lineCounter += (pxPerMinute * Session.get("appntlength"));
-			textCounter = textCounter.add(Session.get("appntlength"), "minutes");
-			if (lineCounter >= canvas.height){break;}
-		}
+
 	})
 // 	console.log(comp)
-	
 // 	for (var booking in queryPointer.fetch())
 // 	{
 // 		console.log(booking);
