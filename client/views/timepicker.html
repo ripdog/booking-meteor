@@ -1,0 +1,25 @@
+<!-- <template name="afQuickField_bootstraptimepicker">
+<!-- 	<label for="{{this.name}}">{{afFieldLabelText name=this.name}}</label>
+	<div class='input-group date' id='datetimepicker4'>
+		<input type='text' value='{{this.value}}' {{atts}} class='form-control aftimecontrol' />
+		<span class="input-group-addon"><span class="glyphicon glyphicon-time"></span>
+		</span>
+	</div>
+</template> -->
+<template name="afQuickField_bootstraptimepicker">
+  <div class="form-group {{#if afFieldIsInvalid name=this.atts.name}}has-error{{/if}}">
+    {{#unless this.skipLabel}}
+    {{> afFieldLabel afFieldLabelAtts}}
+    {{/unless}}
+    {{> afFieldInput afFieldInputAtts}}
+    <span class="help-block">{{{afFieldMessage name=this.atts.name}}}</span>
+  </div>
+</template>
+
+<template name="afInput_bootstraptimepicker">
+  <div class='input-group date' id="datetimepicker4">
+        <input type='text' value='{{this.value}}' {{atts}} class='form-control aftimecontrol'/>
+        <span class="input-group-addon"><span class="glyphicon glyphicon-time"></span>
+        </span>
+  </div>
+</template>

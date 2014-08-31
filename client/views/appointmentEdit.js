@@ -22,9 +22,9 @@ Template.insertAppointmentForm.rendered = function() {
 	Session.set("date", thedate);
 	var currentDate = Session.get("date")
 	Session.set("startTime", new Date(currentDate.getFullYear(), currentDate.getMonth(),
-											 currentDate.getDay(), 7, 0, 0));//0800
+											 currentDate.getDay(), 8, 0, 0));//0800
 	Session.set("endTime", new Date(currentDate.getFullYear(), currentDate.getMonth(),
-										   currentDate.getDay(), 16, 0, 0));//1700
+										   currentDate.getDay(), 17, 0, 0));//1700
 	Session.setDefault("appntlength", 15);//in minutes
 	//TODO: Ensure that startTime and endTime get recomputed when current date changes
 	//attach them to the date var
