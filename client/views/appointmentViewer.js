@@ -6,20 +6,17 @@ Template.bookinglist.autorun = render;
 Session.set("height", 1200);
 // moment();
 //appointmentList.find({date: Session.get("date")})
+
+///////////////////////////////////////////////
+///////////QUERY THE DATA
+///////////////////////////////////////////////
+queryPointer.observe({
+	added: function (doc, beforeIndex) {
+		render();
+	}});
 function render(comp){
-	///////////////////////////////////////////////
-	///////////QUERY THE DATA
-	///////////////////////////////////////////////
-	console.log("Starting query build.")
-	var theDate = Session.get("date");
-	console.log(theDate);
-	startDate = moment(theDate).zone(-12).startOf("day")._d;
-	console.log(startDate);
-	endDate = moment(theDate).zone(-12).endOf("day")._d;
-	console.log(endDate);
-	console.log(JSON.stringify({date: {$gte: startDate, $lt: endDate}}))
-	queryPointer = appointmentList.find({date: {$gte: startDate, $lt: endDate}})
-	console.log(queryPointer.fetch());
+	Session.set("startTime", 8);
+	Session.set("endTime", 17);
 	///////////////////////////////////////////////
 	///////////RENDER
 	///////////////////////////////////////////////
@@ -43,10 +40,19 @@ function render(comp){
 			textCounter = textCounter.add(Session.get("appntlength"), "minutes");
 			if (lineCounter >= canvas.height){break;}
 		}
+		console.log(comp)
+		for (var booking in queryPointer.fetch())
+		{
+			console.log(queryPointer.fetch()[booking]);
+			var theObj = queryPointer.fetch()[booking]
+			var bookingText = theObj.date;
+			var bookingTextPoint = moment(theObj.date).unix() - moment(Session.get("date")).hours(Session.get("startTime")).unix()
+			console.log(moment(Session.get("date")).hours(Session.get("startTime")));
+			console.log(bookingTextPoint);
+			bookingTextPoint /= 60  //this is the number of minutes since start of day
+			bookingTextPoint *= pxPerMinute;
+			ctx.fillText(bookingText, 100, bookingTextPoint);
+		};
 	})
-// 	console.log(comp)
-// 	for (var booking in queryPointer.fetch())
-// 	{
-// 		console.log(booking);
-// 	};
+
 }
