@@ -1,35 +1,47 @@
+function dayDelta(date) {
+	var diff = moment(date).diff(moment().startOf('day'), "days");
+	if (diff===1){
+		return " tomorrow";
+	}
+	else if (diff===-1) {
+		return " yesterday";
+	}
+	else if (diff === 0)
+	{
+		return " today"
+	}
+	else if (diff > 1)
+	{
+		return " in " +Math.abs(diff)+ " days"
+	}
+	else
+	{
+		return " "+Math.abs(diff)+" days ago"
+	}
+}
+
 Template.bookingTable.helpers({
 	day: function() {
 		var momentobj = moment(Session.get("date"));
 		var ret = momentobj.format("dddd MMMM Do GGGG");
-		if(momentobj.isSame(moment(), 'day')) {
-				return ret + " - today.";
-		}
-		else {
-			return ret + " - " + momentobj.fromNow();
-		}
+		return ret + " -"+ dayDelta(Session.get("date"));
 	},
 	times: function(){
-		Session.set("startTime", 8);
-		Session.set("endTime", 17);
-		if (typeof Session.get("date") === "undefined") {
-			var thedate = moment().startOf("day").add(1, "hour").toDate();
-			Session.set("date", thedate);
-		}
-		var dateCounter = moment(Session.get("date")).hours(Session.get("startTime") || 8)
+		var dateCounter = moment().startOf('day').hours(Session.get("startTime") || 8)
 		var ret = [];
 		while ((dateCounter.hours() < Session.get("endTime")) || (dateCounter.minutes() === 0))
 		{
 			ret.push({time: dateCounter.format("h:mm A")});
 			dateCounter.add(Session.get("appntlength") || 15, "minutes");
 		}
+		Session.set("maxNumOfAppointments", ret.length);
 		return ret;
 	},
 	appointments: function() {
 		var theDate = Session.get("date");
 		startDate = moment(theDate).startOf("day").toDate();
 		endDate = moment(theDate).endOf("day").toDate();
-		console.log(JSON.stringify({date: {$gte: startDate, $lt: endDate}}))
+// 		console.log(JSON.stringify({date: {$gte: startDate, $lt: endDate}}))
 		queryPointer = appointmentList.find({date: {$gte: startDate, $lt: endDate}})
 		return queryPointer;
 	}
@@ -43,6 +55,9 @@ function getRowHeight() {
 	else {
 		return ret;
 	}
+}
+function getDate(){
+	return Session.get("date");
 }
 rerenderDep = new Deps.Dependency()
 Template.appointmentItem.helpers({
@@ -61,6 +76,9 @@ Template.appointmentItem.helpers({
 	inbetween: function() {
 		//WARNING DIRTY HACK
 		//WILL FAIL IF DEFAULT APPNT LENGTH CHANGED
+		//TODO: Calculate if the height of 3 internal data blocks
+		//will fit inside the container - 10px for padding or so
+		//dont forget to depend on rerenderDep!
 		if (this.length >= 45) {
 			return '<br/>'
 		}
@@ -78,13 +96,13 @@ Template.appointmentItem.helpers({
 		{
 			return getRowHeight() +"px";
 		}
-		console.log("calcing height");
+// 		console.log("calcing height");
 		var defaultHeight = getRowHeight();
 		var pxPerMinute = defaultHeight/Session.get("appntlength");
-		console.log(getRowHeight());
- 		console.log(pxPerMinute);
-		console.log(this.length);
-		console.log(pxPerMinute * this.length);
+// 		console.log(getRowHeight());
+//  		console.log(pxPerMinute);
+// 		console.log(this.length);
+// 		console.log(pxPerMinute * this.length);
 		return Math.ceil(pxPerMinute * this.length) + "px"
 	},
 	left: function() {
@@ -92,19 +110,28 @@ Template.appointmentItem.helpers({
 		return $(".rowHeader").css("width")
 	},
 	top: function() {
+// 		console.log("rendering this obj: ");
+// 		console.log(this);
 		rerenderDep.depend();
 		var numFromTop = (moment(this.date).unix() -
-			moment(Session.get("date")).hours(Session.get("startTime")).unix())/60;
+						  moment(getDate()).hours(Session.get("startTime")).unix())/60;
 
+		//getDate is used to avoid a dependence upon the date var. Don't want to attempt
+		//to rerender this template when it no longer exists.
 		if(numFromTop/Session.get("appntlength") === 0){
 			return $("thead th").css("height")
 		}
 		else
 		{
 			var untouchedAppntsFromTop = (numFromTop/Session.get("appntlength"))+1;
-
+			if (untouchedAppntsFromTop > Session.get("maxNumOfAppointments") ||
+			 	untouchedAppntsFromTop < 0) {
+				//Protect against exceptions when system tries to render appointments
+				//on wrong days.
+				return 0;
+			}
 			var appntsFromTop = Math.floor(untouchedAppntsFromTop);
-// 			console.log(this.date + " is  " + untouchedAppntsFromTop + " appoints from the top.");
+//  			console.log(this.date + " is  " + untouchedAppntsFromTop + " appoints from the top.");
 			var pixelsFromTop = $(".timeRow:nth-child("+appntsFromTop+")").position().top
 			if (untouchedAppntsFromTop % 1 !== 0){
 // 				console.log(untouchedAppntsFromTop % 1);
@@ -118,6 +145,7 @@ Template.appointmentItem.helpers({
 		}
 	}
 });
+
 // Template.appointmentItem.rendered = function(asd) {
 //  	console.log("AppointmentItem Rendered!");
 // // 	this.$(this.firstNode).css("left", );

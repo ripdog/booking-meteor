@@ -29,7 +29,16 @@ Template.masterLayout.helpers({
 Template.masterLayout.rendered = function() {
 	$('#datetimepicker1').datetimepicker({
 		pickTime: false,
-		dateFormat: "YYYY/MM/DD",
-		defaultDate: moment(Session.get("date"))
-	}).show();
-}
+	})
+	$('#datetimepicker1').data("DateTimePicker").format = "YYYY-MM-DD";
+// 	$('#datetimepicker1').data("DateTimePicker").setDate(moment(Session.get("date")));
+	Deps.autorun(function (comp) {
+		console.log(comp);
+		$('#datetimepicker1').data("DateTimePicker").setDate(moment(Session.get("date")));
+	})
+	$('#datetimepicker1').on("dp.change", function(e) {
+		console.log(e);
+		Session.set("date", e.date.toDate());
+	})
+};
+
