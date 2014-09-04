@@ -10,8 +10,7 @@ Template.masterLayout.events({
 		Session.set("date", moment(Session.get("date")).add(1, 'day').toDate());
 	},
 	'click #prevDay': function() {
-		var thedate = (moment(Session.get("date")).subtract(1, 'day').toDate())
-		Session.set("date", thedate);
+		Session.set("date", moment(Session.get("date")).subtract(1, 'day').toDate());
 	},
 	'click #datetimepicker1': function() {
 		$('#datetimepicker1').data("DateTimePicker").show()
@@ -37,7 +36,7 @@ Template.masterLayout.rendered = function() {
 		$('#datetimepicker1').data("DateTimePicker").setDate(moment(Session.get("date")));
 	})
 	$('#datetimepicker1').on("dp.change", function(e) {
-		console.log(e);
+		console.log(e.date.toDate());
 		Session.set("date", e.date.toDate());
 	})
 };
