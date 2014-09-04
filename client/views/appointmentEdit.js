@@ -1,26 +1,24 @@
 Template.insertAppointmentForm.helpers({
-	appointmentList: collections.apptList,
+	appointmentList: appointmentList,
 	currentDate: function(){
 		var momentobj = moment(Session.get("date"));
 		var ret = momentobj.format("dddd MMM Do GGGG");
 		if(momentobj.isSame(moment(), 'day')) {
 				return ret + " - today.";
 		}
-		else
-			{
-				return ret + " - " + momentobj.fromNow();
-			}
+		else {
+			return ret + " - " + momentobj.fromNow();
+		}
 	},
 	sessionDate: function(){return Session.get("date")},
 	length: function(){return Session.get("appntlength")},
-	minDate: Session.get("startTime"),
-	maxDate: Session.get("endTime")
-})
+	minDate: function() {return Session.get("startTime")},
+	maxDate: function() {return Session.get("endTime")}
+});
 Template.insertAppointmentForm.rendered = function() {
-	AutoForm.debug();//TODO: Combine Date and Time.
-	var thedate = moment().startOf("day").add(1, "hour").toDate();
-	Session.set("date", thedate);
-	var currentDate = Session.get("date")
+	AutoForm.debug();
+
+// 	var currentDate = Session.get("date")
 
 	Session.setDefault("appntlength", 15);//in minutes
 	//TODO: Ensure that startTime and endTime get recomputed when current date changes

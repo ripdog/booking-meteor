@@ -1,8 +1,50 @@
-<template name="bookinglist">
-	<div class="bookinglist">
-		<canvas id='bookinglistcanvas' height={{height}} width={{width}}>
-			 If you're seeing this text, please upgrade your browser. Firefox or Google Chrome will work well.
-			<a href="http://getfirefox.com">Click here for Firefox.</a>
-		</canvas>
+<template name="bookingTable">
+	<div id="bookingTable">
+		<h2 class="dayDisplay">{{day}}</h2>
+		<div id="bookingTableWrapper">
+			<table class="table">
+				<thead>
+					<tr>
+						<th>
+							Time
+						</th>
+						<th>
+							Appointments
+						</th>
+					</tr>
+				</thead>
+				<tbody>
+					{{#each times}}
+						{{> timeRow}}
+					{{/each}}
+					{{#each appointments}}
+						{{> appointmentItem}}
+					{{/each}}
+				</tbody>
+
+			</table>
+		</div>
+	</div>
+</template>
+
+<template name="timeRow">
+	<tr class="timeRow">
+		<td class="rowHeader">{{time}}</td>
+		<td class="rowContent"></td>
+	</tr>
+</template>
+
+<template name="appointmentItem">
+	<div class="appointmentItem bg-primary row" style="width:{{width}};
+												   max-height:{{height}};
+													   height:{{height}};
+												   left:{{left}};
+												   top:{{top}};">
+		<h5 class="appointmentItemData"><span class="glyphicon glyphicon-user"></span>
+			{{appointmentName}}</h5>{{{inbetween}}}
+		<p class="appointmentItemData"><span class="glyphicon glyphicon-time"></span>
+			{{appointmentTime}} - {{appointmentLength}} minutes</p>{{{inbetween}}}
+		<p class="appointmentItemData"><span class="glyphicon glyphicon-earphone"></span>
+			{{appointmentPhone}}</p>
 	</div>
 </template>

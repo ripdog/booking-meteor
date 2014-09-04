@@ -4,10 +4,27 @@
 </head>
 
 <body>
+</body>
+
+
+<template name="masterLayout">
 	<div class="container">
 		<nav class="navbar navbar-default" role="navigation">
 			<div class="container-fluid">
-				<a class="title" href="#">Booking</a>
+				<a class="navbar-brand" href="{{pathFor 'bookingTable'}}">Booking</a>
+				<ul class="nav navbar-nav">
+					<li><a href="{{pathFor 'providerList'}}">Providers</a></li>
+				</ul>
+				<form class="navbar-form navbar-left">
+					<div class="form-group">
+						<button type="button" id="prevDay" class="btn btn-default">&lt;</button>
+						<div class='input-group date' id='datetimepicker1'>
+							<input type="text" id="dateField" data-date-format="YYYY/MM/DD"
+								   class="form-control" />
+						</div>
+						<button type="button" id="nextDay" class="btn btn-default">&gt;</button>
+					</div>
+				</form>
 				<!-- << < datepicker > >> -->
 				<form class="navbar-form navbar-right" role="">
 					<button type="button" id="newAppointButton" class="btn btn-primary">New Booking</button>
@@ -15,10 +32,8 @@
 			</div>
 		</nav>
 		<div id="main">
-			{{> bookinglist}}
+			{{> yield}}
 			{{> appointmentEditModal}}
 		</div>
 	</div>
-</body>
-
-
+</template>
