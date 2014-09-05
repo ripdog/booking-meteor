@@ -1,0 +1,16 @@
+<template name="providerList">
+	<div class="row">
+		<div class="col-md-4">
+			<div class="list-group">
+				{{#each providerList}}
+				<a href="#" data-id={{_id}}
+				   class="list-group-item providerName">{{name}}
+					<button class="providerDeleteButton btn btn-danger pull-right">
+						Delete</button></a>
+				{{/each}}
+			</div>
+			<button id="newProviderButton" class="btn btn-primary">New Provider</button>
+		</div>
+		<div class="col-md-8">{{> providerEdit}}</div>
+	</div>
+</template>

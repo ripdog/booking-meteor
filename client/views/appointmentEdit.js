@@ -58,7 +58,8 @@ AutoForm.hooks({
 			return doc;
 		},
 		after: {
-			insert: function(error, result) {
+			insert: function(error, result) {//TODO: When appointment is made, use the data-id var
+				//to find it in the appointment list and bounce it!
 				if (error) {
 					console.log("Insert Error:", error);
 					$("#insertSuccessAlert").alert();
