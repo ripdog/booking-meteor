@@ -3,6 +3,8 @@ Template.masterLayout.events({
 		//console.log('button clicked!');
 // 		Session.set("currentAppointment", appnt);
 		//console.log(Session.get("currentAppointment"))
+		Session.set("formForInsert", true);
+		Session.set("currentlyEditingAppointment", null);
 		AutoForm.resetForm(insertAppointmentFormInner);
 		$("#appointmentEditModal").modal();
 	},
@@ -32,11 +34,9 @@ Template.masterLayout.rendered = function() {
 	$('#datetimepicker1').data("DateTimePicker").format = "YYYY-MM-DD";
 // 	$('#datetimepicker1').data("DateTimePicker").setDate(moment(Session.get("date")));
 	Deps.autorun(function (comp) {
-		console.log(comp);
 		$('#datetimepicker1').data("DateTimePicker").setDate(moment(Session.get("date")));
 	})
 	$('#datetimepicker1').on("dp.change", function(e) {
-		console.log(e.date.toDate());
 		Session.set("date", e.date.toDate());
 	})
 };

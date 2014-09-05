@@ -3,7 +3,7 @@ Template["afQuickField_bootstraptimepicker"].helpers({
     return _.extend({template: 'bootstrap'}, this.afFieldLabelAtts);
   },
   afFieldInputAtts: function () {
-    return _.extend({template: 'bootstraptimepicker'}, this.afFieldInputAtts);
+    return _.extend({template: 'bootstrap'}, this.afFieldInputAtts);
   }
 });
 

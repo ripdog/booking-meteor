@@ -31,18 +31,25 @@ Template.insertAppointmentForm.helpers({
 	sessionDate: function(){return Session.get("date")},
 	length: function(){return Session.get("appntlength")},
 	minDate: function() {return Session.get("startTime")},
-	maxDate: function() {return Session.get("endTime")}
+	maxDate: function() {return Session.get("endTime")},
+	currentType: function() {
+		if(Session.get("formForInsert")) {
+			return "insert"
+		}
+		else {
+			return "update"
+		}
+	},
+	currentDoc: function() {return appointmentList.findOne(Session.get("currentlyEditingAppointment"))}
 });
 Template.insertAppointmentForm.rendered = function() {
-// 	AutoForm.debug();
-
 	//TODO: Ensure that startTime and endTime get recomputed when current date changes
 	//attach them to the date var
 };
 AutoForm.hooks({
 	insertAppointmentFormInner: {
 		docToForm: function(doc){
-			console.log("its docToForm tiem!!!!");
+// 			console.log("its docToForm tiem!!!!");
 			if (doc.date instanceof Date) {
 				doc.time = moment(doc.date).format("H:mm A");
 			}
@@ -55,6 +62,7 @@ AutoForm.hooks({
 				//then convert back to utc.
 				doc.date = moment(datestring, "YYYY-MM-DD HH:mm A").utc().toDate();
 			}
+			doc.providerID = Session.get("selectedProviderId");
 			return doc;
 		},
 		after: {

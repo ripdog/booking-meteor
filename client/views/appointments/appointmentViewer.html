@@ -1,6 +1,12 @@
 <template name="bookingTable">
 	<div id="bookingTable">
 		<h2 class="dayDisplay">{{day}}</h2>
+		<ul class="nav nav-tabs" role="tablist">
+			{{#each providerNames}}
+				<li class="{{selected}}"><a data-id={{_id}} class="providerTab"  href="#">{{name}}
+					</a></li>
+			{{/each}}
+		</ul>
 		<div id="bookingTableWrapper">
 			<table class="table">
 				<thead>
@@ -35,7 +41,7 @@
 </template>
 
  <template name="appointmentItem"><!--TODO: set display of each field to optional. -->
-	<div class="appointmentItem bg-primary" style="width:{{width}};
+	<div class="appointmentItem bg-primary" data-id={{_id}} style="width:{{width}};
 												   max-height:{{height}};
 													   height:{{height}};
 												   left:{{left}};

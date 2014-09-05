@@ -44,8 +44,37 @@ Template.bookingTable.helpers({
 // 		console.log(JSON.stringify({date: {$gte: startDate, $lt: endDate}}))
 		queryPointer = appointmentList.find({date: {$gte: startDate, $lt: endDate}})
 		return queryPointer;
+	},
+	providerNames: function() {
+		return providers.find({}, {fields: {name: 1}})
+	},
+	selected: function() {
+		if(Session.get("selectedProviderId") === this._id) {
+			return "active";
+		}
 	}
 });
+Template.bookingTable.events({
+	'click .providerTab': function(event) {
+		Session.set("selectedProviderId", $(event.target).data("id"));
+	},
+	'dblclick .appointmentItem': function(event) {
+		Session.set("formForInsert", false);//edit mode
+		Session.set("currentlyEditingAppointment", $(event.target).data("id"));
+		AutoForm.resetForm(insertAppointmentFormInner);
+		$("#appointmentEditModal").modal();
+	}
+})
+
+Tracker.autorun(function() {
+	if (typeof Session.get("selectedProviderId") === "undefined") {
+		try {
+			Session.setDefault("selectedProviderId", providers.findOne()._id);
+		}
+		catch (e) {}
+	}
+})
+
 function getRowHeight() {
 	var ret = parseInt($(".timeRow").css("height"));
 	if (ret === 38) {//OH GOD DIRTY HACK
@@ -146,7 +175,11 @@ Template.appointmentItem.helpers({
 	}
 });
 
-// Template.appointmentItem.rendered = function(asd) {
+Template.appointmentItem.rendered = function(asd) {
+	
+}
+
+
 //  	console.log("AppointmentItem Rendered!");
 // // 	this.$(this.firstNode).css("left", );
 // // 	this.$(this.firstNode).css("height", );
