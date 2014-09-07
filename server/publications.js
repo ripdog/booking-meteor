@@ -7,6 +7,9 @@ Meteor.publish("providerSubscription", function() {
 	return providers.find();
 });
 Meteor.publish("providerNames", function() {
-	return providers.find({}, {fields: {name: 1}})
+	return providers.find({})
+});
+Meteor.publish("unusualDays", function(thedate) {
+	return unusualDays.find({date:thedate})
 });
 // console.log(providers.find({}).fetch());

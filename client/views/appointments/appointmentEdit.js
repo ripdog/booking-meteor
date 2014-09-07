@@ -29,9 +29,20 @@ Template.insertAppointmentForm.helpers({
 		return ret + " -"+ dayDelta(Session.get("date"));
 	},
 	sessionDate: function(){return Session.get("date")},
-	length: function(){return Session.get("appntlength")},
-	minDate: function() {return Session.get("startTime")},
-	maxDate: function() {return Session.get("endTime")},
+	length: function() {
+		var provObject = unusualDays.findOne({date: Session.get("date"), providerID: Session.get("selectedProviderId")})
+		if (typeof provObject === "undefined") {
+			provObject = providers.findOne(Session.get("selectedProviderId"))
+		}
+		try {return provObject.appointmentLength}
+		catch (e) {
+			console.log("looking for appointment length too early.")
+			return 0;
+		}//this error doesn't matter, it means the unusualDays
+		// and Providers collections aren't filled yet.
+		//will be fixed for real when iron router is used for appointment editing
+		///creation
+	},
 	currentType: function() {
 		if(Session.get("formForInsert")) {
 			return "insert"
@@ -42,14 +53,13 @@ Template.insertAppointmentForm.helpers({
 	},
 	currentDoc: function() {return appointmentList.findOne(Session.get("currentlyEditingAppointment"))}
 });
-Template.insertAppointmentForm.rendered = function() {
-	//TODO: Ensure that startTime and endTime get recomputed when current date changes
-	//attach them to the date var
-};
+// Template.insertAppointmentForm.rendered = function() {
+// 	//TODO: Ensure that startTime and endTime get recomputed when current date changes
+// 	//attach them to the date var
+// };
 AutoForm.hooks({
 	insertAppointmentFormInner: {
 		docToForm: function(doc){
-// 			console.log("its docToForm tiem!!!!");
 			if (doc.date instanceof Date) {
 				doc.time = moment(doc.date).format("H:mm A");
 			}
@@ -63,6 +73,8 @@ AutoForm.hooks({
 				doc.date = moment(datestring, "YYYY-MM-DD HH:mm A").utc().toDate();
 			}
 			doc.providerID = Session.get("selectedProviderId");
+			console.log("logging doc")
+			console.log(doc)
 			return doc;
 		},
 		after: {

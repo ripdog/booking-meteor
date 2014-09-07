@@ -3,13 +3,13 @@ Template.providerList.helpers({
 })
 Template.providerList.events({
 	'click .providerName': function(event){
-		Session.set("selectedProviderId", $(event.target).data("id"))
+		Session.set("selectedProviderId", $(event.currentTarget).data("id"))
 	},
 	'click .providerDeleteButton': function(event){
 		if (confirm("Are you absolutely sure? This will delete *ALL* this providers data and appointments!"))
 			{
 				if (confirm("ALL appointments and data related to this provider will be deleted. Are you totally, complete, utterly sure?")){
-					providers.remove($(event.target).parent().data("id"), function(err, result) {
+					providers.remove($(event.currentTarget).parent().data("id"), function(err, result) {
 						console.log(err);
 						console.log(result);
 					});

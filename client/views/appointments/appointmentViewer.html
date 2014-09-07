@@ -1,6 +1,9 @@
 <template name="bookingTable">
 	<div id="bookingTable">
-		<h2 class="dayDisplay">{{day}}</h2>
+		<!-- <div class="row">
+			<div class="" -->
+				<h2 class="dayDisplay">{{day}}{{notes}}</h2>
+		<!-- </div> -->
 		<ul class="nav nav-tabs" role="tablist">
 			{{#each providerNames}}
 				<li class="{{selected}}"><a data-id={{_id}} class="providerTab"  href="#">{{name}}
@@ -29,6 +32,22 @@
 				</tbody>
 
 			</table>
+		</div>
+		<div class="pull-right" id="customTimeChanger">
+			<!-- add button here to  add custom times for current day.
+			it should be low opacity, and replaced with this autoform
+			when clicked.-->
+			<button type="button" style="{{buttonStyle}}" id="customTimesButton" class="btn">Set Custom Times</button>
+			{{#autoForm collection="unusualDays" id="changeDayTimes"
+			doc=todaysUnusualTimes type="update" autosave=true class=unusualDaysFormClass}}
+				<div class="form-group">
+				{{> afQuickField name="startTime"}}
+				{{> afQuickField name="endTime" }}
+				{{> afQuickField name="appointmentLength" style="width"}}
+				{{> afQuickField name="notes" }}
+				</div>
+			{{/autoForm}}
+
 		</div>
 	</div>
 </template>

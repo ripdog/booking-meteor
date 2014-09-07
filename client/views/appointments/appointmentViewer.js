@@ -19,7 +19,6 @@ function dayDelta(date) {
 		return " "+Math.abs(diff)+" days ago"
 	}
 }
-
 Template.bookingTable.helpers({
 	day: function() {
 		var momentobj = moment(Session.get("date"));
@@ -27,13 +26,20 @@ Template.bookingTable.helpers({
 		return ret + " -"+ dayDelta(Session.get("date"));
 	},
 	times: function(){
-		var dateCounter = moment().startOf('day').hours(Session.get("startTime") || 8)
+		var provObject = unusualDays.findOne({date: Session.get("date"), providerID: Session.get("selectedProviderId")})
+		if (!provObject) {
+			provObject = providers.findOne(Session.get("selectedProviderId"))
+		}
+		// console.log(provObject);
+		var dateCounter = moment().startOf('day').hours(provObject.startTime)
+		var dateTarget = moment().startOf('day').hours(provObject.endTime)
 		var ret = [];
-		while ((dateCounter.hours() < Session.get("endTime")) || (dateCounter.minutes() === 0))
+		while(dateTarget.diff(dateCounter) > 0)
 		{
 			ret.push({time: dateCounter.format("h:mm A")});
-			dateCounter.add(Session.get("appntlength") || 15, "minutes");
+			dateCounter.add(provObject.appointmentLength, "minutes");
 		}
+		ret.push({time: dateCounter.format("h:mm A")});
 		Session.set("maxNumOfAppointments", ret.length);
 		return ret;
 	},
@@ -41,7 +47,6 @@ Template.bookingTable.helpers({
 		var theDate = Session.get("date");
 		startDate = moment(theDate).startOf("day").toDate();
 		endDate = moment(theDate).endOf("day").toDate();
-// 		console.log(JSON.stringify({date: {$gte: startDate, $lt: endDate}}))
 		queryPointer = appointmentList.find({date: {$gte: startDate, $lt: endDate}})
 		return queryPointer;
 	},
@@ -52,19 +57,51 @@ Template.bookingTable.helpers({
 		if(Session.get("selectedProviderId") === this._id) {
 			return "active";
 		}
+	},
+	todaysUnusualTimes: function () {
+		return unusualDays.findOne({date:Session.get('date'), providerID: Session.get("selectedProviderId")})
+	},
+	unusualDaysFormClass: function() {
+		if (unusualDays.findOne({date:Session.get('date'), providerID: Session.get("selectedProviderId")})){
+			return "form-inline";
+		} else {
+			return "hidden";
+		}
+	},
+	buttonStyle: function() {
+		if (unusualDays.findOne({date:Session.get('date'), providerID: Session.get("selectedProviderId")})){
+			return "display: none;";
+		}
+		else {
+			return "";
+		}
+	},
+	notes: function () {
+		var notes = unusualDays.findOne({date:Session.get('date'), providerID: Session.get("selectedProviderId")}).notes
+		if (notes) {
+			return " - " + notes;
+		}
 	}
 });
 Template.bookingTable.events({
 	'click .providerTab': function(event) {
-		Session.set("selectedProviderId", $(event.target).data("id"));
+		Session.set("selectedProviderId", $(event.currentTarget).data("id"));
 	},
 	'dblclick .appointmentItem': function(event) {
 		Session.set("formForInsert", false);//edit mode
-		Session.set("currentlyEditingAppointment", $(event.target).data("id"));
+		Session.set("currentlyEditingAppointment", $(event.currentTarget).data("id"));
 		AutoForm.resetForm(insertAppointmentFormInner);
 		$("#appointmentEditModal").modal();
+	},
+	'click #customTimesButton': function(event) {
+		unusualDays.insert({date: Session.get('date'), providerID: Session.get("selectedProviderId")});
 	}
 })
+
+Template.bookingTable.rendered = function() {
+	console.log("rerendering");
+	rerenderDep.changed();
+}
 
 Tracker.autorun(function() {
 	if (typeof Session.get("selectedProviderId") === "undefined") {
@@ -116,8 +153,9 @@ Template.appointmentItem.helpers({
 		}
 	},
 	width: function() {
-		rerenderDep.depend();
-		return $(".rowContent").css("width");
+		// rerenderDep.depend();
+		// return $(".rowContent").css("width");
+		return "auto";
 	},
 	height: function() {
 		rerenderDep.depend();
@@ -125,13 +163,12 @@ Template.appointmentItem.helpers({
 		{
 			return getRowHeight() +"px";
 		}
-// 		console.log("calcing height");
+		var provObject = unusualDays.findOne({date: Session.get("date"), providerID: Session.get("selectedProviderId")})
+		if (!provObject) {
+			provObject = providers.findOne(Session.get("selectedProviderId"))
+		}
 		var defaultHeight = getRowHeight();
-		var pxPerMinute = defaultHeight/Session.get("appntlength");
-// 		console.log(getRowHeight());
-//  		console.log(pxPerMinute);
-// 		console.log(this.length);
-// 		console.log(pxPerMinute * this.length);
+		var pxPerMinute = defaultHeight/provObject.appointmentLength;
 		return Math.ceil(pxPerMinute * this.length) + "px"
 	},
 	left: function() {
@@ -142,17 +179,26 @@ Template.appointmentItem.helpers({
 // 		console.log("rendering this obj: ");
 // 		console.log(this);
 		rerenderDep.depend();
+
+		if ($(".timeRow").length === 0)
+			{console.log("rendering too early, hold off.");
+			return 0;}
+		var provObject = unusualDays.findOne({date: Session.get("date"), providerID: Session.get("selectedProviderId")})
+		if (!provObject) {
+			provObject = providers.findOne(Session.get("selectedProviderId"))
+		}
+		// console.log(provObject);
 		var numFromTop = (moment(this.date).unix() -
-						  moment(getDate()).hours(Session.get("startTime")).unix())/60;
+						  moment(getDate()).hours(provObject.startTime).unix())/60;
 
 		//getDate is used to avoid a dependence upon the date var. Don't want to attempt
 		//to rerender this template when it no longer exists.
-		if(numFromTop/Session.get("appntlength") === 0){
+		if(numFromTop/provObject.appointmentLength === 0){
 			return $("thead th").css("height")
 		}
 		else
 		{
-			var untouchedAppntsFromTop = (numFromTop/Session.get("appntlength"))+1;
+			var untouchedAppntsFromTop = (numFromTop/provObject.appointmentLength)+1;
 			if (untouchedAppntsFromTop > Session.get("maxNumOfAppointments") ||
 			 	untouchedAppntsFromTop < 0) {
 				//Protect against exceptions when system tries to render appointments
@@ -160,8 +206,14 @@ Template.appointmentItem.helpers({
 				return 0;
 			}
 			var appntsFromTop = Math.floor(untouchedAppntsFromTop);
-//  			console.log(this.date + " is  " + untouchedAppntsFromTop + " appoints from the top.");
-			var pixelsFromTop = $(".timeRow:nth-child("+appntsFromTop+")").position().top
+  	// 		console.log(this.date + " is  " + untouchedAppntsFromTop + " appoints from the top.");
+			try {
+				var pixelsFromTop = $(".timeRow:nth-child("+appntsFromTop+")").position().top
+			}
+			catch (exc) {
+				console.log("exception caught, rendering too early, hold off.");
+				rerenderDep.changed();
+			}
 			if (untouchedAppntsFromTop % 1 !== 0){
 // 				console.log(untouchedAppntsFromTop % 1);
 				//if the appnt doesn't align with standard boundries - i.e, 15 mins
@@ -176,7 +228,7 @@ Template.appointmentItem.helpers({
 });
 
 Template.appointmentItem.rendered = function(asd) {
-	
+
 }
 
 
