@@ -77,10 +77,9 @@ Template.bookingTable.helpers({
 		}
 	},
 	notes: function () {
-		var notes = unusualDays.findOne({date:Session.get('date'), providerID: Session.get("selectedProviderId")}).notes
-		if (notes) {
-			return " - " + notes;
-		}
+		try{
+			return unusualDays.findOne({date:Session.get('date'), providerID: Session.get("selectedProviderId")}).notes
+		} catch(e) {}
 	}
 });
 Template.bookingTable.events({
