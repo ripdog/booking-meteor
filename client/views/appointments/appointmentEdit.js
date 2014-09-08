@@ -19,13 +19,15 @@ function dayDelta(date) {
 		return " "+Math.abs(diff)+" days ago"
 	}
 }
+Template.insertAppointmentForm.rendered = function () {
 
+}
 
 Template.insertAppointmentForm.helpers({
 	appointmentList: appointmentList,
 	currentDate: function(){
 		var momentobj = moment(Session.get("date"));
-		var ret = momentobj.format("dddd MMMM Do GGGG");
+		var ret = momentobj.format("dddd, MMMM Do GGGG");
 		return ret + " -"+ dayDelta(Session.get("date"));
 	},
 	sessionDate: function(){return Session.get("date")},
@@ -63,6 +65,7 @@ AutoForm.hooks({
 			if (doc.date instanceof Date) {
 				doc.time = moment(doc.date).format("H:mm A");
 			}
+			$('#datetimepicker4').data("DateTimePicker").setDate(moment(doc.date));
 			return doc;
 		},
 		formToDoc: function(doc){
@@ -70,7 +73,7 @@ AutoForm.hooks({
 				var datestring = moment(Session.get("date")).zone(-12).format("YYYY-MM-DD ") + doc.time;
 				//the time is localtime, the date is utc. Set the date to localtime, add the time
 				//then convert back to utc.
-				doc.date = moment(datestring, "YYYY-MM-DD HH:mm A").utc().toDate();
+				doc.date = moment(datestring, "YYYY-MM-DD hh:mm A").utc().toDate();
 			}
 			doc.providerID = Session.get("selectedProviderId");
 			console.log("logging doc")

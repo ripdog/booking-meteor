@@ -22,7 +22,7 @@ function dayDelta(date) {
 Template.bookingTable.helpers({
 	day: function() {
 		var momentobj = moment(Session.get("date"));
-		var ret = momentobj.format("dddd MMMM Do GGGG");
+		var ret = momentobj.format("dddd, MMMM Do GGGG");
 		return ret + " -"+ dayDelta(Session.get("date"));
 	},
 	times: function(){
@@ -44,10 +44,12 @@ Template.bookingTable.helpers({
 		return ret;
 	},
 	appointments: function() {
-		var theDate = Session.get("date");
-		startDate = moment(theDate).startOf("day").toDate();
-		endDate = moment(theDate).endOf("day").toDate();
-		queryPointer = appointmentList.find({date: {$gte: startDate, $lt: endDate}})
+		// var theDate = Session.get("date");
+		// startDate = moment(theDate).startOf("day").toDate();
+		// endDate = moment(theDate).endOf("day").toDate();
+		// console.log(JSON.stringify({date: {$gte: startDate, $lt: endDate}}));
+		// // queryPointer = appointmentList.find({date: {$gte: startDate, $lt: endDate}})
+		queryPointer = appointmentList.find()
 		return queryPointer;
 	},
 	providerNames: function() {
@@ -93,7 +95,15 @@ Template.bookingTable.events({
 		$("#appointmentEditModal").modal();
 	},
 	'click #customTimesButton': function(event) {
-		unusualDays.insert({date: Session.get('date'), providerID: Session.get("selectedProviderId")});
+		var provObject = providers.findOne(Session.get("selectedProviderId"))
+		unusualDays.insert({date: Session.get('date'), providerID: Session.get("selectedProviderId"), startTime: provObject.startTime, endTime: provObject.endTime, appointmentLength: provObject.appointmentLength});
+	},
+	'click #deleteCustomTimes': function(event) {
+		unusualDays.remove(unusualDays.findOne({date:Session.get('date'), providerID: Session.get("selectedProviderId")})._id);
+	},
+	'dblclick .rowContent': function(event) {
+		console.log(event.currentTarget.previousElementSibling);
+		moment("2014/5/5").twix("2014/6/6", true).format();
 	}
 })
 
@@ -188,7 +198,7 @@ Template.appointmentItem.helpers({
 		}
 		// console.log(provObject);
 		var numFromTop = (moment(this.date).unix() -
-						  moment(getDate()).hours(provObject.startTime).unix())/60;
+					  moment(getDate()).hours(provObject.startTime).unix())/60;
 
 		//getDate is used to avoid a dependence upon the date var. Don't want to attempt
 		//to rerender this template when it no longer exists.

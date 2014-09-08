@@ -6,14 +6,15 @@
 standard-app-packages
 insecure
 less
-mrt:font-awesome-4-less
 accounts-password
 ian:bootstrap-3
 ian:accounts-ui-bootstrap-3
-mizzao:bootboxjs
 aldeed:autoform
 aldeed:collection2
 tsega:bootstrap3-datetimepicker
 iron:router
-mrt:moment
+splendido:moment-twix
+aldeed:simple-schema
+meteorhacks:kadira
+mizzao:bootboxjs
 

@@ -42,10 +42,11 @@
 			{{#autoForm collection="unusualDays" id="changeDayTimes"
 			doc=todaysUnusualTimes type="update" autosave=true class=unusualDaysFormClass}}
 				<div class="form-group">
-				{{> afQuickField name="startTime"}}
-				{{> afQuickField name="endTime" }}
-				{{> afQuickField name="appointmentLength" style="width"}}
+				{{> afQuickField name="startTime" style="width: 75px"}}
+				{{> afQuickField name="endTime" style="width: 75px"}}
+				{{> afQuickField name="appointmentLength" step=5 style="width: 75px"}}
 				{{> afQuickField name="notes" }}
+				<button type="button" style="opacity:0.25;" id="deleteCustomTimes" class="btn form-control btn-danger">Delete Custom Times</button>
 				</div>
 			{{/autoForm}}
 

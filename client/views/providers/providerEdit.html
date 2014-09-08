@@ -1,3 +1,12 @@
 <template name="providerEdit">
-	{{> quickForm collection="providers" doc=editingProvider id="updateProviderForm" type="update" omitFields="unusualDays"}}
+	{{# autoForm collection="providers" doc=editingProvider id="updateProviderForm" type="update"}}
+			<fieldset>
+			<!-- <h6>New appointment for {{currentDate}}</h6> -->
+			{{> afQuickField name='name'}}
+			{{> afQuickField name='startTime'}}
+			{{> afQuickField name='endTime'}}
+			{{> afQuickField name='appointmentLength' step=5}}
+			<button type="submit" class="btn btn-primary" id="saveAppointChanges">Save changes</button>
+		</fieldset>
+	{{/autoForm}}
 </template>

@@ -15,7 +15,7 @@
 <template name="insertAppointmentForm">
 	{{#autoForm collection=appointmentList doc=currentDoc id="insertAppointmentFormInner" type=currentType}}
 	<div class="modal-body">
-		<div class="alert alert-success" id="insertSuccessAlert" role="alert">New Appointment Created.</div>
+		<!-- <div class="alert alert-success" id="insertSuccessAlert" role="alert">New Appointment Created.</div> -->
 		<fieldset>
 			<h6>New appointment for {{currentDate}}</h6>
 			{{> afQuickField name='lastname'}}

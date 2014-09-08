@@ -24,7 +24,7 @@ Template.afQuickField_bootstraptimepicker.rendered = function() {
 	$('#datetimepicker4').datetimepicker({
 		pickDate: false,
 		minuteStepping:5,
-		defaultDate: moment().hour(12).minute(0)
+		defaultDate: moment().startOf('day').hour(12).zone(-12)
 		//TODO ^ should pick closest date to 1200 which isn't taken.
 	});
 }
