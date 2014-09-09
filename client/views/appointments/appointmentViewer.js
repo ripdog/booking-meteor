@@ -19,6 +19,9 @@ function dayDelta(date) {
 		return " "+Math.abs(diff)+" days ago"
 	}
 }
+
+
+
 Template.bookingTable.helpers({
 	day: function() {
 		var momentobj = moment(Session.get("date"));
@@ -26,6 +29,15 @@ Template.bookingTable.helpers({
 		return ret + " -"+ dayDelta(Session.get("date"));
 	},
 	times: function(){
+		Tracker.autorun(function() {
+			if (typeof Session.get("selectedProviderId") === "undefined") {
+				try {
+					Session.setDefault("selectedProviderId", providers.findOne()._id);
+					console.log("No selectedProviderId, selecting one.")
+				}
+				catch (e) {}
+			}
+		})
 		var provObject = unusualDays.findOne({date: Session.get("date"), providerID: Session.get("selectedProviderId")})
 		if (!provObject) {
 			provObject = providers.findOne(Session.get("selectedProviderId"))
@@ -112,14 +124,7 @@ Template.bookingTable.rendered = function() {
 	rerenderDep.changed();
 }
 
-Tracker.autorun(function() {
-	if (typeof Session.get("selectedProviderId") === "undefined") {
-		try {
-			Session.setDefault("selectedProviderId", providers.findOne()._id);
-		}
-		catch (e) {}
-	}
-})
+
 
 function getRowHeight() {
 	var ret = parseInt($(".timeRow").css("height"));
