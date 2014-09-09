@@ -1,9 +1,9 @@
-Template["afQuickField_bootstraptimepicker"].helpers({
+Template["afFormGroup_bootstraptimepicker"].helpers({
   afFieldLabelAtts: function () {
-    return _.extend({template: 'bootstrap'}, this.afFieldLabelAtts);
+    return _.extend({template: 'bootstraptimepicker'}, this.afFieldLabelAtts);
   },
   afFieldInputAtts: function () {
-    return _.extend({template: 'bootstrap'}, this.afFieldInputAtts);
+    return _.extend({template: 'bootstraptimepicker'}, this.afFieldInputAtts);
   }
 });
 
@@ -16,15 +16,16 @@ function addFormControlAtts() {
 	}
 	return atts;
 }
-Template.afQuickField_bootstraptimepicker.atts = addFormControlAtts;
-Template.afQuickField_bootstraptimepicker.events = {
-	'click #datetimepicker4': function (event){$('#datetimepicker4').data("DateTimePicker").show()}
-}
-Template.afQuickField_bootstraptimepicker.rendered = function() {
+Template.afInput_bootstraptimepicker.atts = addFormControlAtts;
+
+Template.afInput_bootstraptimepicker.rendered  = function() {
 	$('#datetimepicker4').datetimepicker({
 		pickDate: false,
 		minuteStepping:5,
 		defaultDate: moment().startOf('day').hour(12).zone(-12)
 		//TODO ^ should pick closest date to 1200 which isn't taken.
 	});
+}
+Template.afInput_bootstraptimepicker.events = {
+	'click #datetimepicker4': function (event){$('#datetimepicker4').data("DateTimePicker").show()}
 }

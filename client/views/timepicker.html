@@ -6,7 +6,7 @@
 		</span>
 	</div>
 </template> -->
-<template name="afQuickField_bootstraptimepicker">
+<template name="afFormGroup_bootstraptimepicker">
   <div class="form-group {{#if afFieldIsInvalid name=this.atts.name}}has-error{{/if}}">
     {{#unless this.skipLabel}}
     {{> afFieldLabel afFieldLabelAtts}}
@@ -22,4 +22,8 @@
         <span class="input-group-addon"><span class="glyphicon glyphicon-time"></span>
         </span>
   </div>
+</template>
+
+<template name="afFieldLabel_bootstraptimepicker">
+<label {{atts}}>{{afFieldLabelText name=this.atts.name}}</label>
 </template>
