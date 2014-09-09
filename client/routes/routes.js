@@ -8,7 +8,7 @@ Router.map(function() {
 	this.route('bookingTable', {//Split up the bookingTable so that the appointment
       //items always render after the table itself. Also allow cleanup so less
       //stuff disappears when changing date. Add date to url.
-		path: '/',
+		path: '/',//should be /:prov/:date?
 		waitOn: function() {
 			Session.setDefault("date", moment().startOf("day").toDate());
 			return [Meteor.subscribe('appointmentList', Session.get('date'), Session.get("selectedProviderId")),

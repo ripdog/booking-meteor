@@ -66,7 +66,7 @@ AutoForm.hooks({
 		},
 		formToDoc: function(doc){
 			if (typeof doc.time === "string") {
-				var datestring = moment(doc.date).zone(-12).format("YYYY-MM-DD ") + doc.time;
+				var datestring = moment(Session.get("date")).zone(-12).format("YYYY-MM-DD ") + doc.time;
 				//the time is localtime, the date is utc. Set the date to localtime, add the time
 				//then convert back to utc.
 				doc.date = moment(datestring, "YYYY-MM-DD hh:mm A").utc().toDate();
