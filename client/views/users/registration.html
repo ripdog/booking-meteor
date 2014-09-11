@@ -1,3 +1,12 @@
 <template name="registration">
-	
+	{{#autoForm collection=users id="registrationForm" collection="Meteor.users"}}
+		<fieldset>
+			<legend>Register a new user</legend>
+				{{> afQuickField name="username"}}
+				{{> afQuickField name="emails"}}
+				{{> afQuickField name="password" type="password"}}
+				{{> afQuickField name="roles" options="auto"}}
+				<button type="submit" class="btn btn-primary" id="createUser">Register</button>
+		</fieldset>
+	{{/autoForm}}
 </template>

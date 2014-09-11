@@ -28,8 +28,12 @@ Template.bookingTable.helpers({
 		var ret = momentobj.format("dddd, MMMM Do GGGG");
 		return ret + " -"+ dayDelta(Session.get("date"));
 	},
+	loggedIn: function() {
+		return Meteor.userId();
+	},
 	times: function(){
 		Tracker.autorun(function() {
+			Meteor.userId();
 			if (typeof Session.get("selectedProviderId") === "undefined") {
 				try {
 					Session.setDefault("selectedProviderId", providers.findOne()._id);
@@ -38,6 +42,7 @@ Template.bookingTable.helpers({
 				catch (e) {}
 			}
 		})
+		Meteor.userId();
 		var provObject = unusualDays.findOne({date: Session.get("date"), providerID: Session.get("selectedProviderId")})
 		if (!provObject) {
 			provObject = providers.findOne(Session.get("selectedProviderId"))
@@ -62,20 +67,25 @@ Template.bookingTable.helpers({
 		// console.log(JSON.stringify({date: {$gte: startDate, $lt: endDate}}));
 		// // queryPointer = appointmentList.find({date: {$gte: startDate, $lt: endDate}})
 		queryPointer = appointmentList.find()
+		Meteor.userId();
 		return queryPointer;
 	},
 	providerNames: function() {
+		Meteor.userId();
 		return providers.find({}, {fields: {name: 1}})
 	},
 	selected: function() {
+		Meteor.userId();
 		if(Session.get("selectedProviderId") === this._id) {
 			return "active";
 		}
 	},
 	todaysUnusualTimes: function () {
+		Meteor.userId();
 		return unusualDays.findOne({date:Session.get('date'), providerID: Session.get("selectedProviderId")})
 	},
 	unusualDaysFormClass: function() {
+		Meteor.userId();
 		if (unusualDays.findOne({date:Session.get('date'), providerID: Session.get("selectedProviderId")})){
 			return "form-inline";
 		} else {
@@ -83,6 +93,7 @@ Template.bookingTable.helpers({
 		}
 	},
 	buttonStyle: function() {
+		Meteor.userId();
 		if (unusualDays.findOne({date:Session.get('date'), providerID: Session.get("selectedProviderId")})){
 			return "display: none;";
 		}
@@ -91,6 +102,7 @@ Template.bookingTable.helpers({
 		}
 	},
 	notes: function () {
+		Meteor.userId();
 		try{
 			return unusualDays.findOne({date:Session.get('date'), providerID: Session.get("selectedProviderId")}).notes
 		} catch(e) {}
@@ -120,6 +132,7 @@ Template.bookingTable.events({
 })
 
 Template.bookingTable.rendered = function() {
+	Meteor.userId();
 	console.log("rerendering");
 	rerenderDep.changed();
 }
@@ -154,6 +167,7 @@ Template.appointmentItem.helpers({
 		return this.length;
 	},
 	inbetween: function() {
+		
 		//WARNING DIRTY HACK
 		//WILL FAIL IF DEFAULT APPNT LENGTH CHANGED
 		//TODO: Calculate if the height of 3 internal data blocks

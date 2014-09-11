@@ -29,3 +29,10 @@
 .nav-tabs {
 	clear:both;
 }
+#deleteCustomTimes {
+	margin-top: -10px;
+	opacity:0.25;
+}
+#customTimeChanger {
+	margin-top: 10px;
+}

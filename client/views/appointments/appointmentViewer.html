@@ -1,4 +1,5 @@
 <template name="bookingTable">
+	{{#if loggedIn}}
 	<div id="bookingTable">
 		<!-- <div class="row">
 			<div class="" -->
@@ -11,7 +12,7 @@
 					</a></li>
 			{{/each}}
 		</ul>
-		<div id="bookingTableWrapper">
+		<div id="bookingTableWrapper" style="height:700px; overflow-y:auto;">
 			<table class="table">
 				<thead>
 					<tr>
@@ -35,9 +36,6 @@
 			</table>
 		</div>
 		<div class="pull-right" id="customTimeChanger">
-			<!-- add button here to  add custom times for current day.
-			it should be low opacity, and replaced with this autoform
-			when clicked.-->
 			<button type="button" style="{{buttonStyle}}" id="customTimesButton" class="btn">Set Custom Times</button>
 			{{#autoForm collection="unusualDays" id="changeDayTimes"
 			doc=todaysUnusualTimes type="update" autosave=true class=unusualDaysFormClass}}
@@ -46,12 +44,13 @@
 				{{> afQuickField name="endTime" style="width: 75px"}}
 				{{> afQuickField name="appointmentLength" step=5 style="width: 75px"}}
 				{{> afQuickField name="notes" }}
-				<button type="button" style="opacity:0.25;" id="deleteCustomTimes" class="btn form-control btn-danger">Delete Custom Times</button>
+				<button type="button" id="deleteCustomTimes" class="btn form-control btn-danger">Delete Custom Times</button>
 				</div>
 			{{/autoForm}}
 
 		</div>
 	</div>
+	{{/if}}
 </template>
 
 <template name="timeRow">

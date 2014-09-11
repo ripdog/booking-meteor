@@ -32,18 +32,22 @@ Template.insertAppointmentForm.helpers({
 	},
 	sessionDate: function(){return Session.get("date")},
 	length: function() {
-		var provObject = unusualDays.findOne({date: Session.get("date"), providerID: Session.get("selectedProviderId")})
-		if (typeof provObject === "undefined") {
-			provObject = providers.findOne(Session.get("selectedProviderId"))
+		if (Session.get("formForInsert")) {
+			var provObject = unusualDays.findOne({date: Session.get("date"), providerID: Session.get("selectedProviderId")})
+			if (typeof provObject === "undefined") {
+				provObject = providers.findOne(Session.get("selectedProviderId"))
+			}
+			try {return provObject.appointmentLength}
+			catch (e) {
+				console.log("looking for appointment length too early.")
+				return 0;
+			}//this error doesn't matter, it means the unusualDays
+			// and Providers collections aren't filled yet.
+			//will be fixed for real when iron router is used for appointment editing
+			///creation
+		} else {//update, grab length from current doc
+			appointmentList.findOne(Session.get("currentlyEditingAppointment")).length
 		}
-		try {return provObject.appointmentLength}
-		catch (e) {
-			console.log("looking for appointment length too early.")
-			return 0;
-		}//this error doesn't matter, it means the unusualDays
-		// and Providers collections aren't filled yet.
-		//will be fixed for real when iron router is used for appointment editing
-		///creation
 	},
 	currentType: function() {
 		if(Session.get("formForInsert")) {
@@ -51,6 +55,15 @@ Template.insertAppointmentForm.helpers({
 		}
 		else {
 			return "update"
+		}
+	},
+	timePreset: function() {
+		if (Session.get("formForInsert")) {
+			// $('#datetimepicker4').data("DateTimePicker").setDate(moment().local().startOf('day').hours(12));
+			return "12:00 PM";
+		} else {
+			// $('#datetimepicker4').data("DateTimePicker").setDate(appointmentList.findOne(Session.get("currentlyEditingAppointment")).date);
+			return appointmentList.findOne(Session.get("currentlyEditingAppointment")).time;
 		}
 	},
 	currentDoc: function() {return appointmentList.findOne(Session.get("currentlyEditingAppointment"))}
@@ -88,16 +101,25 @@ AutoForm.hooks({
 					}])
 				}
 				else if (error.invalidKeys[invalidKey].type === "dateOutOfBounds") {
-						var cleanDate = moment(template.data.doc.date).startOf("day")
+					try {
+						var cleanDate = moment(template.data.doc.date).startOf("day");
 						var provObject = unusualDays.findOne({date: cleanDate.toDate(), providerID: template.data.doc.providerID});
 						if (typeof provObject === "undefined") {
 							provObject = providers.findOne(template.data.doc.providerID);
 						}
-						appointmentList.simpleSchema().namedContext("insertAppointmentFormInner").addInvalidKeys([{
-							name: "time", 
-							type: error.invalidKeys[invalidKey].type, 
-							value: provObject.startTime + " and " + provObject.endTime
-						}])
+					} catch (e) {
+						cleanDate = moment(Session.get('date')).startOf('day');
+						provObject = unusualDays.findOne({date: cleanDate.toDate(), providerID: Session.get("selectedProviderId")});
+						if (typeof provObject === "undefined") {
+							provObject = providers.findOne(Session.get("selectedProviderId"));
+						}
+					}
+
+					appointmentList.simpleSchema().namedContext("insertAppointmentFormInner").addInvalidKeys([{
+						name: "time", 
+						type: error.invalidKeys[invalidKey].type, 
+						value: provObject.startTime + " and " + provObject.endTime
+					}])
 				}
 			}
 		},
