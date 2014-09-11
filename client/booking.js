@@ -25,7 +25,10 @@ Template.masterLayout.helpers({
 			Session.set("date", thedate);
 		}
 		return moment(Session.get("date")).format("YYYY-MM-DD");
-	}
+	},
+	loggedIn: function() {
+		return Meteor.userId();
+	},
 })
 Template.masterLayout.rendered = function() {
 	$('#datetimepicker1').datetimepicker({

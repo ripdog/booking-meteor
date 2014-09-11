@@ -1,0 +1,16 @@
+<template name="userList">
+	<div class="row">
+		<div class="col-md-4">
+			<div class="list-group">
+				{{#each userList}}
+				<a href="#" data-id={{_id}}
+				   class="list-group-item providerName">{{username}}
+					<button class="providerDeleteButton btn btn-danger pull-right">
+						Delete</button></a>
+				{{/each}}
+			</div>
+			<button id="newUserButton" class="btn btn-primary">New User</button>
+		</div>
+		<div class="col-md-8"><!-- {{> userEdit}} --></div>
+	</div>
+</template>

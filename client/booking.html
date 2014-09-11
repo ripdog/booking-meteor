@@ -12,10 +12,13 @@
 		<nav class="navbar navbar-default" role="navigation">
 			<div class="container-fluid">
 				<a class="navbar-brand" href="{{pathFor 'bookingTable'}}">Booking</a>
+				{{#if isInRole 'admin'}}
 				<ul class="nav navbar-nav">
 					<li><a href="{{pathFor 'providerList'}}">Providers</a></li>
 				</ul>
+				{{/if}}
 				<form class="navbar-form navbar-left">
+				{{#if loggedIn}}
 					<div class="form-group">
 						<button type="button" id="prevDay" class="btn btn-default">&lt;</button>
 						<div class='input-group date' id='datetimepicker1'>
@@ -24,11 +27,18 @@
 						</div>
 						<button type="button" id="nextDay" class="btn btn-default">&gt;</button>
 					</div>
+					{{/if}}
 				</form>
 				<!-- << < datepicker > >> -->
 				<form class="navbar-form navbar-right" role="">
+					{{#if loggedIn}}
 					<button type="button" id="newAppointButton" class="btn btn-primary">New Booking</button>
+					{{/if}}
+					
 				</form>
+				<div class="nav navbar-nav navbar-right">
+					{{> loginButtons}}
+				</div>
 			</div>
 		</nav>
 		<div id="main">
