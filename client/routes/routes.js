@@ -24,20 +24,58 @@ Router.map(function() {
 		},
 		loadingTemplate: 'loading',
 		onBeforeAction: function () {
-			// Session.setDefault("startTime", 8);
-			// Session.setDefault("endTime", 17);
-// 			var thedate = moment().startOf("day").toDate();
-//			Session.setDefault("appntlength", 15);//in minutes
  			Session.setDefault("formForInsert", true);//insert
 		},
-      action: function() {
-         if(this.ready()) {
-            this.render();
-         }
-      },
-		onAfterAction: function () {
+		action: function() {
+			if(this.ready()) {
+				this.render();
+			}
+		},
+		// onAfterAction: function () {
 
-		}
+		// }
+	});
+	this.route('newAppointment', {
+		path: '/new/:date?',
+		layoutTemplate: "masterLayout",
+		template: 'sideEditWrapper',
+		waitOn: function() {
+			Session.setDefault("date", moment().startOf("day").toDate());
+			return [Meteor.subscribe('appointmentList', Session.get('date'), Session.get("selectedProviderId")),
+         Meteor.subscribe("unusualDays", Session.get("date")), Meteor.subscribe('providerNames')];
+		},
+		loadingTemplate: 'loading',
+		onBeforeAction: function () {
+			Session.set("formForInsert", true);
+			Session.set("currentlyEditingAppointment", null);
+			AutoForm.resetForm("insertAppointmentFormInner");
+		},
+		action: function() {
+			if(this.ready()) {
+				this.render();
+			}
+		},
+	});
+	this.route('editAppointment', {
+		path: '/edit/:id',
+		layoutTemplate: "masterLayout",
+		template: 'sideEditWrapper',
+		waitOn: function() {
+			Session.setDefault("date", moment().startOf("day").toDate());
+			return [Meteor.subscribe('appointmentList', Session.get('date'), Session.get("selectedProviderId")),
+         Meteor.subscribe("unusualDays", Session.get("date")), Meteor.subscribe('providerNames')];
+		},
+		loadingTemplate: 'loading',
+		onBeforeAction: function () {
+			Session.set("formForInsert", false);
+			Session.set("currentlyEditingAppointment", this.params.id);
+			AutoForm.resetForm("insertAppointmentFormInner");
+		},
+		action: function() {
+			if(this.ready()) {
+				this.render();
+			}
+		},
 	});
 	this.route('providerList', {
 		path: '/providers',

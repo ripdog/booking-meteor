@@ -32,7 +32,9 @@
 				<!-- << < datepicker > >> -->
 				<form class="navbar-form navbar-right" role="">
 					{{#if loggedIn}}
+					<a href={{pathFor 'newAppointment'}}>
 					<button type="button" id="newAppointButton" class="btn btn-primary">New Booking</button>
+					</a>
 					{{/if}}
 					
 				</form>
@@ -43,7 +45,6 @@
 		</nav>
 		<div id="main">
 			{{> yield}}
-			{{> appointmentEditModal}}
 		</div>
 	</div>
 </template>

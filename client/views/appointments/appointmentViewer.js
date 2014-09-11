@@ -113,10 +113,8 @@ Template.bookingTable.events({
 		Session.set("selectedProviderId", $(event.currentTarget).data("id"));
 	},
 	'dblclick .appointmentItem': function(event) {
-		Session.set("formForInsert", false);//edit mode
-		Session.set("currentlyEditingAppointment", $(event.currentTarget).data("id"));
-		AutoForm.resetForm(insertAppointmentFormInner);
-		$("#appointmentEditModal").modal();
+		Router.go('editAppointment', {id: $(event.currentTarget).data("id")});
+		// Session.set("currentlyEditingAppointment", );
 	},
 	'click #customTimesButton': function(event) {
 		var provObject = providers.findOne(Session.get("selectedProviderId"))
@@ -167,7 +165,6 @@ Template.appointmentItem.helpers({
 		return this.length;
 	},
 	inbetween: function() {
-		
 		//WARNING DIRTY HACK
 		//WILL FAIL IF DEFAULT APPNT LENGTH CHANGED
 		//TODO: Calculate if the height of 3 internal data blocks
@@ -208,9 +205,10 @@ Template.appointmentItem.helpers({
 // 		console.log(this);
 		rerenderDep.depend();
 
-		if ($(".timeRow").length === 0)
-			{console.log("rendering too early, hold off.");
-			return 0;}
+		if ($(".timeRow").length === 0) {
+			console.log("rendering too early, hold off.");
+			return 0;
+		}
 		var provObject = unusualDays.findOne({date: Session.get("date"), providerID: Session.get("selectedProviderId")})
 		if (!provObject) {
 			provObject = providers.findOne(Session.get("selectedProviderId"))
@@ -234,14 +232,15 @@ Template.appointmentItem.helpers({
 				return 0;
 			}
 			var appntsFromTop = Math.floor(untouchedAppntsFromTop);
-  	// 		console.log(this.date + " is  " + untouchedAppntsFromTop + " appoints from the top.");
+  	 		// console.log(this.date + " is  " + untouchedAppntsFromTop + " appoints from the top.");
 			try {
-				var pixelsFromTop = $(".timeRow:nth-child("+appntsFromTop+")").position().top
+				var pixelsFromTop = $(".timeRow:nth-child("+appntsFromTop+")")[0].offsetTop
 			}
 			catch (exc) {
 				console.log("exception caught, rendering too early, hold off.");
 				rerenderDep.changed();
 			}
+			// console.log("PixelsFromTop: "+pixelsFromTop);
 			if (untouchedAppntsFromTop % 1 !== 0){
 // 				console.log(untouchedAppntsFromTop % 1);
 				//if the appnt doesn't align with standard boundries - i.e, 15 mins

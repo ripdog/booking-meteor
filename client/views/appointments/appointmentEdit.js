@@ -19,9 +19,12 @@ function dayDelta(date) {
 		return " "+Math.abs(diff)+" days ago"
 	}
 }
-Template.insertAppointmentForm.rendered = function () {
+Template.insertAppointmentForm.events({
+	'click #closeBookingEditor': function() {
+		Router.go('/');
+	}
 
-}
+})
 
 Template.insertAppointmentForm.helpers({
 	appointmentList: appointmentList,
@@ -70,11 +73,37 @@ Template.insertAppointmentForm.helpers({
 });
 AutoForm.hooks({
 	insertAppointmentFormInner: {
+		beginSubmit: function(fieldId, template) {
+			$('#insertSuccessAlert')[0].innerHTML = "Submitting...";
+			$('#insertSuccessAlert').show("fast");
+
+		},
+		endSubmit: function(fieldId, template) {
+
+		},
+		onSuccess: function(operation, result, template) {
+			if(template.data.type === "update") {
+				$('#insertSuccessAlert')[0].innerHTML = "Appointment Successfully Edited.";
+			} else {
+				$('#insertSuccessAlert')[0].innerHTML = "New Appointment Created.";
+			}
+			$('#insertSuccessAlert').removeClass('alert-danger alert-info alert-info alert-success');
+			$('#insertSuccessAlert').addClass('alert-success');
+			
+			Meteor.setTimeout(function() {
+				Router.go('bookingTable');
+			}, 3000);
+		},
 		docToForm: function(doc){
 			if (doc.date instanceof Date) {
 				doc.time = moment(doc.date).format("h:mm A");
 			}
-			$('#datetimepicker4').data("DateTimePicker").setDate(moment(doc.date));
+			try {
+				$('#datetimepicker4').data("DateTimePicker").setDate(moment(doc.date));
+			} catch (e) {
+				$('#datetimepicker4 > input').val(moment(doc.date).format("h:mm A"))
+				//TODO: Fallback date setting
+			}
 			return doc;
 		},
 		formToDoc: function(doc){
@@ -90,7 +119,14 @@ AutoForm.hooks({
 			return doc;
 		},
 		onError: function(operation, error, template) {
-
+			var alert = $('#insertSuccessAlert')
+			alert.removeClass('alert-danger alert-info alert-info alert-success');
+			alert.addClass('alert-danger');
+			alert[0].innerHTML = "Uh-oh, something went wrong!";
+			alert.show("fast");
+			Meteor.setTimeout(function() {
+				$('#insertSuccessAlert').hide("slow");
+			}, 3000);
 			//	console.log(appointmentList.simpleSchema().namedContext("insertAppointmentFormInner").invalidKeys())
 			for (var invalidKey in error.invalidKeys) {
 				if (error.invalidKeys[invalidKey].type === "overlappingDates") {

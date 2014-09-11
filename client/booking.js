@@ -1,12 +1,11 @@
 Template.masterLayout.events({
 	'click #newAppointButton': function() {
 		//console.log('button clicked!');
-// 		Session.set("currentAppointment", appnt);
 		//console.log(Session.get("currentAppointment"))
-		Session.set("formForInsert", true);
-		Session.set("currentlyEditingAppointment", null);
-		AutoForm.resetForm(insertAppointmentFormInner);
-		$("#appointmentEditModal").modal();
+		// 
+		// 
+		// 
+	//	$("#appointmentEditModal").modal();
 	},
 	'click #nextDay': function() {
 		Session.set("date", moment(Session.get("date")).add(1, 'day').toDate());
