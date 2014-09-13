@@ -29,15 +29,13 @@ Template.insertAppointmentForm.events({
 Template.insertAppointmentForm.rendered = function() {
 	console.log("appointment edit rendered");
 	$('input[name="time"]').change(function() {
-		$('tr.timeRow.bg-success').removeClass('bg-success');
-		$("td:contains("+$('input[name="time"]').val()+")").parent().addClass('bg-success');
+		Router.go("newAppointment", {time: $('input[name="time"]').val()});
 	});
 	$('#datetimepicker4').on("dp.change", function(e) {
-		$('tr.timeRow.bg-success').removeClass('bg-success');
-		$("td:contains("+$('input[name="time"]').val()+")").parent().addClass('bg-success');
+		Router.go("newAppointment", {time: $('input[name="time"]').val()});
 	})
-	$('tr.timeRow.bg-success').removeClass('bg-success');
-	$("td:contains("+$('input[name="time"]').val()+")").parent().addClass('bg-success');
+	// $('tr.timeRow.bg-success').removeClass('bg-success');
+	// $("td:contains("+$('input[name="time"]').val()+")").parent().addClass('bg-success');
 }
 Template.insertAppointmentForm.helpers({
 	appointmentList: appointmentList,

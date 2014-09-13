@@ -12,12 +12,14 @@
 		<nav class="navbar navbar-default" role="navigation">
 			<div class="container-fluid">
 				<a class="navbar-brand" href="{{pathFor 'bookingTable'}}">Booking</a>
-				{{#if isInRole 'admin'}}
+				
 				<ul class="nav navbar-nav">
 					<li><a href="{{pathFor 'providerList'}}">Providers</a></li>
+				{{#if isInRole 'admin'}}
 					<li><a href="{{pathFor 'userList'}}">Users</a></li>
-				</ul>
 				{{/if}}
+				</ul>
+				
 				<form class="navbar-form navbar-left">
 				{{#if loggedIn}}
 					<div class="form-group">

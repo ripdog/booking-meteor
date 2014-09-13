@@ -1,3 +1,8 @@
+var subs = new SubsManager({
+	cacheLimit: 20,//number of subs to cache
+	expireIn: 20//minutes to hold on to subs
+})
+
 Router.configure({
   // layoutTemplate: 'masterLayout',
   notFoundTemplate: 'notFound',
@@ -27,8 +32,8 @@ Router.map(function() {// Links to / should choose whether to default to today o
 		layoutTemplate: "masterLayout",
 		waitOn: function() {
 			Session.setDefault("date", moment().startOf("day").toDate());
-			return [Meteor.subscribe('appointmentList', Session.get('date'), Session.get("selectedProviderId")),
-         Meteor.subscribe("unusualDays", Session.get("date")), Meteor.subscribe('providerNames')];
+			return [subs.subscribe('appointmentList', Session.get('date'), Session.get("selectedProviderId")),
+         subs.subscribe("unusualDays", Session.get("date")), subs.subscribe('providerNames')];
 		},
 		loadingTemplate: 'loading',
 		onBeforeAction: function () {
@@ -49,8 +54,8 @@ Router.map(function() {// Links to / should choose whether to default to today o
 		template: 'sideEditWrapper',
 		waitOn: function() {
 			Session.setDefault("date", moment().startOf("day").toDate());
-			return [Meteor.subscribe('appointmentList', Session.get('date'), Session.get("selectedProviderId")),
-         Meteor.subscribe("unusualDays", Session.get("date")), Meteor.subscribe('providerNames')];
+			return [subs.subscribe('appointmentList', Session.get('date'), Session.get("selectedProviderId")),
+         subs.subscribe("unusualDays", Session.get("date")), subs.subscribe('providerNames')];
 		},
 		loadingTemplate: 'loading',
 		onBeforeAction: function () {
@@ -61,7 +66,6 @@ Router.map(function() {// Links to / should choose whether to default to today o
 				var momentvar = moment(this.params.time, "hh:mm A");
 				//Session.set("date", momentvar.startOf('day').toDate());
 				Session.set("newTime", momentvar.format("h:mm A"));
-				console.log(Session.get("newTime"));
 			}
 			
 		},
@@ -92,6 +96,9 @@ Router.map(function() {// Links to / should choose whether to default to today o
 			// $("#editorWrapper").show();
 			// $("#editorWrapper").css('width', "");
 
+		},
+		onStop: function() {
+			Session.set("newTime", null);//remove Highlight
 		}
 	});
 	this.route('editAppointment', {
@@ -100,8 +107,8 @@ Router.map(function() {// Links to / should choose whether to default to today o
 		template: 'sideEditWrapper',//TODO: If not on correct date for appointment, change
 		waitOn: function() {
 			Session.setDefault("date", moment().startOf("day").toDate());
-			return [Meteor.subscribe('appointmentList', Session.get('date'), Session.get("selectedProviderId")),
-         Meteor.subscribe("unusualDays", Session.get("date")), Meteor.subscribe('providerNames')];
+			return [subs.subscribe('appointmentList', subs.get('date'), Session.get("selectedProviderId")),
+         subs.subscribe("unusualDays", Session.get("date")), subs.subscribe('providerNames')];
 		},
 		loadingTemplate: 'loading',
 		onBeforeAction: function () {

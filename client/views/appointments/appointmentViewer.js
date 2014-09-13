@@ -42,7 +42,10 @@ Template.bookingTable.helpers({
 				catch (e) {}
 			}
 		})
-		console.log(provObject);
+		if (Roles.userIsInRole(Meteor.userId(), "provider")) {
+			console.log("user is provider, setting selected provider id");
+			Session.set("selectedProviderId", Meteor.user().providerID);
+		}
 		var provObject = unusualDays.findOne({date: Session.get("date"), providerID: Session.get("selectedProviderId")})
 		if (!provObject) {
 			provObject = providers.findOne(Session.get("selectedProviderId"))
@@ -61,12 +64,12 @@ Template.bookingTable.helpers({
 		return ret;
 	},
 	appointments: function() {
-		// var theDate = Session.get("date");
-		// startDate = moment(theDate).startOf("day").toDate();
-		// endDate = moment(theDate).endOf("day").toDate();
+		var theDate = Session.get("date");
+		startDate = moment(theDate).startOf("day").toDate();
+		endDate = moment(theDate).endOf("day").toDate();
 		// console.log(JSON.stringify({date: {$gte: startDate, $lt: endDate}}));
-		// // queryPointer = appointmentList.find({date: {$gte: startDate, $lt: endDate}})
-		queryPointer = appointmentList.find()
+		queryPointer = appointmentList.find({date: {$gte: startDate, $lt: endDate}})
+		// queryPointer = appointmentList.find()
 		
 		return queryPointer;
 	},
@@ -102,7 +105,6 @@ Template.bookingTable.helpers({
 		}
 	},
 	notes: function () {
-		
 		try{
 			return unusualDays.findOne({date:Session.get('date'), providerID: Session.get("selectedProviderId")}).notes
 		} catch(e) {}
@@ -124,15 +126,15 @@ Template.bookingTable.events({
 		unusualDays.remove(unusualDays.findOne({date:Session.get('date'), providerID: Session.get("selectedProviderId")})._id);
 	},
 	'dblclick .rowContent': function(event) {
-		//Session.set("lastHighlightedRow", event.currentTarget);
-		$('tr.timeRow.bg-success').removeClass('bg-success');
-		// $(event.currentTarget).addClass('bg-success');
 		Router.go("newAppointment", {time: event.currentTarget.previousElementSibling.innerHTML});
 	}
 })
 
 Template.bookingTable.rendered = function() {
-	
+	// if (Roles.userIsInRole(Meteor.userId(), "provider")) {
+	// 	console.log("user is provider, setting selected provider id");
+	// 	Session.set("selectedProviderId", Meteor.user().providerID);
+	// }
 	console.log("rerendering");
 	rerenderDep.changed();
 }
@@ -152,6 +154,19 @@ function getRowHeight() {
 function getDate(){
 	return Session.get("date");
 }
+
+Template.timeRow.helpers({
+	rowHighlightClass: function() {
+		if (Session.get("newTime") !== "undefined" && Session.get("formForInsert") == true) {
+			if(Session.get("newTime") == this.time) {
+				console.log("highlighting " + this.time);
+				return "bg-success";
+			}
+		}
+		
+	}
+})
+
 rerenderDep = new Deps.Dependency()
 Template.appointmentItem.helpers({
 	appointmentName: function () {
@@ -253,6 +268,9 @@ Template.appointmentItem.helpers({
 			}
 			return pixelsFromTop + "px";
 		}
+	},
+	itemHighlightClass: function() {
+		// console.log(this);
 	}
 });
 

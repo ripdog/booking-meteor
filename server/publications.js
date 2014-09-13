@@ -21,6 +21,8 @@ Meteor.publish("providerNames", function() {
 	if(!this.userId) {
 		this.stop();
 		return;
+	} else if (Roles.userIsInRole(this.userId, "provider")) {
+		return providers.find(Meteor.users.findOne(this.userId).providerID);
 	}
 	return providers.find({})
 });
@@ -28,7 +30,7 @@ Meteor.publish("unusualDays", function(thedate) {
 	if(!this.userId) {
 		this.stop();
 		return;
-	}//TODO: Restrict sent data to providers
+	}
 	return unusualDays.find({date:thedate})
 });
 Meteor.publish(null, function (){ 
@@ -38,8 +40,16 @@ Meteor.publish(null, function (){
 	}
   return Meteor.roles.find({})//publish all roles without sub
 });
+Meteor.publish(null, function(){
+	if(!this.userId) {
+		this.stop();
+		return;
+	} else if (Roles.userIsInRole(this.userId, "provider")) {
+		return Meteor.users.find(this.userId, {fields: {providerID: 1}});
+	}
+})
 Meteor.publish("userList", function() {
-	console.log("userlist caller is admin? " + !Roles.userIsInRole(this.userId, 'admin'))
+	console.log("userlist caller is admin? " + Roles.userIsInRole(this.userId, 'admin'))
 	if(!this.userId || !Roles.userIsInRole(this.userId, 'admin')) {
 		this.stop();
 		return;

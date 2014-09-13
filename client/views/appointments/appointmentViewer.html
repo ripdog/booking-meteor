@@ -54,14 +54,14 @@
 </template>
 
 <template name="timeRow">
-	<tr class="timeRow">
+	<tr class="timeRow {{rowHighlightClass}}">
 		<td class="rowHeader">{{time}}</td>
 		<td class="rowContent"></td>
 	</tr>
 </template>
 
  <template name="appointmentItem"><!--TODO: set display of each field to optional. -->
-	<div class="appointmentItem bg-primary" data-id={{_id}} style="width:{{width}};
+	<div class="appointmentItem bg-primary {{itemHighlightClass}}" data-id={{_id}} style="width:{{width}};
 												   max-height:{{height}};
 													   height:{{height}};
 												   left:{{left}};

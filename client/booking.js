@@ -1,12 +1,12 @@
 Template.masterLayout.events({
-	'click #newAppointButton': function() {
-		//console.log('button clicked!');
-		//console.log(Session.get("currentAppointment"))
-		// 
-		// 
-		// 
-	//	$("#appointmentEditModal").modal();
-	},
+	// 'click #newAppointButton': function() {
+	// 	//console.log('button clicked!');
+	// 	//console.log(Session.get("currentAppointment"))
+	// 	// 
+	// 	// 
+	// 	// 
+	// //	$("#appointmentEditModal").modal();
+	// },
 	'click #nextDay': function() {
 		Session.set("date", moment(Session.get("date")).add(1, 'day').toDate());
 	},
@@ -29,7 +29,7 @@ Template.masterLayout.helpers({
 		return Meteor.userId();
 	},
 	newAppntLink: function() {
-		return "/new/" + moment(Session.get('date')).format("YYYY-MM-DD");
+		return "/new/" + "12:00 PM";
 	}
 })
 Template.masterLayout.rendered = function() {
