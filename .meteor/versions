@@ -1,9 +1,9 @@
 accounts-base@1.0.1
 accounts-password@1.0.1
 alanning:roles@1.2.13
-aldeed:autoform@2.0.0
-aldeed:collection2@1.0.0
-aldeed:simple-schema@1.0.1
+aldeed:autoform@2.0.1
+aldeed:collection2@2.0.0
+aldeed:simple-schema@1.0.3
 anti:i18n@0.4.3
 application-configuration@1.0.1
 autoupdate@1.0.6
@@ -41,8 +41,10 @@ localstorage@1.0.0
 logging@1.0.2
 meteor-platform@1.0.2
 meteor@1.0.3
+meteorhacks:inject-initial@1.0.0
 meteorhacks:kadira-binary-deps@1.0.1
-meteorhacks:kadira@2.7.2
+meteorhacks:kadira@2.7.5
+meteorhacks:zones@1.2.1
 minifiers@1.0.2
 minimongo@1.0.2
 mizzao:bootboxjs@4.3.0

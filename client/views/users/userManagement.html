@@ -1,16 +1,37 @@
 <template name="userList">
 	<div class="row">
+		{{#if userIsAdmin}}
 		<div class="col-md-4">
 			<div class="list-group">
+			
 				{{#each userList}}
 				<a href="#" data-id={{_id}}
-				   class="list-group-item providerName">{{username}}
-					<button class="providerDeleteButton btn btn-danger pull-right">
+				   class="list-group-item userName">{{username}}
+					<button class="userDeleteButton btn btn-danger pull-right">
 						Delete</button></a>
 				{{/each}}
+				
 			</div>
 			<button id="newUserButton" class="btn btn-primary">New User</button>
 		</div>
-		<div class="col-md-8"><!-- {{> userEdit}} --></div>
+		{{/if}}
+		<div class="col-md-8">{{> userEdit}}</div>
 	</div>
+</template>
+
+<template name="userEdit">
+	{{provoptions}}
+	{{# autoForm collection=usercoll doc=editingUser id="updateUserForm" type="update"}}
+			<fieldset>
+			{{> afQuickField name='username'}}
+			{{> afQuickField name='emails'}}
+			{{> afQuickField name='roles' }}
+			{{> afQuickField name='profile' }}
+
+			{{#if isProvider}}
+				{{> afQuickField name='providerID' options=provOptions}}
+			{{/if}}
+			<button type="submit" class="btn btn-primary" id="saveAppointChanges">Save changes</button>
+		</fieldset>
+	{{/autoForm}}
 </template>

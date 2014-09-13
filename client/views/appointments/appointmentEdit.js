@@ -21,11 +21,24 @@ function dayDelta(date) {
 }
 Template.insertAppointmentForm.events({
 	'click #closeBookingEditor': function() {
+		$('td.rowContent.bg-success').removeClass('bg-success');
 		Router.go('/');
 	}
 
 })
-
+Template.insertAppointmentForm.rendered = function() {
+	console.log("appointment edit rendered");
+	$('input[name="time"]').change(function() {
+		$('tr.timeRow.bg-success').removeClass('bg-success');
+		$("td:contains("+$('input[name="time"]').val()+")").parent().addClass('bg-success');
+	});
+	$('#datetimepicker4').on("dp.change", function(e) {
+		$('tr.timeRow.bg-success').removeClass('bg-success');
+		$("td:contains("+$('input[name="time"]').val()+")").parent().addClass('bg-success');
+	})
+	$('tr.timeRow.bg-success').removeClass('bg-success');
+	$("td:contains("+$('input[name="time"]').val()+")").parent().addClass('bg-success');
+}
 Template.insertAppointmentForm.helpers({
 	appointmentList: appointmentList,
 	currentDate: function(){
@@ -63,7 +76,11 @@ Template.insertAppointmentForm.helpers({
 	timePreset: function() {
 		if (Session.get("formForInsert")) {
 			// $('#datetimepicker4').data("DateTimePicker").setDate(moment().local().startOf('day').hours(12));
-			return "12:00 PM";
+			if (!(Session.get("newTime") === "undefined")) {
+				return Session.get("newTime");
+			} else {
+				return "12:00 PM";
+			}
 		} else {
 			// $('#datetimepicker4').data("DateTimePicker").setDate(appointmentList.findOne(Session.get("currentlyEditingAppointment")).date);
 			return appointmentList.findOne(Session.get("currentlyEditingAppointment")).time;
@@ -89,7 +106,7 @@ AutoForm.hooks({
 			}
 			$('#insertSuccessAlert').removeClass('alert-danger alert-info alert-info alert-success');
 			$('#insertSuccessAlert').addClass('alert-success');
-			
+			$('td.rowContent.bg-success').removeClass('bg-success');
 			Meteor.setTimeout(function() {
 				Router.go('bookingTable');
 			}, 3000);

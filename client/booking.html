@@ -15,6 +15,7 @@
 				{{#if isInRole 'admin'}}
 				<ul class="nav navbar-nav">
 					<li><a href="{{pathFor 'providerList'}}">Providers</a></li>
+					<li><a href="{{pathFor 'userList'}}">Users</a></li>
 				</ul>
 				{{/if}}
 				<form class="navbar-form navbar-left">
@@ -32,7 +33,7 @@
 				<!-- << < datepicker > >> -->
 				<form class="navbar-form navbar-right" role="">
 					{{#if loggedIn}}
-					<a href={{pathFor 'newAppointment'}}>
+					<a href={{newAppntLink}}>
 					<button type="button" id="newAppointButton" class="btn btn-primary">New Booking</button>
 					</a>
 					{{/if}}

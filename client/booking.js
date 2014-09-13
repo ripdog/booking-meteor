@@ -15,7 +15,7 @@ Template.masterLayout.events({
 	},
 	'click #datetimepicker1': function() {
 		$('#datetimepicker1').data("DateTimePicker").show()
-	}
+	},
 });
 Template.masterLayout.helpers({
 	theDate: function() {
@@ -28,6 +28,9 @@ Template.masterLayout.helpers({
 	loggedIn: function() {
 		return Meteor.userId();
 	},
+	newAppntLink: function() {
+		return "/new/" + moment(Session.get('date')).format("YYYY-MM-DD");
+	}
 })
 Template.masterLayout.rendered = function() {
 	$('#datetimepicker1').datetimepicker({

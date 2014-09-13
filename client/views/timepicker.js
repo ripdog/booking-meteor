@@ -26,6 +26,7 @@ Template.afInput_bootstraptimepicker.rendered  = function() {
 		// defaultDate: moment().startOf('day').hour(12).zone(-12)
 		//TODO ^ should pick closest date to 1200 which isn't taken.
 	});
+	
 }
 Template.afInput_bootstraptimepicker.events = {
 	'click #datetimepicker4': function (event){$('#datetimepicker4').data("DateTimePicker").show()}

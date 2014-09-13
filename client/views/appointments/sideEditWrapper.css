@@ -1,0 +1,6 @@
+#editorWrapper {
+	/*display:none;
+	width:0;*/
+	transition: width 0.5s;
+	webkit-transition: width 0.5s;
+}
