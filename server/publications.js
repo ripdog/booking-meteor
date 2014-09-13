@@ -39,7 +39,8 @@ Meteor.publish(null, function (){
   return Meteor.roles.find({})//publish all roles without sub
 });
 Meteor.publish("userList", function() {
-	if(!this.userId || !! Roles.userIsInRole(this.userId, 'admin')) {
+	console.log("userlist caller is admin? " + !Roles.userIsInRole(this.userId, 'admin'))
+	if(!this.userId || !Roles.userIsInRole(this.userId, 'admin')) {
 		this.stop();
 		return;
 	}
