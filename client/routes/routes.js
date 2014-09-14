@@ -32,8 +32,8 @@ Router.map(function() {// Links to / should choose whether to default to today o
 		layoutTemplate: "masterLayout",
 		waitOn: function() {
 			Session.setDefault("date", moment().startOf("day").toDate());
-			return [subs.subscribe('appointmentList', Session.get('date'), Session.get("selectedProviderId")),
-         subs.subscribe("unusualDays", Session.get("date")), subs.subscribe('providerNames')];
+			return [this.subscribe('appointmentList', Session.get('date'), Session.get("selectedProviderId")),
+         this.subscribe("unusualDays", Session.get("date")), this.subscribe('providerNames')];
 		},
 		loadingTemplate: 'loading',
 		onBeforeAction: function () {
@@ -48,6 +48,14 @@ Router.map(function() {// Links to / should choose whether to default to today o
 
 		// }
 	});
+	this.route("permalink", {
+		path: '/perma/:prov/:date',
+		action: function() {
+			Session.set("date", moment(Date(this.params.date)).startOf('day').toDate());
+			Session.set("selectedProviderId", this.params.date);
+			Router.go('bookingTable');
+		}
+	})
 	this.route('newAppointment', {
 		path: '/new/:time?',//TODO: Where all is this set?
 		layoutTemplate: "masterLayout",
@@ -92,13 +100,10 @@ Router.map(function() {// Links to / should choose whether to default to today o
 
 				
 			}
-			//console.log($("#editorWrapper"))
-			// $("#editorWrapper").show();
-			// $("#editorWrapper").css('width', "");
-
 		},
 		onStop: function() {
 			Session.set("newTime", null);//remove Highlight
+			$("div.bootstrap-datetimepicker-widget").remove();
 		}
 	});
 	this.route('editAppointment', {
@@ -107,7 +112,7 @@ Router.map(function() {// Links to / should choose whether to default to today o
 		template: 'sideEditWrapper',//TODO: If not on correct date for appointment, change
 		waitOn: function() {
 			Session.setDefault("date", moment().startOf("day").toDate());
-			return [subs.subscribe('appointmentList', subs.get('date'), Session.get("selectedProviderId")),
+			return [subs.subscribe('appointmentList', Session.get('date'), Session.get("selectedProviderId")),
          subs.subscribe("unusualDays", Session.get("date")), subs.subscribe('providerNames')];
 		},
 		loadingTemplate: 'loading',
@@ -124,6 +129,7 @@ Router.map(function() {// Links to / should choose whether to default to today o
 		onStop: function() {
 			Session.set("formForInsert", true);
 			Session.set("currentlyEditingAppointment", null);
+			$("div.bootstrap-datetimepicker-widget").remove();
 		}
 	});
 	this.route('providerList', {
@@ -145,7 +151,7 @@ Router.map(function() {// Links to / should choose whether to default to today o
 	// 	path: '/register',
 	// });
 	this.route('login', {
-		path: '/login/:redirect?',
+		path: '/login/:redirect(*)?',
 		onBeforeAction: function() {
 			console.log(this);
 			if(this.params.redirect) {

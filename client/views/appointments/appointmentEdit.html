@@ -1,28 +1,27 @@
 <template name="appointmentEdit">
-	<div id="appointmentEdit" class="">
-	  	<h4 class="title">Add New Booking</h4>
-			{{> insertAppointmentForm}}
+	<div id="appointmentEdit">
+		{{> insertAppointmentForm}}
 	</div>
 </template>
 
 <template name="insertAppointmentForm">
 	{{#autoForm collection=appointmentList doc=currentDoc id="insertAppointmentFormInner" type=currentType}}
-	<div class="body">
-		<div class="alert " style="display:none;" id="insertSuccessAlert" role="alert"></div>
-		<fieldset>
-			<h6>New appointment for {{currentDate}}</h6>
-			{{> afQuickField name='lastname'}}
-			{{> afQuickField name='firstname'}}
-			{{> afQuickField name='time' value=timePreset template='bootstraptimepicker'}}
-			{{> afQuickField name='phone'}}
-			{{> afQuickField name='notes' rows=2}}
-			{{> afQuickField name='length' step=5 value=length}}
-			{{> afFieldInput name='date' value=sessionDate type="hidden"}}
-		</fieldset>
-	</div>
-	<div class="footer">
+	<h4 class="title">{{title}}</h4>
+	<div class="alert " style="display:none;" id="insertSuccessAlert" role="alert"></div>
+	<fieldset>
+		<h6>{{subtitle}}</h6>
+		{{> afQuickField name='lastname'}}
+		{{> afQuickField name='firstname'}}
+		{{> afQuickField name='time' value=timePreset template='bootstraptimepicker'}}
+		{{> afQuickField name='phone'}}
+		{{> afQuickField name='notes' rows=2}}
+		{{> afQuickField name='length' step=5 value=length}}
+		{{> afFieldInput name='date' value=sessionDate type="hidden"}}
+	</fieldset>
+	<div class="footer" style="height:50px;">
 		<button type="button" class="btn btn-default pull-left" id="closeBookingEditor">Close</button>
-		<button type="submit" class="btn btn-primary pull-right" id="saveAppointChanges">Save changes</button>
+		<button type="button" class="btn btn-danger pull-left {{deleteButtonClass}}" id="deleteAppointment">Delete</button>
+		<button type="submit" class="btn btn-primary pull-right" id="saveAppointChanges">{{savebuttontext}}</button>
 	</div>
 	{{/autoForm}}
 </template>

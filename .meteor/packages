@@ -21,3 +21,5 @@ underscore
 splendido:accounts-templates-bootstrap
 aldeed:simple-schema@1.0.3
 meteorhacks:zones
+meteorhacks:subs-manager
+

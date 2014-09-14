@@ -23,26 +23,55 @@ Template.insertAppointmentForm.events({
 	'click #closeBookingEditor': function() {
 		$('td.rowContent.bg-success').removeClass('bg-success');
 		Router.go('/');
+	},
+	'click #deleteAppointment': function() {
+		if (confirm("Are you sure you want to delete this appointment?")) {
+			appointmentList.remove(Session.get("currentlyEditingAppointment"));
+			Router.go('/');
+		}
 	}
 
 })
 Template.insertAppointmentForm.rendered = function() {
 	console.log("appointment edit rendered");
 	$('input[name="time"]').change(function() {
-		Router.go("newAppointment", {time: $('input[name="time"]').val()});
+		if (Router.current().route.name === "newAppointment" || 
+			Router.current().route.name === "bookingTable") {
+			Router.go("newAppointment", {time: $('input[name="time"]').val()});
+		};
 	});
 	$('#datetimepicker4').on("dp.change", function(e) {
-		Router.go("newAppointment", {time: $('input[name="time"]').val()});
+		if (Router.current().route.name === "newAppointment" || 
+			Router.current().route.name === "bookingTable") {
+			Router.go("newAppointment", {time: $('input[name="time"]').val()});
+		};
 	})
 	// $('tr.timeRow.bg-success').removeClass('bg-success');
 	// $("td:contains("+$('input[name="time"]').val()+")").parent().addClass('bg-success');
 }
 Template.insertAppointmentForm.helpers({
 	appointmentList: appointmentList,
-	currentDate: function(){
-		var momentobj = moment(Session.get("date"));
-		var ret = momentobj.format("dddd, MMMM Do GGGG");
-		return ret + " -"+ dayDelta(Session.get("date"));
+	title: function(){
+		if (Session.get("formForInsert")) {
+			return "Add New Appointment"
+		} else {
+			return "Editing Appointment";
+		}
+		
+	},
+	subtitle: function() {
+		if (Session.get("formForInsert")) {
+			var momentobj = moment(Session.get("date"));
+			var ret = momentobj.format("dddd, MMMM Do GGGG");
+			return "New Appointment for " + ret + " -"+ dayDelta(Session.get("date"));
+		} else {}
+	},
+	savebuttontext: function() {
+		if (Session.get("formForInsert")) {
+			return "Create New Appointment"
+		} else {
+			return "Update Appointment"
+		}
 	},
 	sessionDate: function(){return Session.get("date")},
 	length: function() {
@@ -84,7 +113,11 @@ Template.insertAppointmentForm.helpers({
 			return appointmentList.findOne(Session.get("currentlyEditingAppointment")).time;
 		}
 	},
-	currentDoc: function() {return appointmentList.findOne(Session.get("currentlyEditingAppointment"))}
+	currentDoc: function() {return appointmentList.findOne(Session.get("currentlyEditingAppointment"))},
+	deleteButtonClass: function() {if (Session.get("formForInsert")) {
+		return "hidden";
+	}}
+
 });
 AutoForm.hooks({
 	insertAppointmentFormInner: {

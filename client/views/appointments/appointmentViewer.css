@@ -36,3 +36,17 @@
 #customTimeChanger {
 	margin-top: 10px;
 }
+.being-edited {
+	/*box-shadow: 0px 0px 6px 0px #428BCA;*/
+	background-color: #E13F33;
+	animation: editing 2s infinite;
+	-webkit-animation: editing 2s infinite;
+}
+@keyframes editing {
+	0%, 100% { box-shadow:0px 0px 6px 0px #E13F33; }
+	50% {box-shadow: 0px 0px 6px 5px #E13F33;}
+}
+@-webkit-keyframes editing {
+	0%, 100% { box-shadow:0px 0px 6px 0px #E13F33; }
+	50% {box-shadow: 0px 0px 6px 5px #E13F33;}
+}

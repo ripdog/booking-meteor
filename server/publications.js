@@ -5,6 +5,11 @@ Meteor.publish("appointmentList", function (date, providerId) {
 	}
 	var startDate = moment(date).startOf('day').toDate();
 	var endDate = moment(date).endOf('day').toDate();
+	try{
+		console.log("appointmentList subscribed by " + providers.findOne(providerId).name);
+	} catch(e) {
+		console.log("!!!! appointmentList subscribed without providerId!")
+	}
 	return appointmentList.find({"date": {$gte: startDate, $lt: endDate}, "providerID": providerId});
 })
 Meteor.publish("providerSubscription", function() {
@@ -12,9 +17,11 @@ Meteor.publish("providerSubscription", function() {
 		this.stop();
 		return;
 	}
-	// if (Roles.userIsInRole(this.userId, 'provider')) {
-	// 	return providers.find(Meteor.users.findOne(this.userId).providerId);
-	// }
+	if (Roles.userIsInRole(this.userId, 'provider')) {
+		console.log("providerSubscription subscribed by provider");
+		return providers.find(Meteor.users.findOne(this.userId).providerId);
+	}
+	console.log("providerSubscription subscribed by non-provider");
 	return providers.find();
 });
 Meteor.publish("providerNames", function() {
@@ -22,8 +29,10 @@ Meteor.publish("providerNames", function() {
 		this.stop();
 		return;
 	} else if (Roles.userIsInRole(this.userId, "provider")) {
+		console.log("providerNames subscribed by provider");
 		return providers.find(Meteor.users.findOne(this.userId).providerID);
 	}
+	console.log("providerNames subscribed by non-provider");
 	return providers.find({})
 });
 Meteor.publish("unusualDays", function(thedate) {

@@ -68,7 +68,7 @@ Template.bookingTable.helpers({
 		startDate = moment(theDate).startOf("day").toDate();
 		endDate = moment(theDate).endOf("day").toDate();
 		// console.log(JSON.stringify({date: {$gte: startDate, $lt: endDate}}));
-		queryPointer = appointmentList.find({date: {$gte: startDate, $lt: endDate}})
+		queryPointer = appointmentList.find({date: {$gte: startDate, $lt: endDate}, providerID: Session.get("selectedProviderId")})
 		// queryPointer = appointmentList.find()
 		
 		return queryPointer;
@@ -115,6 +115,7 @@ Template.bookingTable.events({
 		Session.set("selectedProviderId", $(event.currentTarget).data("id"));
 	},
 	'dblclick .appointmentItem': function(event) {
+		event.stopImmediatePropagation();
 		Router.go('editAppointment', {id: $(event.currentTarget).data("id")});
 		// Session.set("currentlyEditingAppointment", );
 	},
@@ -126,7 +127,10 @@ Template.bookingTable.events({
 		unusualDays.remove(unusualDays.findOne({date:Session.get('date'), providerID: Session.get("selectedProviderId")})._id);
 	},
 	'dblclick .rowContent': function(event) {
-		Router.go("newAppointment", {time: event.currentTarget.previousElementSibling.innerHTML});
+		if (Router.current().route.name === "newAppointment" || 
+			Router.current().route.name === "bookingTable") {
+			Router.go("newAppointment", {time: event.currentTarget.previousElementSibling.innerHTML});
+		};
 	}
 })
 
@@ -218,8 +222,6 @@ Template.appointmentItem.helpers({
 		return $(".rowHeader").css("width")
 	},
 	top: function() {
-// 		console.log("rendering this obj: ");
-// 		console.log(this);
 		rerenderDep.depend();
 
 		if ($(".timeRow").length === 0) {
@@ -230,7 +232,6 @@ Template.appointmentItem.helpers({
 		if (!provObject) {
 			provObject = providers.findOne(Session.get("selectedProviderId"))
 		}
-		// console.log(provObject);
 		var numFromTop = (moment(this.date).unix() -
 					  moment(getDate()).hours(provObject.startTime).unix())/60;
 
@@ -270,7 +271,11 @@ Template.appointmentItem.helpers({
 		}
 	},
 	itemHighlightClass: function() {
-		// console.log(this);
+		console.log(this);
+		if(typeof Session.get('currentlyEditingAppointment') !== "undefined" 
+			&& Session.get("currentlyEditingAppointment") === this._id) {
+			return "being-edited";
+		}
 	}
 });
 
