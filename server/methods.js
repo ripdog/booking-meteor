@@ -5,7 +5,7 @@ Meteor.methods({
 				username:"newuser",
 				email:"fakeEmail@example.com",
 				roles: ["booker"],
-				password:"newpass"
+				// password:"newpass"
 			})
 		}
 	},
@@ -13,6 +13,11 @@ Meteor.methods({
 		if(Roles.userIsInRole(this.userId, 'admin')) {
 			return Meteor.users.remove(id);
 		} 
+	},
+	forcePassword: function(userID, pass) {
+		if (Roles.userIsInRole(this.userId, 'admin')) {
+			return Accounts.setPassword(userID, pass);
+		}
 	}
 })
 

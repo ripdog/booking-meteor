@@ -23,6 +23,9 @@ function dayDelta(date) {
 
 
 Template.bookingTable.helpers({
+	unusualDays: function() {
+		return unusualDays.findOne({date: Session.get("date"), providerID: Session.get("selectedProviderId")});
+	},
 	day: function() {
 		var momentobj = moment(Session.get("date"));
 		var ret = momentobj.format("dddd, MMMM Do GGGG");
@@ -87,14 +90,14 @@ Template.bookingTable.helpers({
 		
 		return unusualDays.findOne({date:Session.get('date'), providerID: Session.get("selectedProviderId")})
 	},
-	unusualDaysFormClass: function() {
+	// unusualDaysFormClass: function() {
 		
-		if (unusualDays.findOne({date:Session.get('date'), providerID: Session.get("selectedProviderId")})){
-			return "form-inline";
-		} else {
-			return "hidden";
-		}
-	},
+	// 	if (unusualDays.findOne({date:Session.get('date'), providerID: Session.get("selectedProviderId")})){
+	// 		return "form-inline";
+	// 	} else {
+	// 		return "hidden";
+	// 	}
+	// },
 	buttonStyle: function() {
 		
 		if (unusualDays.findOne({date:Session.get('date'), providerID: Session.get("selectedProviderId")})){
@@ -163,7 +166,7 @@ Template.timeRow.helpers({
 	rowHighlightClass: function() {
 		if (Session.get("newTime") !== "undefined" && Session.get("formForInsert") == true) {
 			if(Session.get("newTime") == this.time) {
-				console.log("highlighting " + this.time);
+				// console.log("highlighting " + this.time);
 				return "bg-success";
 			}
 		}
@@ -271,7 +274,7 @@ Template.appointmentItem.helpers({
 		}
 	},
 	itemHighlightClass: function() {
-		console.log(this);
+		// console.log(this);
 		if(typeof Session.get('currentlyEditingAppointment') !== "undefined" 
 			&& Session.get("currentlyEditingAppointment") === this._id) {
 			return "being-edited";

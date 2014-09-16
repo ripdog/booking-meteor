@@ -1,3 +1,4 @@
+
 function dayDelta(date) {
 	var diff = moment(date).diff(moment().startOf('day'), "days");
 	if (diff===1){
@@ -75,6 +76,7 @@ Template.insertAppointmentForm.helpers({
 	},
 	sessionDate: function(){return Session.get("date")},
 	length: function() {
+		var lol = Session.get("newTime");
 		if (Session.get("formForInsert")) {
 			var provObject = unusualDays.findOne({date: Session.get("date"), providerID: Session.get("selectedProviderId")})
 			if (typeof provObject === "undefined") {
@@ -124,10 +126,14 @@ AutoForm.hooks({
 		beginSubmit: function(fieldId, template) {
 			$('#insertSuccessAlert')[0].innerHTML = "Submitting...";
 			$('#insertSuccessAlert').show("fast");
-
+			$('#saveAppointChanges').attr("disabled", true);
 		},
 		endSubmit: function(fieldId, template) {
-
+			// 
+		},
+		onSubmit: function(doc) {
+			//cleaning the form early ensures defaultValues are added. Why is this needed?
+			appointmentList.simpleSchema().clean(doc);//DOESNT ACTUALLY WORK LOL
 		},
 		onSuccess: function(operation, result, template) {
 			if(template.data.type === "update") {
@@ -138,7 +144,7 @@ AutoForm.hooks({
 			$('#insertSuccessAlert').removeClass('alert-danger alert-info alert-info alert-success');
 			$('#insertSuccessAlert').addClass('alert-success');
 			$('td.rowContent.bg-success').removeClass('bg-success');
-			Meteor.setTimeout(function() {
+			closeTimeout = Meteor.setTimeout(function() {
 				Router.go('bookingTable');
 			}, 3000);
 		},
@@ -162,12 +168,11 @@ AutoForm.hooks({
 				doc.date = moment(datestring, "YYYY-MM-DD hh:mm A").utc().toDate();
 			}
 			doc.providerID = Session.get("selectedProviderId");
-			// console.log("logging doc")
-			// console.log(doc)
 			return doc;
 		},
 		onError: function(operation, error, template) {
-			var alert = $('#insertSuccessAlert')
+			$('#saveAppointChanges').attr("disabled", false);
+			var alert = $('#insertSuccessAlert');
 			alert.removeClass('alert-danger alert-info alert-info alert-success');
 			alert.addClass('alert-danger');
 			alert[0].innerHTML = "Uh-oh, something went wrong!";

@@ -28,7 +28,7 @@ Router.map(function() {// Links to / should choose whether to default to today o
 	this.route('bookingTable', {//Split up the bookingTable so that the appointment
       //items always render after the table itself. Also allow cleanup so less
       //stuff disappears when changing date. Add date to url.
-		path: '/',//should be /view/:prov/:date?
+		path: '/',
 		layoutTemplate: "masterLayout",
 		waitOn: function() {
 			Session.setDefault("date", moment().startOf("day").toDate());
@@ -67,6 +67,12 @@ Router.map(function() {// Links to / should choose whether to default to today o
 		},
 		loadingTemplate: 'loading',
 		onBeforeAction: function () {
+			if (typeof closeTimeout !== "undefined") {//form was used, then user started another
+				//appointment creation. Clean up the form.
+				$('#saveAppointChanges').attr("disabled", false);
+				Meteor.clearTimeout(closeTimeout);
+				$('#insertSuccessAlert').hide('fast');
+			}
 			Session.set("formForInsert", true);
 			Session.set("currentlyEditingAppointment", null);
 			AutoForm.resetForm("insertAppointmentFormInner");
@@ -153,7 +159,6 @@ Router.map(function() {// Links to / should choose whether to default to today o
 	this.route('login', {
 		path: '/login/:redirect(*)?',
 		onBeforeAction: function() {
-			console.log(this);
 			if(this.params.redirect) {
 				Session.set('loginRedirect', this.params.redirect);
 			}
