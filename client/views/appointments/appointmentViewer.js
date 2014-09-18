@@ -21,7 +21,6 @@ function dayDelta(date) {
 }
 
 
-
 Template.bookingTable.helpers({
 	unusualDays: function() {
 		return unusualDays.findOne({date: Session.get("date"), providerID: Session.get("selectedProviderId")});
@@ -63,7 +62,6 @@ Template.bookingTable.helpers({
 			dateCounter.add(provObject.appointmentLength, "minutes");
 		}
 		ret.push({time: dateCounter.format("h:mm A")});
-		Session.set("maxNumOfAppointments", ret.length);
 		return ret;
 	},
 	appointments: function() {
@@ -246,10 +244,12 @@ Template.appointmentItem.helpers({
 		else
 		{
 			var untouchedAppntsFromTop = (numFromTop/provObject.appointmentLength)+1;
-			if (untouchedAppntsFromTop > Session.get("maxNumOfAppointments") ||
+			if (untouchedAppntsFromTop > $(".timeRow").length ||
 			 	untouchedAppntsFromTop < 0) {
 				//Protect against exceptions when system tries to render appointments
 				//on wrong days.
+				console.log(untouchedAppntsFromTop);
+				console.log("appointment item out of bounds, return 0 for top")
 				return 0;
 			}
 			var appntsFromTop = Math.floor(untouchedAppntsFromTop);
