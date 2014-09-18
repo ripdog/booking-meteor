@@ -89,6 +89,14 @@ Router.map(function() {// Links to / should choose whether to default to today o
 			}
 		},
 		onAfterAction: function() {
+			var provObject = unusualDays.findOne({date: Session.get("date"), providerID: Session.get("selectedProviderId")})
+			if (!provObject) {
+				provObject = providers.findOne(Session.get("selectedProviderId"))
+			}
+			try {//ensure there is a sane default for appointment length field.
+				$("#insertAppointmentFormInner [data-schema-key='length']").val(provObject.appointmentLength);
+			} 
+			catch(e) {}
 			if (this.params.time) {
 				if (this.ready()) {
 					// var queryString = 'td:contains('+this.params.time+')';
@@ -99,7 +107,9 @@ Router.map(function() {// Links to / should choose whether to default to today o
 					// 		$(queryString).parent().addClass('bg-success')
 					// 	}, 400);
 					// }
+
 					try {
+						
 						$('#datetimepicker4').data("DateTimePicker").setDate(this.params.time);
 					} catch (e) {}
 				}
