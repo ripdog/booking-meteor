@@ -1,1 +1,1 @@
-// AutoForm.debug();
+AutoForm.debug();

@@ -56,12 +56,18 @@ Template.bookingTable.helpers({
 		var dateCounter = moment().startOf('day').hours(provObject.startTime)
 		var dateTarget = moment().startOf('day').hours(provObject.endTime)
 		var ret = [];
+		var theTime;
 		while(dateTarget.diff(dateCounter) > 0)
 		{
-			ret.push({time: dateCounter.format("h:mm A")});
+			theTime = dateCounter.format("h:mm A");
+			ret.push({time: dateCounter.format("h:mm A"), rowTimeId:theTime});
 			dateCounter.add(provObject.appointmentLength, "minutes");
 		}
-		ret.push({time: dateCounter.format("h:mm A")});
+		var finalTime = dateCounter.format("h:mm A")
+		console.log(JSON.stringify({time: finalTime}));
+		ret.push({time: finalTime, rowTimeId:finalTime});
+		console.log("times has finished. Rerendering.");
+		// rerenderDep.changed()
 		return ret;
 	},
 	appointments: function() {
@@ -223,12 +229,17 @@ Template.appointmentItem.helpers({
 		return $(".rowHeader").css("width")
 	},
 	top: function() {
-		rerenderDep.depend();
+		// rerenderDep.depend();
 
-		if ($(".timeRow").length === 0) {
-			console.log("rendering too early, hold off.");
-			return 0;
-		}
+		// if ($(".timeRow").length === 0) {
+		// 	console.log("rendering too early, hold off.");
+		// 	return 0;
+		// }
+		// // console.log(moment(this.date).format("h:mm A"))
+		// console.log('.rowContent[id="'+moment(this.date).format("h:mm A")+'"]');
+		// var header = $('.rowContent[id="'+moment(this.date).format("h:mm A")+'"]')[0].offsetTop;
+		// // console.log(header);
+		// return header + "px";
 		var provObject = unusualDays.findOne({date: Session.get("date"), providerID: Session.get("selectedProviderId")})
 		if (!provObject) {
 			provObject = providers.findOne(Session.get("selectedProviderId"))
@@ -244,7 +255,7 @@ Template.appointmentItem.helpers({
 		else
 		{
 			var untouchedAppntsFromTop = (numFromTop/provObject.appointmentLength)+1;
-			if (untouchedAppntsFromTop > $(".timeRow").length ||
+			if (untouchedAppntsFromTop > $(".timeRow").length+1 ||
 			 	untouchedAppntsFromTop < 0) {
 				//Protect against exceptions when system tries to render appointments
 				//on wrong days.
