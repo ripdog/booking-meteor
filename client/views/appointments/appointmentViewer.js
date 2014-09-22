@@ -148,7 +148,22 @@ Template.bookingTable.rendered = function() {
 	// }
 	console.log("rerendering");
 	rerenderDep.changed();
-
+	Tracker.autorun(function(asd) {
+		// /appointToScrollTo
+		// var pos = $('div[data-id="'+Session.get("currentlyEditingAppointment")+'"]')[0].offsetTop
+		var pos = Session.get("scrollToPoint");
+		if (pos === null) {return;}
+		console.log("Scrolling to :");
+		console.log(pos);
+		$("#bookingTableWrapper").animate({
+			scrollTop: pos,
+			scrollLeft: 0
+		});
+		Tracker.nonreactive(function() {
+			Session.set("scrollToPoint", null);
+		})
+		
+	})
 }
 
 
@@ -171,13 +186,18 @@ Template.timeRow.helpers({
 	rowHighlightClass: function() {
 		if (Session.get("newTime") !== "undefined" && Session.get("formForInsert") == true) {
 			if(Session.get("newTime") == this.time) {
-				// console.log("highlighting " + this.time);
+				console.log(this);
 				return "bg-success";
 			}
 		}
 		
 	}
 })
+Template.timeRow.rendered = function(){
+	if(Session.equals("newTime", this.data.time)) {
+		Session.set("scrollToPoint", this.firstNode.offsetTop);
+	}
+}
 
 rerenderDep = new Deps.Dependency()
 Template.appointmentItem.helpers({
@@ -283,6 +303,11 @@ Template.appointmentItem.helpers({
 // 				console.log(extraPixels);
 				pixelsFromTop += extraPixels;
 			}
+			console.log("Editing: "+Session.get("currentlyEditingAppointment"))
+			if(Session.equals("currentlyEditingAppointment", this._id)) {
+				console.log("This is me, setting scrollToPoint");
+				Session.set("scrollToPoint", pixelsFromTop);
+			}
 			return pixelsFromTop + "px";
 		}
 	},
@@ -290,18 +315,9 @@ Template.appointmentItem.helpers({
 		// console.log(this);
 		if(typeof Session.get('currentlyEditingAppointment') !== "undefined" 
 			&& Session.get("currentlyEditingAppointment") === this._id) {
+
 			return "being-edited";
 		}
 	}
 });
 
-Template.appointmentItem.rendered = function(asd) {
-	if (typeof Session.get("appointToScrollTo") !== "undefined") {
-		// /appointToScrollTo
-		var pos = $('div[data-id="'+Session.get("appointToScrollTo")+'"]')[0].offsetTop
-		$("#bookingTableWrapper").animate({
-			scrollTop: pas,
-			scrollLeft: 0
-		})
-	}
-}

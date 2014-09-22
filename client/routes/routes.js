@@ -99,15 +99,6 @@ Router.map(function() {// Links to / should choose whether to default to today o
 			catch(e) {}
 			if (this.params.time) {
 				if (this.ready()) {
-					// var queryString = 'td:contains('+this.params.time+')';
-					// if ($(queryString).length > 0) {
-					// 	$(queryString).parent().addClass('bg-success');
-					// } else {
-					// 	Meteor.setTimeout(function() {
-					// 		$(queryString).parent().addClass('bg-success')
-					// 	}, 400);
-					// }
-
 					try {
 						
 						$('#datetimepicker4').data("DateTimePicker").setDate(this.params.time);
@@ -142,6 +133,11 @@ Router.map(function() {// Links to / should choose whether to default to today o
 				this.render();
 			}
 		},
+		// onAfterAction: function() {
+		// 	if (this.ready()) {
+		// 		Session.set("appointToScrollTo", )
+		// 	}
+		// }
 		onStop: function() {
 			Session.set("formForInsert", true);
 			Session.set("currentlyEditingAppointment", null);

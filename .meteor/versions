@@ -1,8 +1,8 @@
 accounts-base@1.1.0
 accounts-password@1.0.1
 alanning:roles@1.2.13
-aldeed:autoform@2.0.1
-aldeed:collection2@2.0.0
+aldeed:autoform@2.0.2
+aldeed:collection2@2.0.1
 aldeed:simple-schema@1.0.3
 anti:i18n@0.4.3
 application-configuration@1.0.2
@@ -46,7 +46,7 @@ meteor-platform@1.1.0
 meteor@1.1.0
 meteorhacks:inject-initial@1.0.0
 meteorhacks:kadira-binary-deps@1.0.1
-meteorhacks:kadira@2.8.1
+meteorhacks:kadira@2.9.0
 meteorhacks:subs-manager@1.1.0
 meteorhacks:zones@1.2.2
 minifiers@1.1.0
@@ -56,6 +56,7 @@ mobile-status-bar@1.0.0
 mongo-livedata@1.0.4
 mongo@1.0.5
 mrt:moment@2.8.1
+natestrauser:jquery-scrollto@1.4.7
 npm-bcrypt@0.7.7
 observe-sequence@1.0.2
 ordered-dict@1.0.0
@@ -71,8 +72,8 @@ sha@1.0.0
 softwarerero:accounts-t9n@0.0.20
 spacebars-compiler@1.0.2
 spacebars@1.0.1
-splendido:accounts-templates-bootstrap@0.9.0
-splendido:accounts-templates-core@0.9.0
+splendido:accounts-templates-bootstrap@0.9.4
+splendido:accounts-templates-core@0.9.4
 splendido:moment-twix@0.0.3
 srp@1.0.0
 stylus@1.0.4
