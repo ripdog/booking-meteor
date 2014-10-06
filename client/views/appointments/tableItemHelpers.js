@@ -15,11 +15,18 @@ tableItemLeft = function(thisobj) {
 	return $(".rowHeader").css("width");
 }
 tableItemTop = function(thisobj) {
-			var provObject = unusualDays.findOne({date: Session.get("date"), providerID: Session.get("selectedProviderId")})
+	if (!thisobj.date) {//this is a blockout
+		var datestring = moment(Session.get("date")).tz("Pacific/Auckland").format("YYYY-MM-DD ") + thisobj.time;
+		var thedate = moment(datestring);
+		// console.log(thedate);
+	} else {
+		thedate = thisobj.date;
+	}
+		var provObject = unusualDays.findOne({date: Session.get("date"), providerID: Session.get("selectedProviderId")})
 		if (!provObject) {
 			provObject = providers.findOne(Session.get("selectedProviderId"))
 		}
-		var numFromTop = (moment(thisobj.date).unix() -
+		var numFromTop = (moment(thedate).unix() -
 					  moment(getDate()).hours(provObject.startTime).unix())/60;
 
 		//getDate is used to avoid a dependence upon the date var. Don't want to attempt
@@ -58,7 +65,7 @@ tableItemTop = function(thisobj) {
 				pixelsFromTop += extraPixels;
 			}
 			console.log("Editing: "+Session.get("currentlyEditingAppointment"))
-			if(Session.equals("currentlyEditingAppointment", thisobj._id)) {
+			if(Session.equals("currentlyEditingAppointment", thisobj._id) && thisobj._id)/*if _id is null we are a blockout*/ {
 				console.log("This is me, setting scrollToPoint");
 				Session.set("scrollToPoint", pixelsFromTop);
 			}

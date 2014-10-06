@@ -64,11 +64,24 @@ Template.bookingTable.helpers({
 		var today = moment(Session.get('date')).format("dddd").toLowerCase();
 		console.log(JSON.stringify({_id: Session.get("selectedProviderId"), "blockouts.day": today}));
 		var blockouts = providers.findOne({_id: Session.get("selectedProviderId"), "blockouts.day": today}, {fields: {blockouts: 1}});
-		if (blockouts) {
-			console.log(blockouts);
-			return blockouts.blockouts;
+		var anyBlockouts = providers.findOne({_id: Session.get("selectedProviderId"), "blockouts.day": "all"}, {fields: {blockouts: 1}});
+		if(blockouts && anyBlockouts) {
+			var ret = _.union(blockouts.blockouts, anyBlockouts.blockouts);
 		}
-		
+		else if (blockouts) {
+			ret = blockouts.blockouts;
+		} else if (anyBlockouts) {
+			ret = anyBlockouts.blockouts;
+		}
+		console.log("today is "+today);
+		ret = _.filter(ret, function(block) {
+			console.log("examining")
+			console.log(block);
+			console.log((block.day === today || block.day === "all"));
+			return (block.day === today || block.day === "all");
+		})
+		console.log(ret);
+		return ret;
 	},
 	appointments: function() {
 		var theDate = Session.get("date");
@@ -76,8 +89,6 @@ Template.bookingTable.helpers({
 		endDate = moment(theDate).endOf("day").toDate();
 		// console.log(JSON.stringify({date: {$gte: startDate, $lt: endDate}}));
 		queryPointer = appointmentList.find({date: {$gte: startDate, $lt: endDate}, providerID: Session.get("selectedProviderId")})
-		// queryPointer = appointmentList.find()
-		
 		return queryPointer;
 	},
 	providerNames: function() {
@@ -175,8 +186,7 @@ Template.bookingTable.rendered = function() {
 		// var pos = $('div[data-id="'+Session.get("currentlyEditingAppointment")+'"]')[0].offsetTop
 		var pos = Session.get("scrollToPoint");
 		if (pos === null) {return;}
-		console.log("Scrolling to :");
-		console.log(pos);
+		console.log("Scrolling to :" + pos);
 		$("#bookingTableWrapper").animate({
 			scrollTop: pos,
 			scrollLeft: 0
