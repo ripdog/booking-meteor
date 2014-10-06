@@ -162,7 +162,7 @@ AutoForm.hooks({
 		},
 		formToDoc: function(doc){
 			if (typeof doc.time === "string") {
-				var datestring = moment(Session.get("date")).zone(-12).format("YYYY-MM-DD ") + doc.time;
+				var datestring = moment(Session.get("date")).tz("Pacific/Auckland").format("YYYY-MM-DD ") + doc.time;
 				//the time is localtime, the date is utc. Set the date to localtime, add the time
 				//then convert back to utc.
 				doc.date = moment(datestring, "YYYY-MM-DD hh:mm A").utc().toDate();
@@ -181,6 +181,8 @@ AutoForm.hooks({
 				$('#insertSuccessAlert').hide("slow");
 			}, 3000);
 			//	console.log(appointmentList.simpleSchema().namedContext("insertAppointmentFormInner").invalidKeys())
+			//This is hacky code to transfer error from the date, where they are detected, to the time, where they are displayed
+			//for the user.
 			for (var invalidKey in error.invalidKeys) {
 				if (error.invalidKeys[invalidKey].type === "overlappingDates") {
 					appointmentList.simpleSchema().namedContext("insertAppointmentFormInner").addInvalidKeys([{

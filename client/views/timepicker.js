@@ -23,11 +23,14 @@ Template.afInput_bootstraptimepicker.rendered  = function() {
 		pickDate: false,
 		minuteStepping:5,
 		defaultDate: $('#datetimepicker4 > input')[0].value
-		// defaultDate: moment().startOf('day').hour(12).zone(-12)
+		// defaultDate: moment().startOf('day').hour(12).tz("Pacific/Auckland")
 		//TODO ^ should pick closest date to 1200 which isn't taken.
 	});
 	
 }
 Template.afInput_bootstraptimepicker.events = {
 	'click #datetimepicker4': function (event){$('#datetimepicker4').data("DateTimePicker").show()}
+}
+Template.afInput_bootstraptimepicker.destroyed = function() {
+	$("div.bootstrap-datetimepicker-widget").remove();
 }

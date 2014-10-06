@@ -23,4 +23,5 @@ aldeed:simple-schema@1.0.3
 meteorhacks:zones
 meteorhacks:subs-manager
 natestrauser:jquery-scrollto
+mrt:moment-timezone
 

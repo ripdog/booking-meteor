@@ -32,21 +32,19 @@ Router.map(function() {// Links to / should choose whether to default to today o
 		layoutTemplate: "masterLayout",
 		waitOn: function() {
 			Session.setDefault("date", moment().startOf("day").toDate());
+
 			return [this.subscribe('appointmentList', Session.get('date'), Session.get("selectedProviderId")),
          this.subscribe("unusualDays", Session.get("date")), this.subscribe('providerNames')];
 		},
-		loadingTemplate: 'loading',
 		onBeforeAction: function () {
  			Session.setDefault("formForInsert", true);//insert
 		},
 		action: function() {
 			if(this.ready()) {
+				Session.setDefault("selectedProviderId", providers.findOne()._id);
 				this.render();
 			}
 		},
-		// onAfterAction: function () {
-
-		// }
 	});
 	this.route("permalink", {
 		path: '/perma/:prov/:date',
@@ -75,7 +73,7 @@ Router.map(function() {// Links to / should choose whether to default to today o
 			}
 			Session.set("formForInsert", true);
 			Session.set("currentlyEditingAppointment", null);
-			AutoForm.resetForm("insertAppointmentFormInner");
+			
 			if (this.params.time) {
 				var momentvar = moment(this.params.time, "hh:mm A");
 				//Session.set("date", momentvar.startOf('day').toDate());
@@ -89,6 +87,9 @@ Router.map(function() {// Links to / should choose whether to default to today o
 			}
 		},
 		onAfterAction: function() {
+			if (this.ready()) {
+				//AutoForm.resetForm("insertAppointmentFormInner");
+			}
 			var provObject = unusualDays.findOne({date: Session.get("date"), providerID: Session.get("selectedProviderId")})
 			if (!provObject) {
 				provObject = providers.findOne(Session.get("selectedProviderId"))
@@ -109,8 +110,9 @@ Router.map(function() {// Links to / should choose whether to default to today o
 			}
 		},
 		onStop: function() {
+			console.log("onStop for New Appointment");
+			console.log(this);
 			Session.set("newTime", null);//remove Highlight
-			$("div.bootstrap-datetimepicker-widget").remove();
 		}
 	});
 	this.route('editAppointment', {
@@ -126,22 +128,24 @@ Router.map(function() {// Links to / should choose whether to default to today o
 		onBeforeAction: function () {
 			Session.set("formForInsert", false);
 			Session.set("currentlyEditingAppointment", this.params.id);
-			AutoForm.resetForm("insertAppointmentFormInner");
+			if(this.ready()) {
+				Session.set("date", moment(appointmentList.findOne(this.params.id).date).startOf('day').toDate());
+			}
+			
 		},
 		action: function() {
 			if(this.ready()) {
 				this.render();
 			}
 		},
-		// onAfterAction: function() {
-		// 	if (this.ready()) {
-		// 		Session.set("appointToScrollTo", )
-		// 	}
-		// }
+		onAfterAction: function() {
+			if (this.ready()) {
+				AutoForm.resetForm("insertAppointmentFormInner");
+			}
+		},
 		onStop: function() {
 			Session.set("formForInsert", true);
 			Session.set("currentlyEditingAppointment", null);
-			$("div.bootstrap-datetimepicker-widget").remove();
 		}
 	});
 	this.route('providerList', {

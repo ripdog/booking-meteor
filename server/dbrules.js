@@ -4,8 +4,8 @@ unusualDays.deny({
 		var provider = doc.providerID;
 		var cleanDate = moment(doc.date);
 		var provObj = providers.findOne(provider);
-		var startDate = cleanDate.clone().zone(-12).hour(provObj.startTime).toDate();
-		var endDate = cleanDate.clone().zone(-12).hour(provObj.endTime).toDate()
+		var startDate = cleanDate.clone().tz("Pacific/Auckland").hour(provObj.startTime).toDate();
+		var endDate = cleanDate.clone().tz("Pacific/Auckland").hour(provObj.endTime).toDate()
 		var dayTwix = moment(startDate).twix(endDate);
 		console.log(dayTwix.format());
 		//build query

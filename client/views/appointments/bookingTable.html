@@ -28,6 +28,9 @@
 					{{#each times}}
 						{{> timeRow}}
 					{{/each}}
+					{{#each blockouts}}
+						{{> blockoutItem}}
+					{{/each}}
 					{{#each appointments}}
 						{{> appointmentItem}}
 					{{/each}}
@@ -61,17 +64,3 @@
 	</tr>
 </template>
 
- <template name="appointmentItem"><!--TODO: set display of each field to optional. -->
-	<div class="appointmentItem bg-primary {{itemHighlightClass}}" data-id={{_id}} style="width:{{width}};
-												   max-height:{{height}};
-													   height:{{height}};
-												   left:{{left}};
-												   top:{{top}};">
-		<h5 class="appointmentItemData"><span class="glyphicon glyphicon-user"></span>
-			{{appointmentName}}</h5>{{{inbetween}}}
-		<p class="appointmentItemData"><span class="glyphicon glyphicon-time"></span>
-			{{appointmentTime}} - {{appointmentLength}} minutes</p>{{{inbetween}}}
-		<p class="appointmentItemData"><span class="glyphicon glyphicon-earphone"></span>
-			{{appointmentPhone}}</p>
-	</div>
-</template>

@@ -1,0 +1,12 @@
+ <template name="blockoutItem">
+	<div class="tableItem bg-warning {{itemHighlightClass}}" data-id={{_id}} style="width:{{width}};
+												   max-height:{{height}};
+													   height:{{height}};
+												   left:{{left}};
+												   top:{{top}};">
+		<h5 class="appointmentItemData"><span class="glyphicon"></span>
+			{{blockoutTitle}}</h5>{{{inbetween}}}
+		<p class="appointmentItemData"><span class="glyphicon glyphicon-time"></span>
+			{{blockoutTime}} - {{blockoutLength}} minutes</p>
+	</div>
+</template>

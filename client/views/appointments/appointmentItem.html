@@ -1,0 +1,14 @@
+ <template name="appointmentItem"><!--TODO: set display of each field to optional. -->
+	<div class="tableItem appointmentItem bg-primary {{itemHighlightClass}}" data-id={{_id}} style="width:{{width}};
+												   max-height:{{height}};
+													   height:{{height}};
+												   left:{{left}};
+												   top:{{top}};">
+		<h5 class="tableItemData"><span class="glyphicon glyphicon-user"></span>
+			{{appointmentName}}</h5>{{{inbetween}}}
+		<p class="tableItemData"><span class="glyphicon glyphicon-time"></span>
+			{{appointmentTime}} - {{appointmentLength}} minutes</p>{{{inbetween}}}
+		<p class="tableItemData"><span class="glyphicon glyphicon-earphone"></span>
+			{{appointmentPhone}}</p>
+	</div>
+</template>
