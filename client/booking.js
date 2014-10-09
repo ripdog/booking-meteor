@@ -1,12 +1,4 @@
-Template.masterLayout.events({
-	// 'click #newAppointButton': function() {
-	// 	//console.log('button clicked!');
-	// 	//console.log(Session.get("currentAppointment"))
-	// 	// 
-	// 	// 
-	// 	// 
-	// //	$("#appointmentEditModal").modal();
-	// },
+Template.navbar.events({
 	'click #nextDay': function() {
 		Session.set("date", moment(Session.get("date")).add(1, 'day').toDate());
 	},
@@ -17,12 +9,12 @@ Template.masterLayout.events({
 		$('#datetimepicker1').data("DateTimePicker").show()
 	},
 });
-Template.masterLayout.helpers({
+Template.navbar.helpers({
 	theDate: function() {
-		if (typeof Session.get("date") === 'undefined'){
-			var thedate = moment().startOf("day").toDate();
-			Session.set("date", thedate);
-		}
+		// if (typeof Session.get("date") === 'undefined'){
+		// 	var thedate = moment().startOf("day").toDate();
+		// 	Session.set("date", thedate);
+		// }
 		return moment(Session.get("date")).format("YYYY-MM-DD");
 	},
 	loggedIn: function() {
@@ -32,7 +24,7 @@ Template.masterLayout.helpers({
 		return "/new/" + "12:00 PM";
 	}
 })
-Template.masterLayout.rendered = function() {
+Template.navbar.rendered = function() {
 	$('#datetimepicker1').datetimepicker({
 		pickTime: false,
 	})

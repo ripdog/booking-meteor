@@ -64,8 +64,8 @@ tableItemTop = function(thisobj) {
 // 				console.log(extraPixels);
 				pixelsFromTop += extraPixels;
 			}
-			console.log("Editing: "+Session.get("currentlyEditingAppointment"))
-			if(Session.equals("currentlyEditingAppointment", thisobj._id) && thisobj._id)/*if _id is null we are a blockout*/ {
+			console.log("Editing: "+Session.get("currentlyEditingDoc"))
+			if(Session.equals("currentlyEditingDoc", thisobj._id) && thisobj._id)/*if _id is null we are a blockout*/ {
 				console.log("This is me, setting scrollToPoint");
 				Session.set("scrollToPoint", pixelsFromTop);
 			}

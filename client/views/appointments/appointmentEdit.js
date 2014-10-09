@@ -27,7 +27,7 @@ Template.insertAppointmentForm.events({
 	},
 	'click #deleteAppointment': function() {
 		if (confirm("Are you sure you want to delete this appointment?")) {
-			appointmentList.remove(Session.get("currentlyEditingAppointment"));
+			appointmentList.remove(Session.get("currentlyEditingDoc"));
 			Router.go('/');
 		}
 	}
@@ -91,7 +91,7 @@ Template.insertAppointmentForm.helpers({
 			//will be fixed for real when iron router is used for appointment editing
 			///creation
 		} else {//update, grab length from current doc
-			appointmentList.findOne(Session.get("currentlyEditingAppointment")).length
+			appointmentList.findOne(Session.get("currentlyEditingDoc")).length
 		}
 	},
 	currentType: function() {
@@ -111,11 +111,11 @@ Template.insertAppointmentForm.helpers({
 				return "12:00 PM";
 			}
 		} else {
-			// $('#datetimepicker4').data("DateTimePicker").setDate(appointmentList.findOne(Session.get("currentlyEditingAppointment")).date);
-			return appointmentList.findOne(Session.get("currentlyEditingAppointment")).time;
+			// $('#datetimepicker4').data("DateTimePicker").setDate(appointmentList.findOne(Session.get("currentlyEditingDoc")).date);
+			return appointmentList.findOne(Session.get("currentlyEditingDoc")).time;
 		}
 	},
-	currentDoc: function() {return appointmentList.findOne(Session.get("currentlyEditingAppointment"))},
+	currentDoc: function() {return appointmentList.findOne(Session.get("currentlyEditingDoc"))},
 	deleteButtonClass: function() {if (Session.get("formForInsert")) {
 		return "hidden";
 	}}
@@ -127,14 +127,12 @@ AutoForm.hooks({
 			$('#insertSuccessAlert')[0].innerHTML = "Submitting...";
 			$('#insertSuccessAlert').show("fast");
 			$('#saveAppointChanges').attr("disabled", true);
+			// appointmentList.simpleSchema().clean(doc);
 		},
 		endSubmit: function(fieldId, template) {
 			// 
 		},
-		onSubmit: function(doc) {
-			//cleaning the form early ensures defaultValues are added. Why is this needed?
-			appointmentList.simpleSchema().clean(doc);//DOESNT ACTUALLY WORK LOL
-		},
+
 		onSuccess: function(operation, result, template) {
 			if(template.data.type === "update") {
 				$('#insertSuccessAlert')[0].innerHTML = "Appointment Successfully Edited.";

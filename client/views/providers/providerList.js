@@ -3,7 +3,10 @@ Template.providerList.helpers({
 })
 Template.providerList.events({
 	'click .providerName': function(event){
-		Session.set("selectedProviderId", $(event.currentTarget).data("id"))
+		try {
+			AutoForm.resetForm("updateProviderForm")
+		} catch (e) {}
+		Session.set("selectedProviderId", $(event.currentTarget).data("id"));
 	},
 	'click .providerDeleteButton': function(event){
 		if (confirm("Are you absolutely sure? This will delete *ALL* this providers data and appointments!"))

@@ -43,8 +43,8 @@ Template.appointmentItem.helpers({
 	},
 	itemHighlightClass: function() {
 		// console.log(this);
-		if(typeof Session.get('currentlyEditingAppointment') !== "undefined" 
-			&& Session.get("currentlyEditingAppointment") === this._id) {
+		if(typeof Session.get('currentlyEditingDoc') !== "undefined" 
+			&& Session.get("currentlyEditingDoc") === this._id) {
 
 			return "being-edited";
 		}

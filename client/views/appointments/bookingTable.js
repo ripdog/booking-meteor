@@ -1,5 +1,3 @@
-
-
 // 	 /$$                 /$$                                        
 // 	| $$                | $$                                        
 // 	| $$$$$$$   /$$$$$$ | $$  /$$$$$$   /$$$$$$   /$$$$$$   /$$$$$$$
@@ -62,7 +60,7 @@ Template.bookingTable.helpers({
 	},
 	blockouts: function() {
 		var today = moment(Session.get('date')).format("dddd").toLowerCase();
-		console.log(JSON.stringify({_id: Session.get("selectedProviderId"), "blockouts.day": today}));
+		// console.log(JSON.stringify({_id: Session.get("selectedProviderId"), "blockouts.day": today}));
 		var blockouts = providers.findOne({_id: Session.get("selectedProviderId"), "blockouts.day": today}, {fields: {blockouts: 1}});
 		var anyBlockouts = providers.findOne({_id: Session.get("selectedProviderId"), "blockouts.day": "all"}, {fields: {blockouts: 1}});
 		if(blockouts && anyBlockouts) {
@@ -73,11 +71,11 @@ Template.bookingTable.helpers({
 		} else if (anyBlockouts) {
 			ret = anyBlockouts.blockouts;
 		}
-		console.log("today is "+today);
+		// console.log("today is "+today);
 		ret = _.filter(ret, function(block) {
-			console.log("examining")
-			console.log(block);
-			console.log((block.day === today || block.day === "all"));
+			// console.log("examining")
+			// console.log(block);
+			// console.log((block.day === today || block.day === "all"));
 			return (block.day === today || block.day === "all");
 		})
 		console.log(ret);
@@ -147,7 +145,7 @@ Template.bookingTable.events({
 	'dblclick .appointmentItem': function(event) {
 		event.stopImmediatePropagation();
 		Router.go('editAppointment', {id: $(event.currentTarget).data("id")});
-		// Session.set("currentlyEditingAppointment", );
+		// Session.set("currentlyEditingDoc", );
 	},
 	'click #customTimesButton': function(event) {
 		var provObject = providers.findOne(Session.get("selectedProviderId"))
@@ -183,7 +181,7 @@ Template.bookingTable.rendered = function() {
 	rerenderDep.changed();
 	Tracker.autorun(function(asd) {
 		// /appointToScrollTo
-		// var pos = $('div[data-id="'+Session.get("currentlyEditingAppointment")+'"]')[0].offsetTop
+		// var pos = $('div[data-id="'+Session.get("currentlyEditingDoc")+'"]')[0].offsetTop
 		var pos = Session.get("scrollToPoint");
 		if (pos === null) {return;}
 		console.log("Scrolling to :" + pos);

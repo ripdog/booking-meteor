@@ -1,10 +1,15 @@
-<template name="sideEditWrapper">
-	<div class="row">
-		<div class="col-md-4" id="editorWrapper">
-			{{> appointmentEdit}}
-		</div>
-		<div class="col-md-8">
-			{{> bookingTable}}
+<template name="sideEditMasterTemplate">
+	<div class="container">
+			{{> navbar}}
+		<div id="main">
+			<div class="row">
+				<div class="col-md-4" id="editorWrapper">
+					{{> yield}}
+				</div>
+				<div class="col-md-8">
+					{{> yield "right"}}
+				</div>
+			</div>
 		</div>
 	</div>
 </template>

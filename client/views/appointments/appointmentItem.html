@@ -7,8 +7,18 @@
 		<h5 class="tableItemData"><span class="glyphicon glyphicon-user"></span>
 			{{appointmentName}}</h5>{{{inbetween}}}
 		<p class="tableItemData"><span class="glyphicon glyphicon-time"></span>
-			{{appointmentTime}} - {{appointmentLength}} minutes</p>{{{inbetween}}}
-		<p class="tableItemData"><span class="glyphicon glyphicon-earphone"></span>
-			{{appointmentPhone}}</p>
+			{{time}} - {{appointmentLength}} minutes</p>
+		{{#if phone}}
+			{{{inbetween}}}
+			<p class="tableItemData">
+				<span class="glyphicon glyphicon-earphone"></span>
+				{{phone}}
+			</p>
+		{{/if}}
+		{{#if notes}}
+			{{{inbetween}}}
+			<p class="tableItemData"><span class="glyphicon glyphicon-info-sign"></span>
+			{{notes}}</p>
+		{{/if}}
 	</div>
 </template>

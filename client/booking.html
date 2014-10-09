@@ -7,9 +7,17 @@
 </body>
 
 
-<template name="masterLayout">
+<template name="singlePageMasterLayout">
 	<div class="container">
-		<nav class="navbar navbar-default" role="navigation">
+			{{> navbar}}
+		<div id="main">
+			{{> yield}}
+		</div>
+	</div>
+</template>
+
+<template name="navbar">
+	<nav class="navbar navbar-default" role="navigation">
 			<div class="container-fluid">
 				<a class="navbar-brand" href="{{pathFor 'bookingTable'}}">Booking</a>
 				
@@ -32,7 +40,6 @@
 					</div>
 					{{/if}}
 				</form>
-				<!-- << < datepicker > >> -->
 				<form class="navbar-form navbar-right" role="">
 					{{#if loggedIn}}
 					<a href={{newAppntLink}}>
@@ -46,8 +53,4 @@
 				</div>
 			</div>
 		</nav>
-		<div id="main">
-			{{> yield}}
-		</div>
-	</div>
 </template>
