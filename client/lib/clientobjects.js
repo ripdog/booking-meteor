@@ -34,4 +34,4 @@ dayDelta = function (date) {
 	{
 		return " "+Math.abs(diff)+" days ago"
 	}
-}
+};

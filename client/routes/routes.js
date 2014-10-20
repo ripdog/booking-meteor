@@ -34,7 +34,7 @@ Router.route('bookingTable', {//Split up the bookingTable so that the appointmen
 		Session.setDefault("date", moment().startOf("day").toDate());
 
 		return [this.subscribe('appointmentList', Session.get('date'), Session.get("selectedProviderId")),
-     this.subscribe("unusualDays", Session.get("date")), this.subscribe('providerNames')];
+     this.subscribe("unusualDays", Session.get("date")), this.subscribe('providerSubscription')];
 	},
 	onBeforeAction: function () {
 			Session.setDefault("formForInsert", true);//insert
@@ -61,7 +61,7 @@ Router.route('newAppointment', {
 	waitOn: function() {
 		Session.setDefault("date", moment().startOf("day").toDate());
 		return [this.subscribe('appointmentList', Session.get('date'), Session.get("selectedProviderId")),
-     this.subscribe("unusualDays", Session.get("date")), this.subscribe('providerNames')];
+     this.subscribe("unusualDays", Session.get("date")), this.subscribe('providerSubscription')];
 	},
 	loadingTemplate: 'loading',
 	onBeforeAction: function () {
@@ -123,7 +123,7 @@ Router.route('editAppointment', {
 	waitOn: function() {
 		Session.setDefault("date", moment().startOf("day").toDate());
 		return [this.subscribe('appointmentList', Session.get('date'), Session.get("selectedProviderId")),
-     this.subscribe("unusualDays", Session.get("date")), this.subscribe('providerNames')];
+     this.subscribe("unusualDays", Session.get("date")), this.subscribe('providerSubscription')];
 	},
 	loadingTemplate: 'loading',
 	onBeforeAction: function () {
@@ -157,7 +157,7 @@ Router.route('newBlockoutForm', {
 	waitOn: function() {
 		Session.setDefault("date", moment().startOf("day").toDate());
 		return [this.subscribe('appointmentList', Session.get('date'), Session.get("selectedProviderId")),
-     this.subscribe("unusualDays", Session.get("date")), this.subscribe('providerNames')];
+     this.subscribe("unusualDays", Session.get("date")), this.subscribe('providerSubscription')];
 	},
 	onBeforeAction: function() {
 		Session.set("formForInsert", true);

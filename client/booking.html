@@ -42,6 +42,9 @@
 				</form>
 				<form class="navbar-form navbar-right" role="">
 					{{#if loggedIn}}
+					<a href={{newBlockLink}}>
+						<button type="button" id="newBlockButton" class="btn btn-warning">New Blockout</button>
+					</a>
 					<a href={{newAppntLink}}>
 					<button type="button" id="newAppointButton" class="btn btn-primary">New Booking</button>
 					</a>

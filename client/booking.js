@@ -22,6 +22,9 @@ Template.navbar.helpers({
 	},
 	newAppntLink: function() {
 		return "/new/" + "12:00 PM";
+	},
+	newBlockLink: function() {
+		return "/newBlockout/" + "12:00 PM";
 	}
 })
 Template.navbar.rendered = function() {

@@ -36,13 +36,17 @@ Template.bookingTable.helpers({
 			console.log("user is provider, setting selected provider id");
 			Session.set("selectedProviderId", Meteor.user().providerID);
 		}
-		var provObject = unusualDays.findOne({date: Session.get("date"), providerID: Session.get("selectedProviderId")})
+		var provObject = unusualDays.findOne({date: Session.get("date"), providerID: Session.get("selectedProviderId")});
 		if (!provObject) {
-			provObject = providers.findOne(Session.get("selectedProviderId"))
+			provObject = providers.findOne(Session.get("selectedProviderId"));
+		}
+		if (!provObject) {
+			console.log("provider not yet available, bailing out");
+			return;
 		}
 		// console.log(provObject);
-		var dateCounter = moment().startOf('day').hours(provObject.startTime)
-		var dateTarget = moment().startOf('day').hours(provObject.endTime)
+		var dateCounter = moment().startOf('day').hours(provObject.startTime);
+		var dateTarget = moment().startOf('day').hours(provObject.endTime);
 		var ret = [];
 		var theTime;
 		while(dateTarget.diff(dateCounter) > 0)
@@ -60,26 +64,7 @@ Template.bookingTable.helpers({
 	},
 	blockouts: function() {
 		var today = moment(Session.get('date')).format("dddd").toLowerCase();
-		// console.log(JSON.stringify({_id: Session.get("selectedProviderId"), "blockouts.day": today}));
-		var blockouts = providers.findOne({_id: Session.get("selectedProviderId"), "blockouts.day": today}, {fields: {blockouts: 1}});
-		var anyBlockouts = providers.findOne({_id: Session.get("selectedProviderId"), "blockouts.day": "all"}, {fields: {blockouts: 1}});
-		if(blockouts && anyBlockouts) {
-			var ret = _.union(blockouts.blockouts, anyBlockouts.blockouts);
-		}
-		else if (blockouts) {
-			ret = blockouts.blockouts;
-		} else if (anyBlockouts) {
-			ret = anyBlockouts.blockouts;
-		}
-		// console.log("today is "+today);
-		ret = _.filter(ret, function(block) {
-			// console.log("examining")
-			// console.log(block);
-			// console.log((block.day === today || block.day === "all"));
-			return (block.day === today || block.day === "all");
-		})
-		console.log(ret);
-		return ret;
+		return getBlockouts(today, Session.get("selectedProviderId"), Session.get('date'));
 	},
 	appointments: function() {
 		var theDate = Session.get("date");

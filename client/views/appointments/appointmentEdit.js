@@ -181,15 +181,15 @@ AutoForm.hooks({
 			//	console.log(appointmentList.simpleSchema().namedContext("insertAppointmentFormInner").invalidKeys())
 			//This is hacky code to transfer error from the date, where they are detected, to the time, where they are displayed
 			//for the user.
-			for (var invalidKey in error.invalidKeys) {
-				if (error.invalidKeys[invalidKey].type === "overlappingDates") {
+			_.each(error.invalidKeys, function(invalidKey) {
+				if (invalidKey.type === "overlappingDates") {
 					appointmentList.simpleSchema().namedContext("insertAppointmentFormInner").addInvalidKeys([{
-						name: "time", 
-						type: error.invalidKeys[invalidKey].type, 
-						value: moment(error.invalidKeys[invalidKey].value).format("h:mm A")
+						name: "time",
+						type: invalidKey.type,
+						value: moment(invalidKey.value).format("h:mm A")
 					}])
 				}
-				else if (error.invalidKeys[invalidKey].type === "dateOutOfBounds") {
+				else if (invalidKey.type === "dateOutOfBounds") {
 					try {
 						var cleanDate = moment(template.data.doc.date).startOf("day");
 						var provObject = unusualDays.findOne({date: cleanDate.toDate(), providerID: template.data.doc.providerID});
@@ -205,12 +205,19 @@ AutoForm.hooks({
 					}
 
 					appointmentList.simpleSchema().namedContext("insertAppointmentFormInner").addInvalidKeys([{
-						name: "time", 
-						type: error.invalidKeys[invalidKey].type, 
+						name: "time",
+						type: error.invalidKeys[invalidKey].type,
 						value: provObject.startTime + " and " + provObject.endTime
 					}])
 				}
-			}
+				else if (invalidKey.type === "overlappingBlockout") {
+					appointmentList.simpleSchema().namedContext("insertAppointmentFormInner").addInvalidKeys([{
+						name: "time",
+						type: invalidKey.type,
+						//value: moment(invalidKey.value).format("h:mm A")
+					}])
+				}
+			});
 		},
 		after: {
 			insert: function(error, result) {//TODO: When appointment is made, use the data-id var

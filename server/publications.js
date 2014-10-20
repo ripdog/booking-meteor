@@ -24,17 +24,17 @@ Meteor.publish("providerSubscription", function() {
 	console.log("providerSubscription subscribed by non-provider");
 	return providers.find();
 });
-Meteor.publish("providerNames", function() {
-	if(!this.userId) {
-		this.stop();
-		return;
-	} else if (Roles.userIsInRole(this.userId, "provider")) {
-		console.log("providerNames subscribed by provider");
-		return providers.find(Meteor.users.findOne(this.userId).providerID);
-	}
-	console.log("providerNames subscribed by non-provider");
-	return providers.find({})
-});
+//Meteor.publish("providerNames", function() {
+//	if(!this.userId) {
+//		this.stop();
+//		return;
+//	} else if (Roles.userIsInRole(this.userId, "provider")) {
+//		console.log("providerNames subscribed by provider");
+//		return providers.find(Meteor.users.findOne(this.userId).providerID);
+//	}
+//	console.log("providerNames subscribed by non-provider");
+//	return providers.find({})
+//});
 Meteor.publish("unusualDays", function(thedate) {
 	if(!this.userId) {
 		this.stop();

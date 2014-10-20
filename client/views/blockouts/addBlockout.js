@@ -75,7 +75,7 @@ Template.insertBlockoutForm.helpers({
 			//will be fixed for real when iron router is used for appointment editing
 			///creation
 		} else {//update, grab length from current doc
-			unusualDays.findOne(Session.get("currentlyEditingDoc")).length
+			return unusualDays.findOne(Session.get("currentlyEditingDoc")).length;
 		}
 	},
 	currentType: function() {
@@ -97,7 +97,7 @@ Template.insertBlockoutForm.helpers({
 			return unusualDays.findOne(Session.get("currentlyEditingDoc")).time;
 		}
 	},
-	currentDoc: function() {return appointmentList.findOne(Session.get("currentlyEditingDoc"))},
+	currentDoc: function() {return unusualDays.findOne({date: Session.get("date")});},
 	deleteButtonClass: function() {if (Session.get("formForInsert")) {
 		return "hidden";
 	}}
@@ -111,7 +111,8 @@ AutoForm.hooks({
 			$('#saveAppointChanges').attr("disabled", true);
 		},
 		endSubmit: function(fieldId, template) {
-			// 
+			console.log("endSubmit run!")
+			console.log(template)
 		},
 		onSubmit: function(insertDoc, updateDoc, currentDoc) {
 			console.log("submitting blockout");
@@ -123,19 +124,32 @@ AutoForm.hooks({
 					startTime: provObject.startTime, endTime: provObject.endTime, 
 					appointmentLength: provObject.appointmentLength}));
 			}
-			// AutoForm.validateField(this.formId, 'blockouts.$.title', false)
-			console.log(insertDoc)
-			console.log(this)
+			AutoForm.validateField("insertBlockoutFormInner", 'blockouts.$.title', false);
+			console.log(insertDoc);
+			console.log(this);
 			console.log("got an unusualDay");
 			console.log(todaysUnusualDay);
-			var insertResult = unusualDays.update(todaysUnusualDay._id, 
-				{$push: {
-					title: insertDoc.blockouts.$.title,
-					time: insertDoc.blockouts.$.time,
-					length: insertDoc.blockouts.$.length
-				}});
+			var results = unusualDays.update(
+				todaysUnusualDay._id,
+				{$push: {blockouts: {
+					title: insertDoc.title,
+					time: insertDoc.time,
+					length: insertDoc.length
+				}}}
+			);
+			console.log(results);
+			if (typeof results !== "string") {
+				this.resetForm();
+				this.done();
+			}
+			else if (results === "badTitle") {
+				AutoForm.getValidationContext("insertBlockoutFormInner").addInvalidKeys([{
+					name: "title",
+					type: "badTitle"
+				}])
+			}
 			return false;
-			this.done();
+
 		},
 		onSuccess: function(operation, result, template) {
 			if(template.data.type === "update") {

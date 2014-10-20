@@ -5,14 +5,14 @@
 </template>
 
 <template name="insertBlockoutForm">
-	{{#autoForm collection="unusualDays" doc=currentDoc validation="none" id="insertBlockoutFormInner"}}
+	{{#autoForm schema="blockoutSchema" id="insertBlockoutFormInner"}}
 	<h4 class="title">{{title}}</h4>
 	<div class="alert " style="display:none;" id="insertSuccessAlert" role="alert"></div>
 	<fieldset>
 		<h6>{{subtitle}}</h6>
-		{{> afQuickField name='blockouts.$.title' validation="submitThenKeyup"}}
-		{{> afQuickField name='blockouts.$.time' value=timePreset template='bootstraptimepicker' validation="submitThenKeyup"}}
-		{{> afQuickField name='blockouts.$.length' step=5 value=length validation="submitThenKeyup"}}
+		{{> afQuickField name='title' validation="submitThenKeyup"}}
+		{{> afQuickField name='time' value=timePreset template='bootstraptimepicker' validation="submitThenKeyup"}}
+		{{> afQuickField name='length' step=5 value=length validation="submitThenKeyup"}}
 	</fieldset>
 	<div class="footer" style="height:50px;">
 		<button type="button" class="btn btn-default pull-left" id="closeBlockoutEditor">Close</button>
