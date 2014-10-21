@@ -31,7 +31,7 @@ Template.bookingTable.helpers({
 				}
 				catch (e) {}
 			}
-		})
+		});
 		if (Roles.userIsInRole(Meteor.userId(), "provider")) {
 			console.log("user is provider, setting selected provider id");
 			Session.set("selectedProviderId", Meteor.user().providerID);
@@ -55,7 +55,7 @@ Template.bookingTable.helpers({
 			ret.push({time: dateCounter.format("h:mm A"), rowTimeId:theTime});
 			dateCounter.add(provObject.appointmentLength, "minutes");
 		}
-		var finalTime = dateCounter.format("h:mm A")
+		var finalTime = dateCounter.format("h:mm A");
 		// console.log(JSON.stringify({time: finalTime}));
 		ret.push({time: finalTime, rowTimeId:finalTime});
 		console.log("times has finished. Rerendering.");
@@ -63,15 +63,15 @@ Template.bookingTable.helpers({
 		return ret;
 	},
 	blockouts: function() {
-		var today = moment(Session.get('date')).format("dddd").toLowerCase();
-		return getBlockouts(today, Session.get("selectedProviderId"), Session.get('date'));
+		return getBlockouts(Session.get("selectedProviderId"), Session.get('date'));
 	},
 	appointments: function() {
 		var theDate = Session.get("date");
 		startDate = moment(theDate).startOf("day").toDate();
 		endDate = moment(theDate).endOf("day").toDate();
 		// console.log(JSON.stringify({date: {$gte: startDate, $lt: endDate}}));
-		queryPointer = appointmentList.find({date: {$gte: startDate, $lt: endDate}, providerID: Session.get("selectedProviderId")})
+		queryPointer = appointmentList.find({date: {$gte: startDate, $lt: endDate},
+			providerID: Session.get("selectedProviderId")});
 		return queryPointer;
 	},
 	providerNames: function() {
@@ -110,19 +110,7 @@ Template.bookingTable.helpers({
 });
 
 
-/*
-	                                           /$$             
-	                                          | $$             
-	  /$$$$$$  /$$    /$$ /$$$$$$  /$$$$$$$  /$$$$$$   /$$$$$$$
-	 /$$__  $$|  $$  /$$//$$__  $$| $$__  $$|_  $$_/  /$$_____/
-	| $$$$$$$$ \  $$/$$/| $$$$$$$$| $$  \ $$  | $$   |  $$$$$$ 
-	| $$_____/  \  $$$/ | $$_____/| $$  | $$  | $$ /$$\____  $$
-	|  $$$$$$$   \  $/  |  $$$$$$$| $$  | $$  |  $$$$//$$$$$$$/
-	 \_______/    \_/    \_______/|__/  |__/   \___/ |_______/ 
-	                                                           
-	                                                           
-	                                                           
-*/                                    
+
 Template.bookingTable.events({
 	'click .providerTab': function(event) {
 		Session.set("selectedProviderId", $(event.currentTarget).data("id"));
@@ -131,6 +119,10 @@ Template.bookingTable.events({
 		event.stopImmediatePropagation();
 		Router.go('editAppointment', {id: $(event.currentTarget).data("id")});
 		// Session.set("currentlyEditingDoc", );
+	},
+	'dblclick .blockoutItem': function(event) {
+		event.stopImmediatePropagation();
+		Router.go('editBlockout', {id: $(event.currentTarget).data("id")});
 	},
 	'click #customTimesButton': function(event) {
 		var provObject = providers.findOne(Session.get("selectedProviderId"))
@@ -145,18 +137,8 @@ Template.bookingTable.events({
 		Router.go("newAppointment", {time: event.currentTarget.previousElementSibling.innerHTML});
 		// };
 	}
-})
-// 	                                     /$$                                     /$$
-// 	                                    | $$                                    | $$
-// 	  /$$$$$$   /$$$$$$  /$$$$$$$   /$$$$$$$  /$$$$$$   /$$$$$$   /$$$$$$   /$$$$$$$
-// 	 /$$__  $$ /$$__  $$| $$__  $$ /$$__  $$ /$$__  $$ /$$__  $$ /$$__  $$ /$$__  $$
-// 	| $$  \__/| $$$$$$$$| $$  \ $$| $$  | $$| $$$$$$$$| $$  \__/| $$$$$$$$| $$  | $$
-// 	| $$      | $$_____/| $$  | $$| $$  | $$| $$_____/| $$      | $$_____/| $$  | $$
-// 	| $$      |  $$$$$$$| $$  | $$|  $$$$$$$|  $$$$$$$| $$      |  $$$$$$$|  $$$$$$$
-// 	|__/       \_______/|__/  |__/ \_______/ \_______/|__/       \_______/ \_______/
-// 	                                                                                
-// 	                                                                                
-// 	                                                                                
+});
+
 Template.bookingTable.rendered = function() {
 	// if (Roles.userIsInRole(Meteor.userId(), "provider")) {
 	// 	console.log("user is provider, setting selected provider id");

@@ -30,4 +30,12 @@ Template.blockoutItem.helpers({
 			return " - "
 		}
 	},
+	itemHighlightClass: function() {
+		// console.log(this);
+		if(typeof Session.get('currentlyEditingDoc') !== "undefined"
+			&& Session.get("currentlyEditingDoc") === this._id) {
+
+			return "being-edited";
+		}
+	}
 })

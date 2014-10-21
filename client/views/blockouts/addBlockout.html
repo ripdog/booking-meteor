@@ -5,7 +5,7 @@
 </template>
 
 <template name="insertBlockoutForm">
-	{{#autoForm collection="blockouts" type="insert" id="insertBlockoutFormInner"}}
+	{{#autoForm collection="blockouts" doc=currentDoc type=currentType id="insertBlockoutFormInner"}}
 	<h4 class="title">{{title}}</h4>
 	<div class="alert " style="display:none;" id="insertSuccessAlert" role="alert"></div>
 	<fieldset>

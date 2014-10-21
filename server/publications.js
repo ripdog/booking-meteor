@@ -8,7 +8,9 @@ Meteor.publish("appointmentList", function (date, providerId) {
 	try{
 		console.log("appointmentList subscribed by " + providers.findOne(providerId).name);
 	} catch(e) {
-		console.log("!!!! appointmentList subscribed without providerId!")
+		console.log("!!!! appointmentList subscribed without providerId!");
+		//this.stop();
+		//return;
 	}
 	return appointmentList.find({"date": {$gte: startDate, $lt: endDate}, "providerID": providerId});
 })
@@ -56,7 +58,7 @@ Meteor.publish(null, function(){
 	} else if (Roles.userIsInRole(this.userId, "provider")) {
 		return Meteor.users.find(this.userId, {fields: {providerID: 1}});
 	}
-})
+});
 Meteor.publish("userList", function() {
 	console.log("userlist caller is admin? " + Roles.userIsInRole(this.userId, 'admin'))
 	if(!this.userId || !Roles.userIsInRole(this.userId, 'admin')) {
@@ -64,4 +66,37 @@ Meteor.publish("userList", function() {
 		return;
 	}
 	return Meteor.users.find();
-})
+});
+Meteor.publish("blockouts", function(date, provider) {
+	try {
+		console.log("blockouts subscribed by:  " + providers.findOne(provider).name);
+	}
+	catch(e) {
+		console.log("blockouts subscribed without provider id");
+		//this.stop();
+		//return;
+	}//no providerID provided.
+	if(!this.userId) {
+		this.stop();
+		return;
+	}
+	var startDate = moment(date).startOf('day').toDate();
+	var endDate = moment(date).endOf('day').toDate();
+	//console.log({date: {$gte: startDate, $lt: endDate}, providerID: provider});
+	//console.log(blockouts.find().fetch());
+	return blockouts.find({date: {$gte: startDate, $lt: endDate}, providerID: provider});
+});
+Meteor.publish("singleAppoint", function(id) {
+	if(!this.userId) {
+		this.stop();
+		return;
+	}
+	return appointmentList.find(id);
+});
+Meteor.publish("singleBlockout", function(id) {
+	if(!this.userId) {
+		this.stop();
+		return;
+	}
+	return blockouts.find(id);
+});

@@ -27,13 +27,16 @@ Template.insertBlockoutForm.events({
 	},
 	'click #deleteBlockoutButton': function() {
 		if (confirm("Are you sure you want to delete this blockout?")) {
-			// appointmentList.remove(Session.get("currentlyEditingDoc"));
-			//TODO: How?
+			blockouts.remove(Session.get("currentlyEditingDoc"));
 			Router.go('/');
 		}
 	}
 
-})
+});
+Template.insertBlockoutForm.rendered = function() {
+	console.log("rerendering");
+	rerenderDep.changed();
+};
 
 Template.insertBlockoutForm.helpers({
 	title: function(){
@@ -75,7 +78,7 @@ Template.insertBlockoutForm.helpers({
 			//will be fixed for real when iron router is used for appointment editing
 			///creation
 		} else {//update, grab length from current doc
-			return unusualDays.findOne(Session.get("currentlyEditingDoc")).length;
+			return blockouts.findOne(Session.get("currentlyEditingDoc")).length;
 		}
 	},
 	currentType: function() {
@@ -94,10 +97,10 @@ Template.insertBlockoutForm.helpers({
 				return "12:00 PM";
 			}
 		} else {
-			return unusualDays.findOne(Session.get("currentlyEditingDoc")).time;
+			return blockouts.findOne(Session.get("currentlyEditingDoc")).time;
 		}
 	},
-	currentDoc: function() {return unusualDays.findOne({date: Session.get("date")});},
+	currentDoc: function() {return blockouts.findOne(Session.get("currentlyEditingDoc"));},
 	deleteButtonClass: function() {if (Session.get("formForInsert")) {
 		return "hidden";
 	}}
@@ -111,10 +114,8 @@ AutoForm.hooks({
 			succAlert.show("fast");//possible race condition? If error occours and form is correctly submitted within 3000ms
 			$('#saveAppointChanges').attr("disabled", true);
 		},
-		endSubmit: function(fieldId, template) {
-			console.log("endSubmit run!");
-			console.log(template)
-		},
+		//endSubmit: function(fieldId, template) {
+		//},
 		docToForm: function(doc){
 			if (doc.date instanceof Date) {
 				doc.time = moment(doc.date).format("h:mm A");
@@ -161,10 +162,46 @@ AutoForm.hooks({
 			Meteor.setTimeout(function() {
 				$('#insertSuccessAlert').hide("slow");
 			}, 3000);
+			_.each(error.invalidKeys, function(invalidKey) {
+				if (invalidKey.type === "overlappingDates") {
+					blockouts.simpleSchema().namedContext("insertBlockoutFormInner").addInvalidKeys([{
+						name: "time",
+						type: invalidKey.type,
+						value: moment(invalidKey.value).format("h:mm A")
+					}])
+				}
+				else if (invalidKey.type === "dateOutOfBounds") {
+					try {
+						var cleanDate = moment(template.data.doc.date).startOf("day");
+						var provObject = unusualDays.findOne({date: cleanDate.toDate(), providerID: template.data.doc.providerID});
+						if (typeof provObject === "undefined") {
+							provObject = providers.findOne(template.data.doc.providerID);
+						}
+					} catch (e) {
+						cleanDate = moment(Session.get('date')).startOf('day');
+						provObject = unusualDays.findOne({date: cleanDate.toDate(), providerID: Session.get("selectedProviderId")});
+						if (typeof provObject === "undefined") {
+							provObject = providers.findOne(Session.get("selectedProviderId"));
+						}
+					}
+
+					blockouts.simpleSchema().namedContext("insertBlockoutFormInner").addInvalidKeys([{
+						name: "time",
+						type: invalidKey.type,
+						value: provObject.startTime + " and " + provObject.endTime
+					}])
+				}
+				else if (invalidKey.type === "overlappingBlockout") {
+					blockouts.simpleSchema().namedContext("insertBlockoutFormInner").addInvalidKeys([{
+						name: "time",
+						type: invalidKey.type,
+						//value: moment(invalidKey.value).format("h:mm A")
+					}])
+				}
+			});
 		},
 		after: {
-			insert: function(error, result) {//TODO: When appointment is made, use the data-id var
-				//to find it in the appointment list and bounce it!
+			insert: function(error, result) {
 				if (error) {
 					console.log("Insert Error:", error);
 					$("#insertSuccessAlert").alert();

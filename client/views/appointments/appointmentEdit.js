@@ -153,7 +153,7 @@ AutoForm.hooks({
 			try {
 				$('#datetimepicker4').data("DateTimePicker").setDate(moment(doc.date));
 			} catch (e) {
-				$('#datetimepicker4 > input').val(moment(doc.date).format("h:mm A"))
+				$('#datetimepicker4 > input').val(moment(doc.date).format("h:mm A"));
 				//TODO: Fallback date setting
 			}
 			return doc;
@@ -206,7 +206,7 @@ AutoForm.hooks({
 
 					appointmentList.simpleSchema().namedContext("insertAppointmentFormInner").addInvalidKeys([{
 						name: "time",
-						type: error.invalidKeys[invalidKey].type,
+						type: invalidKey.type,
 						value: provObject.startTime + " and " + provObject.endTime
 					}])
 				}

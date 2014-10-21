@@ -24,6 +24,17 @@ function mustBeSignedIn(pause) {
 	}
 }
 
+returnStandardSubs = function() {
+	Session.setDefault("date", moment().startOf("day").toDate());
+	return [
+		Meteor.subscribe('appointmentList', Session.get('date'), Session.get("selectedProviderId")),
+		Meteor.subscribe("unusualDays", Session.get("date")),
+		Meteor.subscribe('providerSubscription'),
+		Meteor.subscribe('blockouts', Session.get('date'), Session.get("selectedProviderId"))
+	];
+
+}
+
 // Links to / should choose whether to default to today or existing date
 //based on Session.get('date')
 Router.route('bookingTable', {//Split up the bookingTable so that the appointment
@@ -31,10 +42,7 @@ Router.route('bookingTable', {//Split up the bookingTable so that the appointmen
   //stuff disappears when changing date. Add date to url.
 	path: '/',
 	waitOn: function() {
-		Session.setDefault("date", moment().startOf("day").toDate());
-
-		return [this.subscribe('appointmentList', Session.get('date'), Session.get("selectedProviderId")),
-     this.subscribe("unusualDays", Session.get("date")), this.subscribe('providerSubscription')];
+		return returnStandardSubs();
 	},
 	onBeforeAction: function () {
 			Session.setDefault("formForInsert", true);//insert
@@ -53,15 +61,13 @@ Router.route("permalink", {
 		Session.set("selectedProviderId", this.params.date);
 		Router.go('bookingTable');
 	}
-})
+});
 Router.route('newAppointment', {
 	path: '/new/:time?',//TODO: Where all is this set?
 	layoutTemplate: "sideEditMasterTemplate",
 	template: 'appointmentEdit',
 	waitOn: function() {
-		Session.setDefault("date", moment().startOf("day").toDate());
-		return [this.subscribe('appointmentList', Session.get('date'), Session.get("selectedProviderId")),
-     this.subscribe("unusualDays", Session.get("date")), this.subscribe('providerSubscription')];
+		return returnStandardSubs();
 	},
 	loadingTemplate: 'loading',
 	onBeforeAction: function () {
@@ -88,31 +94,29 @@ Router.route('newAppointment', {
 		}
 	},
 	onAfterAction: function() {
-		if (this.ready()) {
+		//if (this.ready()) {
 			//AutoForm.resetForm("insertAppointmentFormInner");
-		}
-		var provObject = unusualDays.findOne({date: Session.get("date"), providerID: Session.get("selectedProviderId")})
-		if (!provObject) {
-			provObject = providers.findOne(Session.get("selectedProviderId"))
-		}
-		try {//ensure there is a sane default for appointment length field.
-			$("#insertAppointmentFormInner [data-schema-key='length']").val(provObject.appointmentLength);
-		} 
-		catch(e) {}
+		//}
+
 		if (this.params.time) {
 			if (this.ready()) {
+				var provObject = unusualDays.findOne({date: Session.get("date"), providerID: Session.get("selectedProviderId")})
+				if (!provObject) {
+					provObject = providers.findOne(Session.get("selectedProviderId"))
+				}
+				try {//ensure there is a sane default for appointment length field.
+					$("#insertAppointmentFormInner [data-schema-key='length']").val(provObject.appointmentLength);
+				}
+				catch(e) {}
 				try {
-					
 					$('#datetimepicker4').data("DateTimePicker").setDate(this.params.time);
 				} catch (e) {}
 			}
-
-			
 		}
 	},
 	onStop: function() {
-		console.log("onStop for New Appointment");
-		console.log(this);
+		//console.log("onStop for New Appointment");
+		//console.log(this);
 		Session.set("newTime", null);//remove Highlight
 	}
 });
@@ -121,9 +125,7 @@ Router.route('editAppointment', {
 	layoutTemplate: "sideEditMasterTemplate",
 	template: 'appointmentEdit',//TODO: If not on correct date for appointment, change
 	waitOn: function() {
-		Session.setDefault("date", moment().startOf("day").toDate());
-		return [this.subscribe('appointmentList', Session.get('date'), Session.get("selectedProviderId")),
-     this.subscribe("unusualDays", Session.get("date")), this.subscribe('providerSubscription')];
+		return returnStandardSubs().push(Meteor.subscribe("singleAppointment", this.params.id));
 	},
 	loadingTemplate: 'loading',
 	onBeforeAction: function () {
@@ -132,7 +134,7 @@ Router.route('editAppointment', {
 		if(this.ready()) {
 			Session.set("date", moment(appointmentList.findOne(this.params.id).date).startOf('day').toDate());
 		}
-		
+
 	},
 	action: function() {
 		if(this.ready()) {
@@ -155,9 +157,7 @@ Router.route('newBlockoutForm', {
 	layoutTemplate: "sideEditMasterTemplate",
 	template: 'blockoutEdit',
 	waitOn: function() {
-		Session.setDefault("date", moment().startOf("day").toDate());
-		return [this.subscribe('appointmentList', Session.get('date'), Session.get("selectedProviderId")),
-     this.subscribe("unusualDays", Session.get("date")), this.subscribe('providerSubscription')];
+		return returnStandardSubs();
 	},
 	onBeforeAction: function() {
 		Session.set("formForInsert", true);
@@ -166,8 +166,47 @@ Router.route('newBlockoutForm', {
 	action: function() {
 		this.render('bookingTable', {to: "right"});
 		this.render();
+	},
+	onAfterAction: function() {
+		if (this.ready()) {
+			try {
+				$('#datetimepicker4').data("DateTimePicker").setDate(this.params.time);
+			} catch (e) {}
+		}
 	}
 
+});
+Router.route('editBlockout', {
+	path: '/editBlockout/:id',
+	layoutTemplate: "sideEditMasterTemplate",
+	template: 'blockoutEdit',//TODO: If not on correct date for appointment, change
+	waitOn: function() {
+		return returnStandardSubs();
+	},
+	loadingTemplate: 'loading',
+	onBeforeAction: function () {
+		this.wait(Meteor.subscribe("singleBlockout", this.params.id));
+		Session.set("formForInsert", false);
+		Session.set("currentlyEditingDoc", this.params.id);
+		if(this.ready()) {
+			Session.set("date", moment(blockouts.findOne(this.params.id).date).startOf('day').toDate());
+		}
+	},
+	action: function() {
+		if(this.ready()) {
+			this.render('bookingTable', {to: 'right'});
+			this.render();
+		}
+	},
+	onAfterAction: function() {
+		if (this.ready()) {
+			AutoForm.resetForm("insertBlockoutFormInner");
+		}
+	},
+	onStop: function() {
+		Session.set("formForInsert", true);
+		Session.set("currentlyEditingDoc", null);
+	}
 });
 Router.route('providerList', {
 	path: '/providers',
@@ -180,10 +219,7 @@ Router.route('userList', {
 	waitOn: function() {
 		return [Meteor.subscribe("userList"), Meteor.subscribe('providerSubscription')];
 	}
-})
-// this.route('registration', {
-// 	path: '/register',
-// });
+});
 Router.route('login', {
 	path: '/login/:redirect(*)?',
 	onBeforeAction: function() {
@@ -192,4 +228,3 @@ Router.route('login', {
 		}
 	}
 });
-
