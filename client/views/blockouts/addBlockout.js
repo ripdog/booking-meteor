@@ -106,50 +106,36 @@ Template.insertBlockoutForm.helpers({
 AutoForm.hooks({
 	insertBlockoutFormInner: {
 		beginSubmit: function(fieldId, template) {
-			$('#insertSuccessAlert')[0].innerHTML = "Submitting...";
-			$('#insertSuccessAlert').show("fast");//possible race condition? If error occours and form is correctly submitted within 3000ms
+			var succAlert = $('#insertSuccessAlert');
+			succAlert[0].innerHTML = "Submitting...";
+			succAlert.show("fast");//possible race condition? If error occours and form is correctly submitted within 3000ms
 			$('#saveAppointChanges').attr("disabled", true);
 		},
 		endSubmit: function(fieldId, template) {
-			console.log("endSubmit run!")
+			console.log("endSubmit run!");
 			console.log(template)
 		},
-		onSubmit: function(insertDoc, updateDoc, currentDoc) {
-			console.log("submitting blockout");
-			var todaysUnusualDay = unusualDays.findOne({date: Session.get('date')})
-			if (!todaysUnusualDay) {
-				console.log("unable to find unusualDay for today, making one");
-				var provObject = providers.findOne(Session.get("selectedProviderId"))
-				todaysUnusualDay = unusualDays.findOne(unusualDays.insert({date: Session.get('date'), providerID: Session.get("selectedProviderId"), 
-					startTime: provObject.startTime, endTime: provObject.endTime, 
-					appointmentLength: provObject.appointmentLength}));
+		docToForm: function(doc){
+			if (doc.date instanceof Date) {
+				doc.time = moment(doc.date).format("h:mm A");
 			}
-			AutoForm.validateField("insertBlockoutFormInner", 'blockouts.$.title', false);
-			console.log(insertDoc);
-			console.log(this);
-			console.log("got an unusualDay");
-			console.log(todaysUnusualDay);
-			var results = unusualDays.update(
-				todaysUnusualDay._id,
-				{$push: {blockouts: {
-					title: insertDoc.title,
-					time: insertDoc.time,
-					length: insertDoc.length
-				}}}
-			);
-			console.log(results);
-			if (typeof results !== "string") {
-				this.resetForm();
-				this.done();
+			try {
+				$('#datetimepicker4').data("DateTimePicker").setDate(moment(doc.date));
+			} catch (e) {
+				$('#datetimepicker4 > input').val(moment(doc.date).format("h:mm A"))
+				//TODO: Fallback date setting
 			}
-			else if (results === "badTitle") {
-				AutoForm.getValidationContext("insertBlockoutFormInner").addInvalidKeys([{
-					name: "title",
-					type: "badTitle"
-				}])
+			return doc;
+		},
+		formToDoc: function(doc){
+			if (typeof doc.time === "string") {
+				var datestring = moment(Session.get("date")).tz("Pacific/Auckland").format("YYYY-MM-DD ") + doc.time;
+				//the time is localtime, the date is utc. Set the date to localtime, add the time
+				//then convert back to utc.
+				doc.date = moment(datestring, "YYYY-MM-DD hh:mm A").utc().toDate();
 			}
-			return false;
-
+			doc.providerID = Session.get("selectedProviderId");
+			return doc;
 		},
 		onSuccess: function(operation, result, template) {
 			if(template.data.type === "update") {
@@ -157,8 +143,9 @@ AutoForm.hooks({
 			} else {
 				$('#insertSuccessAlert')[0].innerHTML = "New Blockout Created.";
 			}
-			$('#insertSuccessAlert').removeClass('alert-danger alert-info alert-info alert-success');
-			$('#insertSuccessAlert').addClass('alert-success');
+			var succAlert = $('#insertSuccessAlert');
+			succAlert.removeClass('alert-danger alert-info alert-info alert-success');
+			succAlert.addClass('alert-success');
 			$('td.rowContent.bg-success').removeClass('bg-success');
 			closeTimeout = Meteor.setTimeout(function() {
 				Router.go('bookingTable');
