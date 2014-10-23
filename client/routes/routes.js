@@ -125,14 +125,17 @@ Router.route('editAppointment', {
 	layoutTemplate: "sideEditMasterTemplate",
 	template: 'appointmentEdit',//TODO: If not on correct date for appointment, change
 	waitOn: function() {
-		return returnStandardSubs().push(Meteor.subscribe("singleAppointment", this.params.id));
+		return returnStandardSubs();
 	},
 	loadingTemplate: 'loading',
 	onBeforeAction: function () {
+		this.wait(Meteor.subscribe("singleAppoint", this.params.id));
 		Session.set("formForInsert", false);
 		Session.set("currentlyEditingDoc", this.params.id);
 		if(this.ready()) {
-			Session.set("date", moment(appointmentList.findOne(this.params.id).date).startOf('day').toDate());
+			var appoint = appointmentList.findOne(this.params.id);
+			Session.set("date", moment(appoint.date).startOf('day').toDate());
+			Session.set('selectedProviderId', appoint.providerID);
 		}
 
 	},
