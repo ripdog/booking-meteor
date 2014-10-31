@@ -14,60 +14,84 @@ function mustBeSignedIn(pause) {
 	if (Meteor.loggingIn()) {
 		console.log("currently logging in");
 		this.render('loading');
-		pause();
 	} else {
 		user = Meteor.user();
 		if (!user) {
 			console.log("need to sign in");
 			Router.go('login', {redirect: this.options.path});
 		}
+		this.next();
 	}
 }
 
-returnStandardSubs = function() {
-	Session.setDefault("date", moment().startOf("day").toDate());
-	return [
-		Meteor.subscribe('appointmentList', Session.get('date'), Session.get("selectedProviderId")),
-		Meteor.subscribe("unusualDays", Session.get("date")),
-		Meteor.subscribe('providerSubscription'),
-		Meteor.subscribe('blockouts', Session.get('date'), Session.get("selectedProviderId"))
-	];
+//editDataLoader.load = function(id) {//thanks to Manuel Schoebel
+//	var handle, self;
+//	self = this;
+//	if (!this._subs[sub]) {
+//		this._subs[sub] = {
+//			src: sub,
+//			ready: false,
+//			readyDeps: new Tracker.Dependency
+//		};
+//		Meteor.call('getAppointmentById', id)
+//	}
+//	handle = {
+//		ready: function() {
+//			var sub;
+//			sub = self._libs[src];
+//			lib.readyDeps.depend();
+//			return lib.ready;
+//		}
+//	};
+//	return handle;
+//};
 
-}
+returnStandardSubs = function(date, provName, appntId, blockId) {
+	var thedate = moment(date, 'YYYY-MM-DD').startOf('day').toDate();
+	var list = [];
+	if (typeof date === "string" && typeof provName === "string") {
+		Session.set("date", thedate);
+		Session.set("selectedProviderName", provName);
+		list = list.concat([Meteor.subscribe('appointmentList', Session.get('date'), Session.get("selectedProviderName")),
+			Meteor.subscribe("unusualDays", Session.get("date")),
+			Meteor.subscribe('blockouts', Session.get('date'), Session.get("selectedProviderName"))]);
+	}
+	if (typeof appntId === "string") {
+		list = list.concat(Meteor.subscribe('singleAppoint', appntId));
+	} else if (typeof blockId === "string") {
+		list = list.concat(Meteor.subscribe('singleBlockout', blockId));
+	}
+	console.log(list);
+	return list;
 
-// Links to / should choose whether to default to today or existing date
-//based on Session.get('date')
-Router.route('bookingTable', {//Split up the bookingTable so that the appointment
-  //items always render after the table itself. Also allow cleanup so less
-  //stuff disappears when changing date. Add date to url.
+
+
+};
+
+Tracker.autorun(function() {
+	console.log("session date has changed! " + Session.get('date'));
+});
+/*TODO: Links to / should choose whether to default to today or existing date
+based on Session.get('date')*/
+Router.route('index', {
 	path: '/',
-	waitOn: function() {
-		return returnStandardSubs();
-	},
-	onBeforeAction: function () {
-			Session.setDefault("formForInsert", true);//insert
-	},
 	action: function() {
-		if(this.ready()) {
-			Session.setDefault("selectedProviderId", providers.findOne()._id);
-			this.render();
+		if (this.ready()) {
+			Router.go('bookingTable',
+				{date: moment().startOf('day').format('YYYY-MM-DD'),
+					provName: providers.findOne().name});
 		}
-	},
-});
-Router.route("permalink", {
-	path: '/perma/:prov/:date',
-	action: function() {
-		Session.set("date", moment(Date(this.params.date)).startOf('day').toDate());
-		Session.set("selectedProviderId", this.params.date);
-		Router.go('bookingTable');
 	}
 });
+
+
 Router.route('newAppointment', {
-	path: '/new/:time?',//TODO: Where all is this set?
+	path: '/new/:date/:provName/:time?',//TODO: Where all is this set?
 	layoutTemplate: "sideEditMasterTemplate",
 	template: 'appointmentEdit',
 	waitOn: function() {
-		return returnStandardSubs();
+		console.log("NewAppointment here, grabbing my standard subs!");
+		return returnStandardSubs(this.params.date, this.params.provName, null, null);
 	},
 	loadingTemplate: 'loading',
 	onBeforeAction: function () {
@@ -81,11 +105,11 @@ Router.route('newAppointment', {
 		Session.set("currentlyEditingDoc", null);
 		
 		if (this.params.time) {
-			var momentvar = moment(this.params.time, "hh:mm A");
+			//var momentvar = moment(this.params.time, "hh-mm-A");
 			//Session.set("date", momentvar.startOf('day').toDate());
-			Session.set("newTime", momentvar.format("h:mm A"));
+			Session.set("newTime", this.params.time.replace('-', ':').replace('-', ' '));
 		}
-		
+		this.next();
 	},
 	action: function() {
 		if(this.ready()) {
@@ -100,10 +124,8 @@ Router.route('newAppointment', {
 
 		if (this.params.time) {
 			if (this.ready()) {
-				var provObject = unusualDays.findOne({date: Session.get("date"), providerID: Session.get("selectedProviderId")})
-				if (!provObject) {
-					provObject = providers.findOne(Session.get("selectedProviderId"))
-				}
+
+				var provObject = getProvObject(Session.get("date"), Session.get('selectedProviderName'));
 				try {//ensure there is a sane default for appointment length field.
 					$("#insertAppointmentFormInner [data-schema-key='length']").val(provObject.appointmentLength);
 				}
@@ -116,7 +138,6 @@ Router.route('newAppointment', {
 	},
 	onStop: function() {
 		//console.log("onStop for New Appointment");
-		//console.log(this);
 		Session.set("newTime", null);//remove Highlight
 	}
 });
@@ -125,18 +146,38 @@ Router.route('editAppointment', {
 	layoutTemplate: "sideEditMasterTemplate",
 	template: 'appointmentEdit',//TODO: If not on correct date for appointment, change
 	waitOn: function() {
-		return returnStandardSubs();
+		return returnStandardSubs(null, null, this.params.id, null);
 	},
 	loadingTemplate: 'loading',
 	onBeforeAction: function () {
-		this.wait(Meteor.subscribe("singleAppoint", this.params.id));
+		//this.subscribe("singleAppoint", this.params.id).wait();
+		//var self = this;
+		//Meteor.call('getAppointmentById', this.params.id, function(err, result) {
+		//	console.log(result);
+		//	console.log(self);
+		//	self.wait(returnStandardSubs(moment(result.date).format('YYYY-MM-DD'), result.provName, result.provName, null));
+		//});
+		var handle = Meteor.subscribe('singleAppoint', this.params.id);
+		if (handle.ready()) {
+			var appoint = appointmentList.findOne(this.params.id);
+			console.log('found appointment')
+			Session.set('date', moment(appoint.date).startOf('day').toDate());
+			Session.set('selectedProviderName', appoint.providerName);
+			this.wait(returnStandardSubs(moment(appoint.date).startOf('day').format('YYYY-MM-DD'), appoint.provName, null, null));
+			this.next();
+		}
 		Session.set("formForInsert", false);
 		Session.set("currentlyEditingDoc", this.params.id);
-		if(this.ready()) {
-			var appoint = appointmentList.findOne(this.params.id);
-			Session.set("date", moment(appoint.date).startOf('day').toDate());
-			Session.set('selectedProviderId', appoint.providerID);
-		}
+		//if(this.ready()) {
+		//	Session.set('selectedProviderName', providers.findOne().name);
+		//	Session.set('date', moment().startOf('day').toDate());
+		//}
+		//	console.log('onBeforeAction for appointmentEdit is ready');
+
+
+		//
+		//}
+
 
 	},
 	action: function() {
@@ -165,6 +206,7 @@ Router.route('newBlockoutForm', {
 	onBeforeAction: function() {
 		Session.set("formForInsert", true);
 		Session.set("currentlyEditingDoc", null);
+		this.next();
 	},
 	action: function() {
 		this.render('bookingTable', {to: "right"});
@@ -194,6 +236,7 @@ Router.route('editBlockout', {
 		if(this.ready()) {
 			Session.set("date", moment(blockouts.findOne(this.params.id).date).startOf('day').toDate());
 		}
+		this.next();
 	},
 	action: function() {
 		if(this.ready()) {
@@ -223,11 +266,37 @@ Router.route('userList', {
 		return [Meteor.subscribe("userList"), Meteor.subscribe('providerSubscription')];
 	}
 });
+
+
+//TODO: Split up the bookingTable so that the appointment
+//items always render after the table itself. Also allow cleanup so less
+//stuff disappears when changing date. Add date to url.
+Router.route('bookingTable', {
+	path: '/:date/:provName',
+	waitOn: function() {
+		console.log("doing waitOn for bookingtable");
+		subs = returnStandardSubs(this.params.date, this.params.provName);
+		console.log(subs);
+		return subs;
+	},
+	onBeforeAction: function () {
+		Session.setDefault("formForInsert", true);
+		this.next();
+	},
+	action: function() {
+		if(this.ready()) {
+			this.render();
+		}
+	}
+});
+
+
 Router.route('login', {
-	path: '/login/:redirect(*)?',
+	path: '/login/:redirect*',
 	onBeforeAction: function() {
 		if(this.params.redirect) {
 			Session.set('loginRedirect', this.params.redirect);
 		}
+		this.next();
 	}
 });

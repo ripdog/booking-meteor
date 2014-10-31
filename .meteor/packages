@@ -8,7 +8,6 @@ insecure
 splendido:moment-twix
 aldeed:autoform
 aldeed:collection2
-iron:router
 mizzao:bootboxjs
 ian:bootstrap-3
 ian:accounts-ui-bootstrap-3
@@ -18,10 +17,10 @@ less
 accounts-password
 alanning:roles
 underscore
-splendido:accounts-templates-bootstrap
 aldeed:simple-schema@1.0.3
-meteorhacks:zones
 meteorhacks:subs-manager
 natestrauser:jquery-scrollto
 mrt:moment-timezone
+iron:router@1.0.0
+useraccounts:bootstrap
 

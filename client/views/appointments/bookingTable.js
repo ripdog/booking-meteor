@@ -11,7 +11,7 @@
 // 	                        |__/                                    
 Template.bookingTable.helpers({
 	unusualDays: function() {
-		return unusualDays.findOne({date: Session.get("date"), providerID: Session.get("selectedProviderId")});
+		return unusualDays.findOne({date: Session.get("date"), providerName: Session.get("selectedProviderName")});
 	},
 	day: function() {
 		var momentobj = moment(Session.get("date"));
@@ -22,24 +22,11 @@ Template.bookingTable.helpers({
 		return Meteor.userId();
 	},
 	times: function(){
-		Tracker.autorun(function() {
-			
-			if (typeof Session.get("selectedProviderId") === "undefined") {
-				try {
-					Session.setDefault("selectedProviderId", providers.findOne()._id);
-					console.log("No selectedProviderId, selecting one.")
-				}
-				catch (e) {}
-			}
-		});
 		if (Roles.userIsInRole(Meteor.userId(), "provider")) {
-			console.log("user is provider, setting selected provider id");
-			Session.set("selectedProviderId", Meteor.user().providerID);
+			console.log("user is provider, setting selected provider name");
+			Session.set("selectedProviderName", Meteor.user().providerName);
 		}
-		var provObject = unusualDays.findOne({date: Session.get("date"), providerID: Session.get("selectedProviderId")});
-		if (!provObject) {
-			provObject = providers.findOne(Session.get("selectedProviderId"));
-		}
+		var provObject = getProvObject(Session.get("date"), Session.get('selectedProviderName'));
 		if (!provObject) {
 			console.log("provider not yet available, bailing out");
 			return;
@@ -52,7 +39,7 @@ Template.bookingTable.helpers({
 		while(dateTarget.diff(dateCounter) > 0)
 		{
 			theTime = dateCounter.format("h:mm A");
-			ret.push({time: dateCounter.format("h:mm A"), rowTimeId:theTime});
+			ret.push({time: theTime, rowTimeId:theTime});
 			dateCounter.add(provObject.appointmentLength, "minutes");
 		}
 		var finalTime = dateCounter.format("h:mm A");
@@ -63,7 +50,7 @@ Template.bookingTable.helpers({
 		return ret;
 	},
 	blockouts: function() {
-		return getBlockouts(Session.get("selectedProviderId"), Session.get('date'));
+		return getBlockouts(Session.get("selectedProviderName"), Session.get('date'));
 	},
 	appointments: function() {
 		var theDate = Session.get("date");
@@ -71,31 +58,24 @@ Template.bookingTable.helpers({
 		endDate = moment(theDate).endOf("day").toDate();
 		// console.log(JSON.stringify({date: {$gte: startDate, $lt: endDate}}));
 		queryPointer = appointmentList.find({date: {$gte: startDate, $lt: endDate},
-			providerID: Session.get("selectedProviderId")});
+			providerName: Session.get("selectedProviderName")});
 		return queryPointer;
 	},
 	providerNames: function() {
 		return providers.find({}, {fields: {name: 1}})
 	},
 	selected: function() {
-		if(Session.get("selectedProviderId") === this._id) {
+		if(Session.get("selectedProviderName") === this.name) {
 			return "active";
 		}
 	},
 	todaysUnusualTimes: function () {
-		return unusualDays.findOne({date:Session.get('date'), providerID: Session.get("selectedProviderId")})
+		return unusualDays.findOne({date:Session.get('date'), providerName: Session.get("selectedProviderName")})
 	},
-	// unusualDaysFormClass: function() {
-		
-	// 	if (unusualDays.findOne({date:Session.get('date'), providerID: Session.get("selectedProviderId")})){
-	// 		return "form-inline";
-	// 	} else {
-	// 		return "hidden";
-	// 	}
-	// },
+
 	buttonStyle: function() {
 		
-		if (unusualDays.findOne({date:Session.get('date'), providerID: Session.get("selectedProviderId")})){
+		if (unusualDays.findOne({date:Session.get('date'), providerName: Session.get("selectedProviderName")})){
 			return "display: none;";
 		}
 		else {
@@ -104,7 +84,7 @@ Template.bookingTable.helpers({
 	},
 	notes: function () {
 		try{
-			return unusualDays.findOne({date:Session.get('date'), providerID: Session.get("selectedProviderId")}).notes
+			return unusualDays.findOne({date:Session.get('date'), providerName: Session.get("selectedProviderName")}).notes
 		} catch(e) {/*fails when there is no unusualDay for today.*/}
 	}
 });
@@ -113,7 +93,8 @@ Template.bookingTable.helpers({
 
 Template.bookingTable.events({
 	'click .providerTab': function(event) {
-		Session.set("selectedProviderId", $(event.currentTarget).data("id"));
+		console.log('providerTab clicked');
+		changeParams(null,$(event.currentTarget).data("name"));
 	},
 	'dblclick .appointmentItem': function(event) {
 		event.stopImmediatePropagation();
@@ -125,25 +106,22 @@ Template.bookingTable.events({
 		Router.go('editBlockout', {id: $(event.currentTarget).data("id")});
 	},
 	'click #customTimesButton': function(event) {
-		var provObject = providers.findOne(Session.get("selectedProviderId"))
-		unusualDays.insert({date: Session.get('date'), providerID: Session.get("selectedProviderId"), startTime: provObject.startTime, endTime: provObject.endTime, appointmentLength: provObject.appointmentLength});
+		var provObject = providers.findOne({name: Session.get("selectedProviderName")});
+		unusualDays.insert({date: Session.get('date'),
+			providerName: Session.get("selectedProviderName"),
+			startTime: provObject.startTime,
+			endTime: provObject.endTime,
+			appointmentLength: provObject.appointmentLength});
 	},
 	'click #deleteCustomTimes': function(event) {
-		unusualDays.remove(unusualDays.findOne({date:Session.get('date'), providerID: Session.get("selectedProviderId")})._id);
+		unusualDays.remove(unusualDays.findOne({date:Session.get('date'), providerName: Session.get("selectedProviderName")})._id);
 	},
 	'dblclick .rowContent': function(event) {
-		// if (Router.current().route.name === "newAppointment" || 
-		// 	Router.current().route.name === "bookingTable") {
-		Router.go("newAppointment", {time: event.currentTarget.previousElementSibling.innerHTML});
-		// };
+		newAppointment(event.currentTarget.previousElementSibling.innerHTML.replace(':','-'));
 	}
 });
 
 Template.bookingTable.rendered = function() {
-	// if (Roles.userIsInRole(Meteor.userId(), "provider")) {
-	// 	console.log("user is provider, setting selected provider id");
-	// 	Session.set("selectedProviderId", Meteor.user().providerID);
-	// }
 	console.log("rerendering");
 	rerenderDep.changed();
 	Tracker.autorun(function(asd) {

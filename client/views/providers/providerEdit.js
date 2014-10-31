@@ -1,5 +1,5 @@
 Template.providerEdit.helpers({
 	editingProvider: function(){
-		return providers.findOne({_id: Session.get("selectedProviderId")})
+		return providers.findOne({name: Session.get("selectedProviderName")})
 	}
 })
