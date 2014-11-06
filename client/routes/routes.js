@@ -23,7 +23,6 @@ function mustBeSignedIn() {
 		this.next();
 	}
 }
-
 //editDataLoader.load = function(id) {//thanks to Manuel Schoebel
 //	var handle, self;
 //	self = this;
@@ -255,7 +254,7 @@ Router.route('editBlockout', {
 	}
 });
 Router.route('providerList', {
-	path: '/providers',
+	path: '/providers'
 	//waitOn: function() {
 	//	return Meteor.subscribe('providerSubscription');
 	//}

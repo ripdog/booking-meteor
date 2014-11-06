@@ -12,9 +12,10 @@ tableItemLeft = function(thisobj) {
 	return $(".rowHeader").css("width");
 }
 tableItemTop = function(thisobj) {
+	console.log(thisobj);
 	if (!thisobj.date) {//this is a blockout
 		var datestring = moment(Session.get("date")).tz("Pacific/Auckland").format("YYYY-MM-DD ") + thisobj.time;
-		var thedate = moment(datestring);
+		var thedate = moment(datestring, "YYYY-MM-DD hh:mm A");
 		// console.log(thedate);
 	} else {
 		thedate = thisobj.date;
