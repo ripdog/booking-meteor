@@ -1,4 +1,3 @@
-
 function dayDelta(date) {
 	var diff = moment(date).diff(moment().startOf('day'), "days");
 	if (diff===1){
@@ -32,7 +31,7 @@ Template.insertAppointmentForm.events({
 		}
 	}
 
-})
+});
 Template.insertAppointmentForm.rendered = function() {
 	console.log("appointment edit rendered");
 	$('input[name="time"]').change(function() {
@@ -42,15 +41,15 @@ Template.insertAppointmentForm.rendered = function() {
 			//Router.go("newAppointment", {time: $('input[name="time"]').val()});
 		}
 	});
-	$('#datetimepicker4').on("dp.change", function(e) {
+	$('#datetimepicker4').on("dp.change", function () {
 		if (Router.current().route.name === "newAppointment" || 
 			Router.current().route.name === "bookingTable") {
 			newAppointment($('input[name="time"]').val());
-		};
-	})
+		}
+	});
 	// $('tr.timeRow.bg-success').removeClass('bg-success');
 	// $("td:contains("+$('input[name="time"]').val()+")").parent().addClass('bg-success');
-}
+};
 Template.insertAppointmentForm.helpers({
 	appointmentList: appointmentList,
 	title: function(){
@@ -127,9 +126,6 @@ AutoForm.hooks({
 			$('#saveAppointChanges').attr("disabled", true);
 			// appointmentList.simpleSchema().clean(doc);
 		},
-		endSubmit: function(fieldId, template) {
-			// 
-		},
 
 		onSuccess: function(operation, result, template) {
 			if(template.data.type === "update") {
@@ -192,12 +188,13 @@ AutoForm.hooks({
 					}])
 				}
 				else if (invalidKey.type === "dateOutOfBounds") {
+					var provObject;
 					try {
-						var cleanDate = moment(template.data.doc.date).startOf("day");
-						var provObject = getProvObject(Session.get("date"), Session.get('selectedProviderName'));
+						//var cleanDate = moment(template.data.doc.date).startOf("day");
+						provObject = getProvObject(Session.get("date"), Session.get('selectedProviderName'));
 					} catch (e) {
-						cleanDate = moment(Session.get('date')).startOf('day');
-						var provObject = getProvObject(Session.get("date"), Session.get('selectedProviderName'));
+						//cleanDate = moment(Session.get('date')).startOf('day');
+						provObject = getProvObject(Session.get("date"), Session.get('selectedProviderName'));
 					}
 
 					appointmentList.simpleSchema().namedContext("insertAppointmentFormInner").addInvalidKeys([{
@@ -209,7 +206,7 @@ AutoForm.hooks({
 				else if (invalidKey.type === "overlappingBlockout") {
 					appointmentList.simpleSchema().namedContext("insertAppointmentFormInner").addInvalidKeys([{
 						name: "time",
-						type: invalidKey.type,
+						type: invalidKey.type
 						//value: moment(invalidKey.value).format("h:mm A")
 					}])
 				}

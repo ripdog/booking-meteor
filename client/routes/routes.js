@@ -1,16 +1,16 @@
 var subs = new SubsManager({
 	cacheLimit: 20,//number of subs to cache
 	expireIn: 20//minutes to hold on to subs
-})
+});
 
 Router.configure({
   // layoutTemplate: 'masterLayout',
   notFoundTemplate: 'notFound',
   loadingTemplate: 'loading',
-  layoutTemplate: 'singlePageMasterLayout',
+	layoutTemplate: 'singlePageMasterLayout'
 });
 Router.onBeforeAction(mustBeSignedIn, {except: ['login']});
-function mustBeSignedIn(pause) {
+function mustBeSignedIn() {
 	if (Meteor.loggingIn()) {
 		console.log("currently logging in");
 		this.render('loading');
@@ -160,7 +160,7 @@ Router.route('editAppointment', {
 		var handle = Meteor.subscribe('singleAppoint', this.params.id);
 		if (handle.ready()) {
 			var appoint = appointmentList.findOne(this.params.id);
-			console.log('found appointment')
+			console.log('found appointment');
 			Session.set('date', moment(appoint.date).startOf('day').toDate());
 			Session.set('selectedProviderName', appoint.providerName);
 			this.wait(returnStandardSubs(moment(appoint.date).startOf('day').format('YYYY-MM-DD'), appoint.provName, null, null));
@@ -258,7 +258,7 @@ Router.route('providerList', {
 	path: '/providers',
 	waitOn: function() {
 		return Meteor.subscribe('providerSubscription');
-	},
+	}
 });
 Router.route('userList', {
 	path: '/users',
