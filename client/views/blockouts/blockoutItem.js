@@ -37,5 +37,8 @@ Template.blockoutItem.helpers({
 
 			return "being-edited";
 		}
+	},
+	id: function() {
+		return this._id;
 	}
 })

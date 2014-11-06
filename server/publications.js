@@ -60,7 +60,7 @@ Meteor.publish("userList", function() {
 });
 Meteor.publish("blockouts", function(date, provider) {
 	try {
-		console.log("blockouts subscribed by:  " + provider);
+		console.log("blockouts subscribed for:  " + provider);
 	}
 	catch(e) {
 		console.log("blockouts subscribed without provider name");
@@ -73,7 +73,7 @@ Meteor.publish("blockouts", function(date, provider) {
 	}
 	var startDate = moment(date).startOf('day').toDate();
 	var endDate = moment(date).endOf('day').toDate();
-	//console.log({date: {$gte: startDate, $lt: endDate}, providerID: provider});
+	console.log({date: {$gte: startDate, $lt: endDate}, providerID: provider});
 	//console.log(blockouts.find().fetch());
 	return blockouts.find({date: {$gte: startDate, $lt: endDate}, providerName: provider});
 });

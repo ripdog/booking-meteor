@@ -273,9 +273,7 @@ Router.route('userList', {
 Router.route('bookingTable', {
 	path: '/:date/:provName',
 	waitOn: function() {
-		console.log("doing waitOn for bookingtable");
 		subs = returnStandardSubs(this.params.date, this.params.provName);
-		console.log(subs);
 		return subs;
 	},
 	onBeforeAction: function () {

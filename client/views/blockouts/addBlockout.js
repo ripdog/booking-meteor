@@ -146,7 +146,7 @@ AutoForm.hooks({
 			succAlert.addClass('alert-success');
 			$('td.rowContent.bg-success').removeClass('bg-success');
 			closeTimeout = Meteor.setTimeout(function() {
-				Router.go('bookingTable');
+				goHome();
 			}, 3000);
 		},
 		onError: function(operation, error, template) {
