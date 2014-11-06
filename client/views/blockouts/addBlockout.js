@@ -65,10 +65,7 @@ Template.insertBlockoutForm.helpers({
 	length: function() {
 		var lol = Session.get("newTime");
 		if (Session.get("formForInsert")) {
-			var provObject = unusualDays.findOne({date: Session.get("date"), providerID: Session.get("selectedProviderId")})
-			if (typeof provObject === "undefined") {
-				provObject = providers.findOne(Session.get("selectedProviderId"))
-			}
+			var provObject = getProvObject(Session.get("date"), Session.get('selectedProviderName'));
 			try {return provObject.appointmentLength}
 			catch (e) {
 				// console.log("looking for appointment length too early.")
@@ -135,7 +132,7 @@ AutoForm.hooks({
 				//then convert back to utc.
 				doc.date = moment(datestring, "YYYY-MM-DD hh:mm A").utc().toDate();
 			}
-			doc.providerID = Session.get("selectedProviderId");
+			doc.providerName = Session.get("selectedProviderName");
 			return doc;
 		},
 		onSuccess: function(operation, result, template) {
@@ -173,16 +170,10 @@ AutoForm.hooks({
 				else if (invalidKey.type === "dateOutOfBounds") {
 					try {
 						var cleanDate = moment(template.data.doc.date).startOf("day");
-						var provObject = unusualDays.findOne({date: cleanDate.toDate(), providerID: template.data.doc.providerID});
-						if (typeof provObject === "undefined") {
-							provObject = providers.findOne(template.data.doc.providerID);
-						}
+						var provObject = getProvObject(Session.get("date"), Session.get('selectedProviderName'));
 					} catch (e) {
 						cleanDate = moment(Session.get('date')).startOf('day');
-						provObject = unusualDays.findOne({date: cleanDate.toDate(), providerID: Session.get("selectedProviderId")});
-						if (typeof provObject === "undefined") {
-							provObject = providers.findOne(Session.get("selectedProviderId"));
-						}
+						var provObject = getProvObject(Session.get("date"), Session.get('selectedProviderName'));
 					}
 
 					blockouts.simpleSchema().namedContext("insertBlockoutFormInner").addInvalidKeys([{

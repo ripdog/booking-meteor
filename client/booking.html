@@ -19,7 +19,7 @@
 <template name="navbar">
 	<nav class="navbar navbar-default" role="navigation">
 			<div class="container-fluid">
-				<a class="navbar-brand" href="{{pathFor 'bookingTable'}}">Booking</a>
+				<a class="navbar-brand" href="{{pathFor 'bookingTable' date=homeLinkDate provName=homeLinkProv}}">Booking</a>
 				
 				<ul class="nav navbar-nav">
 					<li><a href="{{pathFor 'providerList'}}">Providers</a></li>
@@ -45,9 +45,7 @@
 					<a href={{newBlockLink}}>
 						<button type="button" id="newBlockButton" class="btn btn-warning">New Blockout</button>
 					</a>
-					<a href={{newAppntLink}}>
 					<button type="button" id="newAppointButton" class="btn btn-primary">New Booking</button>
-					</a>
 					{{/if}}
 					
 				</form>

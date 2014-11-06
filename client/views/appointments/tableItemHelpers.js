@@ -3,10 +3,7 @@ tableItemHeight = function(thisobj) {
 		{
 			return getRowHeight() +"px";
 		}
-		var provObject = unusualDays.findOne({date: Session.get("date"), providerID: Session.get("selectedProviderId")});
-		if (!provObject) {
-			provObject = providers.findOne(Session.get("selectedProviderId"));
-		}
+		var provObject = getProvObject(Session.get("date"), Session.get('selectedProviderName'));
 		var defaultHeight = getRowHeight();
 		var pxPerMinute = defaultHeight/provObject.appointmentLength;
 		return Math.ceil(pxPerMinute * thisobj.length) + "px";
@@ -22,10 +19,7 @@ tableItemTop = function(thisobj) {
 	} else {
 		thedate = thisobj.date;
 	}
-	var provObject = unusualDays.findOne({date: Session.get("date"), providerID: Session.get("selectedProviderId")})
-	if (!provObject) {
-		provObject = providers.findOne(Session.get("selectedProviderId"))
-	}
+	var provObject = getProvObject(Session.get("date"), Session.get('selectedProviderName'));
 	var numFromTop = (moment(thedate).unix() -
 				  moment(getDate()).hours(provObject.startTime).unix())/60;
 

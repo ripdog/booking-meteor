@@ -1,7 +1,7 @@
 unusualDays.deny({
 	remove: function(userId, doc) {
 		//ensure that no appointments will be left stranded by this day being removed.
-		var provider = doc.providerID;
+		var provider = doc.providerName;
 		var cleanDate = moment(doc.date);
 		var provObj = providers.findOne(provider);
 		var startDate = cleanDate.clone().tz("Pacific/Auckland").hour(provObj.startTime).toDate();
@@ -12,7 +12,7 @@ unusualDays.deny({
 		var midnight = moment(cleanDate).startOf("day").toDate();
 		var midday = moment(cleanDate).endOf("day").toDate();
 		var appoints = appointmentList.find({date: {$gte: midnight, $lt: midday},
-			providerID: provider}).fetch();
+			providerName: provider}).fetch();
 		var ret = false
 		_.each(appoints, function(appoint) {
 			console.log(appoint);

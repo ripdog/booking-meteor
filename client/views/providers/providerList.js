@@ -6,7 +6,7 @@ Template.providerList.events({
 		try {
 			AutoForm.resetForm("updateProviderForm")
 		} catch (e) {}
-		Session.set("selectedProviderId", $(event.currentTarget).data("id"));
+		Session.set("selectedProviderName", $(event.currentTarget).data("name"));
 	},
 	'click .providerDeleteButton': function(event){
 		if (confirm("Are you absolutely sure? This will delete *ALL* this providers data and appointments!"))
@@ -21,7 +21,7 @@ Template.providerList.events({
 	},
 	'click #newProviderButton': function(event){
 		providers.insert({name: "New Provider"}, function(error, id) {
-			Session.set("selectedProviderId", id);
+			Session.set("selectedProviderName", providers.findOne(id).name);
 		});
 	}
 })

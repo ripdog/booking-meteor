@@ -1,4 +1,3 @@
-
 function dayDelta(date) {
 	var diff = moment(date).diff(moment().startOf('day'), "days");
 	if (diff===1){
@@ -32,24 +31,25 @@ Template.insertAppointmentForm.events({
 		}
 	}
 
-})
+});
 Template.insertAppointmentForm.rendered = function() {
 	console.log("appointment edit rendered");
 	$('input[name="time"]').change(function() {
 		if (Router.current().route.name === "newAppointment" || 
 			Router.current().route.name === "bookingTable") {
-			Router.go("newAppointment", {time: $('input[name="time"]').val()});
-		};
+			newAppointment($('input[name="time"]').val());
+			//Router.go("newAppointment", {time: $('input[name="time"]').val()});
+		}
 	});
-	$('#datetimepicker4').on("dp.change", function(e) {
+	$('#datetimepicker4').on("dp.change", function () {
 		if (Router.current().route.name === "newAppointment" || 
 			Router.current().route.name === "bookingTable") {
-			Router.go("newAppointment", {time: $('input[name="time"]').val()});
-		};
-	})
+			newAppointment($('input[name="time"]').val());
+		}
+	});
 	// $('tr.timeRow.bg-success').removeClass('bg-success');
 	// $("td:contains("+$('input[name="time"]').val()+")").parent().addClass('bg-success');
-}
+};
 Template.insertAppointmentForm.helpers({
 	appointmentList: appointmentList,
 	title: function(){
@@ -78,20 +78,17 @@ Template.insertAppointmentForm.helpers({
 	length: function() {
 		var lol = Session.get("newTime");
 		if (Session.get("formForInsert")) {
-			var provObject = unusualDays.findOne({date: Session.get("date"), providerID: Session.get("selectedProviderId")})
-			if (typeof provObject === "undefined") {
-				provObject = providers.findOne(Session.get("selectedProviderId"))
-			}
+			var provObject = getProvObject(Session.get("date"), Session.get('selectedProviderName'));
 			try {return provObject.appointmentLength}
 			catch (e) {
-				console.log("looking for appointment length too early.")
+				console.log("looking for appointment length too early.");
 				return 0;
 			}//this error doesn't matter, it means the unusualDays
 			// and Providers collections aren't filled yet.
 			//will be fixed for real when iron router is used for appointment editing
 			///creation
 		} else {//update, grab length from current doc
-			appointmentList.findOne(Session.get("currentlyEditingDoc")).length
+			return appointmentList.findOne(Session.get("currentlyEditingDoc")).length;
 		}
 	},
 	currentType: function() {
@@ -105,7 +102,7 @@ Template.insertAppointmentForm.helpers({
 	timePreset: function() {
 		if (Session.get("formForInsert")) {
 			// $('#datetimepicker4').data("DateTimePicker").setDate(moment().local().startOf('day').hours(12));
-			if (!(Session.get("newTime") === "undefined")) {
+			if (Session.get('newTime') && typeof Session.get('newTime') !== "undefined") {
 				return Session.get("newTime");
 			} else {
 				return "12:00 PM";
@@ -129,9 +126,6 @@ AutoForm.hooks({
 			$('#saveAppointChanges').attr("disabled", true);
 			// appointmentList.simpleSchema().clean(doc);
 		},
-		endSubmit: function(fieldId, template) {
-			// 
-		},
 
 		onSuccess: function(operation, result, template) {
 			if(template.data.type === "update") {
@@ -143,10 +137,12 @@ AutoForm.hooks({
 			$('#insertSuccessAlert').addClass('alert-success');
 			$('td.rowContent.bg-success').removeClass('bg-success');
 			closeTimeout = Meteor.setTimeout(function() {
-				Router.go('bookingTable');
+				//moment(Session.get('date')).format('YYYY-MM-DD'),
+				goHome();
 			}, 3000);
 		},
 		docToForm: function(doc){
+			console.log('running docToForm!');
 			if (doc.date instanceof Date) {
 				doc.time = moment(doc.date).format("h:mm A");
 			}
@@ -165,7 +161,7 @@ AutoForm.hooks({
 				//then convert back to utc.
 				doc.date = moment(datestring, "YYYY-MM-DD hh:mm A").utc().toDate();
 			}
-			doc.providerID = Session.get("selectedProviderId");
+			doc.providerName = Session.get("selectedProviderName");
 			return doc;
 		},
 		onError: function(operation, error, template) {
@@ -182,6 +178,8 @@ AutoForm.hooks({
 			//This is hacky code to transfer error from the date, where they are detected, to the time, where they are displayed
 			//for the user.
 			_.each(error.invalidKeys, function(invalidKey) {
+				//console.log('looking at');
+				//console.log(invalidKey);
 				if (invalidKey.type === "overlappingDates") {
 					appointmentList.simpleSchema().namedContext("insertAppointmentFormInner").addInvalidKeys([{
 						name: "time",
@@ -190,18 +188,13 @@ AutoForm.hooks({
 					}])
 				}
 				else if (invalidKey.type === "dateOutOfBounds") {
+					var provObject;
 					try {
-						var cleanDate = moment(template.data.doc.date).startOf("day");
-						var provObject = unusualDays.findOne({date: cleanDate.toDate(), providerID: template.data.doc.providerID});
-						if (typeof provObject === "undefined") {
-							provObject = providers.findOne(template.data.doc.providerID);
-						}
+						//var cleanDate = moment(template.data.doc.date).startOf("day");
+						provObject = getProvObject(Session.get("date"), Session.get('selectedProviderName'));
 					} catch (e) {
-						cleanDate = moment(Session.get('date')).startOf('day');
-						provObject = unusualDays.findOne({date: cleanDate.toDate(), providerID: Session.get("selectedProviderId")});
-						if (typeof provObject === "undefined") {
-							provObject = providers.findOne(Session.get("selectedProviderId"));
-						}
+						//cleanDate = moment(Session.get('date')).startOf('day');
+						provObject = getProvObject(Session.get("date"), Session.get('selectedProviderName'));
 					}
 
 					appointmentList.simpleSchema().namedContext("insertAppointmentFormInner").addInvalidKeys([{
@@ -213,7 +206,7 @@ AutoForm.hooks({
 				else if (invalidKey.type === "overlappingBlockout") {
 					appointmentList.simpleSchema().namedContext("insertAppointmentFormInner").addInvalidKeys([{
 						name: "time",
-						type: invalidKey.type,
+						type: invalidKey.type
 						//value: moment(invalidKey.value).format("h:mm A")
 					}])
 				}
