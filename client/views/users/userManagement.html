@@ -27,11 +27,14 @@
 			{{> afQuickField name='emails'}}
 			{{> afQuickField name='roles' }}
 			{{> afQuickField name='profile' }}
-
 			{{#if isProvider}}
 				{{> afQuickField name='providerName' options=provOptions}}
 			{{/if}}
 			<button type="submit" class="btn btn-primary" id="saveAppointChanges">Save changes</button>
+				<div class="form-group">
+					<label>Change Password</label><br/>
+					<input type="password" id="changePasswordForm" class="form-control"/><button type="button" id="changePasswordButton" class="btn btn-primary">Change</button>
+				</div>
 		</fieldset>
 	{{/autoForm}}
 </template>

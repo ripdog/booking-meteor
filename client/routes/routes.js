@@ -9,7 +9,7 @@ Router.configure({
   loadingTemplate: 'loading',
 	layoutTemplate: 'singlePageMasterLayout'
 });
-Router.onBeforeAction(mustBeSignedIn, {except: ['login']});
+Router.onBeforeAction(mustBeSignedIn, {except: ['loginPage']});
 function mustBeSignedIn() {
 	if (Meteor.loggingIn()) {
 		console.log("currently logging in");
@@ -18,7 +18,8 @@ function mustBeSignedIn() {
 		user = Meteor.user();
 		if (!user) {
 			console.log("need to log in");
-			Router.go('loginPage', {redirect: this.options.path});
+			console.log(Router.current().route.path());
+			Router.go('loginPage', {redirect: Router.current().route.path()});
 		}
 		this.next();
 	}
@@ -255,10 +256,20 @@ Router.route('providerList', {
 Router.route('userList', {
 	path: '/users',
 	waitOn: function() {
-		return [Meteor.subscribe("userList"), Meteor.subscribe('providerSubscription')];
+		return Meteor.subscribe("userList");
 	}
 });
 
+Router.route('loginPage', {
+	path: '/login/:redirect*',
+	template: 'loginPage',
+	onBeforeAction: function() {
+		if(this.params.redirect) {
+			Session.set('loginRedirect', this.params.redirect);
+		}
+		this.next();
+	}
+});
 
 //TODO: Split up the bookingTable so that the appointment
 //items always render after the table itself. Also allow cleanup so less
@@ -281,12 +292,3 @@ Router.route('bookingTable', {
 });
 
 
-Router.route('loginPage', {
-	path: '/login/:redirect*',
-	onBeforeAction: function() {
-		if(this.params.redirect) {
-			Session.set('loginRedirect', this.params.redirect);
-		}
-		this.next();
-	}
-});

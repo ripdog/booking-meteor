@@ -1,7 +1,7 @@
 Meteor.methods({
     newUser: function () {
         if (Roles.userIsInRole(this.userId, 'admin')) {
-            return ret = Accounts.createUser({
+            return Accounts.createUser({
                 username: "newuser",
                 email: "fakeEmail@example.com",
                 roles: ["booker"]
@@ -16,7 +16,7 @@ Meteor.methods({
     },
     forcePassword: function (userID, pass) {
         if (Roles.userIsInRole(this.userId, 'admin')) {
-            return Accounts.setPassword(userId, pass);
+            return Accounts.setPassword(userID, pass);
         }
     }
 });

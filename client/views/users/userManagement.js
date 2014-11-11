@@ -11,8 +11,7 @@ Template.userList.events({
 		Session.set("editingUser", $(event.currentTarget).data("id"))
 	},
 	'click .userDeleteButton': function (event) {
-		if (confirm("Are you absolutely sure? This will delete *ALL* this users data!"))
-			{
+		if (confirm("Are you absolutely sure? This will delete *ALL* this users data!")) {
 				if (confirm("ALL data related to this user will be deleted. Are you totally, complete, utterly sure?")){
 					Meteor.call('deleteUser', $(event.currentTarget).parent().data("id"), function(err, result) {
 						console.log(err);
@@ -20,6 +19,14 @@ Template.userList.events({
 					});
 				}
 			}
+	},
+	'click #changePasswordButton': function(event) {
+		if (confirm("Are you sure you want to change this users password?")) {
+			Meteor.call("forcePassword", Session.get('editingUser'), $('#changePasswordForm').val(), function(error, result) {
+				console.log(error);
+				console.log(result);
+			})
+		}
 	}
 })
 Template.userEdit.rendered = function() {
