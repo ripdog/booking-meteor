@@ -82,7 +82,7 @@ Template.bookingTable.helpers({
 
 Template.bookingTable.events({
 	'click .providerTab': function(event) {
-		console.log('providerTab clicked');
+		console.log($(event.currentTarget).data("name"));
 		changeParams(null,$(event.currentTarget).data("name"));
 	},
 	'dblclick .appointmentItem': function(event) {

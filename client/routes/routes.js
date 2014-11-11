@@ -196,11 +196,12 @@ Router.route('editAppointment', {
 	}
 });
 Router.route('newBlockoutForm', {
-	path: '/newBlockout/:time',
+	path: '/newBlockout/:date/:provName/:time',
 	layoutTemplate: "sideEditMasterTemplate",
 	template: 'blockoutEdit',
 	waitOn: function() {
-		return returnStandardSubs();
+		console.log("newBlockout here, grabbing my standard subs!");
+		return returnStandardSubs(this.params.date, this.params.provName, null, null);
 	},
 	onBeforeAction: function() {
 		Session.set("formForInsert", true);

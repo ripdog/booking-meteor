@@ -11,7 +11,7 @@ changeParams = function(newDate, newProv) {
 		if(newProv) {
 			newparams.provName = newProv;
 		}
-		console.log(EJSON.stringify({name: Router.current().route.getName(), params: newparams}));
+		console.log(EJSON.stringify(newparams));
 		Router.go(Router.current().route.getName(), newparams);
 	}
 };

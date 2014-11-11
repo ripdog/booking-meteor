@@ -88,7 +88,7 @@ Template.insertBlockoutForm.helpers({
 	},
 	timePreset: function() {//FIXME
 		if (Session.get("formForInsert")) {
-			if (!(Session.get("newTime") === "undefined")) {
+			if (!(typeof Session.get("newTime") === "undefined")) {
 				return Session.get("newTime");
 			} else {
 				return "12:00 PM";
