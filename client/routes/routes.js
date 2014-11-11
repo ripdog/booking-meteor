@@ -144,13 +144,12 @@ Router.route('newAppointment', {
 Router.route('editAppointment', {
 	path: '/edit/:id',
 	layoutTemplate: "sideEditMasterTemplate",
-	template: 'appointmentEdit',//TODO: If not on correct date for appointment, change
+	template: 'appointmentEdit',
 	//waitOn: function() {
 	//	return returnStandardSubs(null, null, this.params.id, null);
 	//},
 	loadingTemplate: 'loading',
 	onBeforeAction: function () {
-		//if (!this.state.get('postGotten')) {
 			var handle = Meteor.subscribe('singleAppoint', this.params.id);
 			if (handle.ready()) {
 				var appoint = appointmentList.findOne(this.params.id);
@@ -164,18 +163,8 @@ Router.route('editAppointment', {
 				//this.state.set('postGotten', true);
 				this.next();
 			}
-		//}
 		Session.set("formForInsert", false);
 		Session.set("currentlyEditingDoc", this.params.id);
-		//if(this.ready()) {
-		//	Session.set('selectedProviderName', providers.findOne().name);
-		//	Session.set('date', moment().startOf('day').toDate());
-		//}
-		//	console.log('onBeforeAction for appointmentEdit is ready');
-
-
-		//
-		//}
 
 
 	},
@@ -225,18 +214,21 @@ Router.route('editBlockout', {
 	path: '/editBlockout/:id',
 	layoutTemplate: "sideEditMasterTemplate",
 	template: 'blockoutEdit',//TODO: If not on correct date for appointment, change
-	waitOn: function() {
-		return returnStandardSubs();
-	},
 	loadingTemplate: 'loading',
 	onBeforeAction: function () {
-		this.wait(Meteor.subscribe("singleBlockout", this.params.id));
+		var handle = Meteor.subscribe('singleBlockout', this.params.id);
+		if (handle.ready()) {
+			var block = blockouts.findOne(this.params.id);
+			console.log('found blockout');
+			var subs = returnStandardSubs(moment(block.date).startOf('day').format('YYYY-MM-DD'), block.providerName, null, null);
+			console.log(subs);
+			this.wait(subs);
+			this.next();
+		}
 		Session.set("formForInsert", false);
 		Session.set("currentlyEditingDoc", this.params.id);
-		if(this.ready()) {
-			Session.set("date", moment(blockouts.findOne(this.params.id).date).startOf('day').toDate());
-		}
-		this.next();
+
+
 	},
 	action: function() {
 		if(this.ready()) {
