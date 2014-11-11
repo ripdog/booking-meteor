@@ -35,15 +35,15 @@ Template.insertAppointmentForm.events({
 Template.insertAppointmentForm.rendered = function() {
 	console.log("appointment edit rendered");
 	$('input[name="time"]').change(function() {
-		if (Router.current().route.name === "newAppointment" || 
-			Router.current().route.name === "bookingTable") {
+		if (Router.current().route.getName() === "newAppointment" || 
+			Router.current().route.getName() === "bookingTable") {
 			newAppointment($('input[name="time"]').val());
 			//Router.go("newAppointment", {time: $('input[name="time"]').val()});
 		}
 	});
 	$('#datetimepicker4').on("dp.change", function () {
-		if (Router.current().route.name === "newAppointment" || 
-			Router.current().route.name === "bookingTable") {
+		if (Router.current().route.getName() === "newAppointment" || 
+			Router.current().route.getName() === "bookingTable") {
 			newAppointment($('input[name="time"]').val());
 		}
 	});

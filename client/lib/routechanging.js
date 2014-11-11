@@ -11,6 +11,7 @@ changeParams = function(newDate, newProv) {
 		if(newProv) {
 			newparams.provName = newProv;
 		}
+		console.log(EJSON.stringify({name: Router.current().route.getName(), params: newparams}));
 		Router.go(Router.current().route.getName(), newparams);
 	}
 };
@@ -18,8 +19,9 @@ newAppointment = function(newtime) {
 	var newparams = {};
 	if (newtime && newtime instanceof Date) {
 		newtime = moment(newtime).format('hh-mm-A');
-	} else if (newtime && newtime instanceof String) {
+	} else if (newtime && typeof newtime === "string") {
 		newtime = newtime.replace(':', "-").replace(' ', "-")
+		//change 12:40 PM to 12-40-PM
 	}
 	if (Router.current().params.provName && Router.current().params.date) {
 		newparams.date = Router.current().params.date;

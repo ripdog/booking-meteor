@@ -3,9 +3,9 @@ unusualDays.deny({
 		//ensure that no appointments will be left stranded by this day being removed.
 		var provider = doc.providerName;
 		var cleanDate = moment(doc.date);
-		var provObj = providers.findOne(provider);
+		var provObj = providers.findOne({name: provider});
 		var startDate = cleanDate.clone().tz("Pacific/Auckland").hour(provObj.startTime).toDate();
-		var endDate = cleanDate.clone().tz("Pacific/Auckland").hour(provObj.endTime).toDate()
+		var endDate = cleanDate.clone().tz("Pacific/Auckland").hour(provObj.endTime).toDate();
 		var dayTwix = moment(startDate).twix(endDate);
 		console.log(dayTwix.format());
 		//build query
@@ -13,11 +13,11 @@ unusualDays.deny({
 		var midday = moment(cleanDate).endOf("day").toDate();
 		var appoints = appointmentList.find({date: {$gte: midnight, $lt: midday},
 			providerName: provider}).fetch();
-		var ret = false
+		var ret = false;
 		_.each(appoints, function(appoint) {
 			console.log(appoint);
 			if(!dayTwix.contains(appoint.date)) {
-				console.log("fail")
+				console.log("fail");
 				ret = true;
 			}
 		});

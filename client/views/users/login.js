@@ -1,6 +1,6 @@
-Template.login.rendered = function() {
+Template.loginPage.rendered = function() {
 
-}
+};
 
 AccountsTemplates.configure({
 	// homeRoutePath: function() {
@@ -12,12 +12,12 @@ AccountsTemplates.configure({
  //  },
 	redirectTimeout: 1000,
 	forbidClientAccountCreation: true,
-	showForgotPasswordLink: false,
-})
+	showForgotPasswordLink: false
+});
 AccountsTemplates.configureRoute('signIn', {
 	redirect: function() {
     if(typeof Session.get("loginRedirect") !== "undefined") {
-      console.log("redirecting to /" + Session.get("loginRedirect"))
+      console.log("redirecting to /" + Session.get("loginRedirect"));
       Router.go('/' + Session.get("loginRedirect"));
     } else {
       Router.go('/');
@@ -25,7 +25,7 @@ AccountsTemplates.configureRoute('signIn', {
   },
 	name: 'login',
 	path: '/login/:redirect?',
-  template: "login",
+  template: "login"
   // 
 });
 // AccountsTemplates.configureRoute('forgotPwd');
@@ -37,7 +37,7 @@ AccountsTemplates.addFields([
       type: "text",
       displayName: "username",
       required: true,
-      minLength: 4,
+      minLength: 4
   },
   {
   	_id: "password",

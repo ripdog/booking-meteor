@@ -17,8 +17,8 @@ function mustBeSignedIn() {
 	} else {
 		user = Meteor.user();
 		if (!user) {
-			console.log("need to sign in");
-			Router.go('login', {redirect: this.options.path});
+			console.log("need to log in");
+			Router.go('loginPage', {redirect: this.options.path});
 		}
 		this.next();
 	}
@@ -46,6 +46,7 @@ function mustBeSignedIn() {
 //};
 
 returnStandardSubs = function(date, provName, appntId, blockId) {
+	//date should be a string in YYYY-MM-DD format
 	var thedate = moment(date, 'YYYY-MM-DD').startOf('day').toDate();
 	var list = [];
 	if (typeof date === "string" && typeof provName === "string") {
@@ -144,27 +145,26 @@ Router.route('editAppointment', {
 	path: '/edit/:id',
 	layoutTemplate: "sideEditMasterTemplate",
 	template: 'appointmentEdit',//TODO: If not on correct date for appointment, change
-	waitOn: function() {
-		return returnStandardSubs(null, null, this.params.id, null);
-	},
+	//waitOn: function() {
+	//	return returnStandardSubs(null, null, this.params.id, null);
+	//},
 	loadingTemplate: 'loading',
 	onBeforeAction: function () {
-		//this.subscribe("singleAppoint", this.params.id).wait();
-		//var self = this;
-		//Meteor.call('getAppointmentById', this.params.id, function(err, result) {
-		//	console.log(result);
-		//	console.log(self);
-		//	self.wait(returnStandardSubs(moment(result.date).format('YYYY-MM-DD'), result.provName, result.provName, null));
-		//});
-		var handle = Meteor.subscribe('singleAppoint', this.params.id);
-		if (handle.ready()) {
-			var appoint = appointmentList.findOne(this.params.id);
-			console.log('found appointment');
-			Session.set('date', moment(appoint.date).startOf('day').toDate());
-			Session.set('selectedProviderName', appoint.providerName);
-			this.wait(returnStandardSubs(moment(appoint.date).startOf('day').format('YYYY-MM-DD'), appoint.provName, null, null));
-			this.next();
-		}
+		//if (!this.state.get('postGotten')) {
+			var handle = Meteor.subscribe('singleAppoint', this.params.id);
+			if (handle.ready()) {
+				var appoint = appointmentList.findOne(this.params.id);
+				console.log('found appointment');
+				Session.set('date', moment(appoint.date).startOf('day').toDate());
+				Session.set('selectedProviderName', appoint.providerName);
+				//handle.stop();
+				var subs = returnStandardSubs(moment(appoint.date).startOf('day').format('YYYY-MM-DD'), appoint.providerName, null, null);
+				console.log(subs);
+				this.wait(subs);
+				//this.state.set('postGotten', true);
+				this.next();
+			}
+		//}
 		Session.set("formForInsert", false);
 		Session.set("currentlyEditingDoc", this.params.id);
 		//if(this.ready()) {
@@ -288,7 +288,7 @@ Router.route('bookingTable', {
 });
 
 
-Router.route('login', {
+Router.route('loginPage', {
 	path: '/login/:redirect*',
 	onBeforeAction: function() {
 		if(this.params.redirect) {

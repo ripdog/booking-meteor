@@ -1,11 +1,5 @@
-Template["afFormGroup_bootstraptimepicker"].helpers({
-  afFieldLabelAtts: function () {
-    return _.extend({template: 'bootstraptimepicker'}, this.afFieldLabelAtts);
-  },
-  afFieldInputAtts: function () {
-    return _.extend({template: 'bootstraptimepicker'}, this.afFieldInputAtts);
-  }
-});
+//Template["afInputTimePicker"].helpers({
+//});
 
 function addFormControlAtts() {
 	var atts = _.clone(this.atts);
@@ -16,9 +10,9 @@ function addFormControlAtts() {
 	}
 	return atts;
 }
-Template.afInput_bootstraptimepicker.atts = addFormControlAtts;
+Template.afInputTimePicker.atts = addFormControlAtts;
 
-Template.afInput_bootstraptimepicker.rendered  = function() {
+Template.afInputTimePicker.rendered  = function() {
 	$('#datetimepicker4').datetimepicker({
 		pickDate: false,
 		minuteStepping:5,
@@ -26,11 +20,17 @@ Template.afInput_bootstraptimepicker.rendered  = function() {
 		// defaultDate: moment().startOf('day').hour(12).tz("Pacific/Auckland")
 		//TODO ^ should pick closest date to 1200 which isn't taken.
 	});
-	
-}
-Template.afInput_bootstraptimepicker.events = {
+};
+Template.afInputTimePicker.events = {
 	'click #datetimepicker4': function (event){$('#datetimepicker4').data("DateTimePicker").show()}
-}
-Template.afInput_bootstraptimepicker.destroyed = function() {
+};
+Template.afInputTimePicker.destroyed = function() {
 	$("div.bootstrap-datetimepicker-widget").remove();
-}
+};
+AutoForm.addInputType("timePicker", {
+	template: "afInputTimePicker",
+	//valueIn: function() {}
+	valueOut: function() {
+		return this.val()
+	}
+});
