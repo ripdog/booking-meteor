@@ -48,7 +48,7 @@ Template.userEdit.helpers ({
 	provOptions: function() {
 		var ret = [];
 		_.each(providers.find().fetch(), function(prov) {
-			ret.push({label: prov.name, value: prov._id});
+			ret.push({label: prov.name, value: prov.name});
 		});
 		return ret;
 	}

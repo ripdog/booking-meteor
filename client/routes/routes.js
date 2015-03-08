@@ -27,6 +27,12 @@ function mustBeSignedIn() {
 		}
 	}
 }
+
+function correctProviderName() {
+	if (Meteor.user() && Meteor.user().providerName !== Session.get("selectedProviderName")) {
+		Session.set("selectedProviderName",Meteor.user().providerName);
+	}
+}
 //editDataLoader.load = function(id) {//thanks to Manuel Schoebel
 //	var handle, self;
 //	self = this;
@@ -165,11 +171,17 @@ Router.route('editAppointment', {
 				//console.log('found appointment');
 				Session.set('date', moment(appoint.date).startOf('day').toDate());
 				Session.set('selectedProviderName', appoint.providerName);
-				var subs = returnStandardSubs(moment(appoint.date).startOf('day').format('YYYY-MM-DD'),
-					appoint.providerName,
-					null,
-					null);
-				this.wait(subs);
+				//var subs = returnStandardSubs(moment(appoint.date).startOf('day').format('YYYY-MM-DD'),
+				//	appoint.providerName,
+				//	null,
+				//	null);
+				Tracker.autorun(function() {
+					var subs = returnStandardSubs(moment(Session.get('date')).startOf('day').format('YYYY-MM-DD'),
+						Session.get('selectedProviderName'),
+						null,
+						null);
+				});
+				//this.wait(subs);
 				this.next();
 			}
 		Session.set("formForInsert", false);

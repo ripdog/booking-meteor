@@ -14,9 +14,9 @@ Template.afInputTimePicker.atts = addFormControlAtts;
 
 Template.afInputTimePicker.rendered  = function() {
 	$('#datetimepicker4').datetimepicker({
-		pickDate: false,
-		minuteStepping:5,
-		defaultDate: $('#datetimepicker4 > input')[0].value
+		format: "HH:mm A",
+		stepping:5,
+		defaultDate: moment($('#datetimepicker4 > input')[0].value, "HH:mm A")
 		// defaultDate: moment().startOf('day').hour(12).tz("Pacific/Auckland")
 		//TODO ^ should pick closest date to 1200 which isn't taken.
 	});

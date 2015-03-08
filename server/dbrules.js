@@ -23,10 +23,53 @@ unusualDays.deny({
 		});
 		return ret;
 	}
-})
-// { date: Thu Sep 18 2014 00:00:00 GMT+1200 (NZST),
-// App 23011 stdout: I20140918-18:00:30.652(12)?   providerID: '8gP3mvG37ptD55omd',
-// App 23011 stdout: I20140918-18:00:30.652(12)?   startTime: 8,
-// App 23011 stdout: I20140918-18:00:30.652(12)?   endTime: 17,
-// App 23011 stdout: I20140918-18:00:30.652(12)?   appointmentLength: 15,
-// App 23011 stdout: I20140918-18:00:30.654(12)?   _id: 'HDmdni7HnYZozNNuQ' }
+});
+
+appointmentList.allow({
+	insert: function(userId, appointment) {
+		if (Roles.userIsInRole(userId, 'provider') && appointment.providerName != Meteor.users.findOne(userId).providerName) {
+			throw new Meteor.Error (403, "Provider tried to add appointment for user other than herself.")
+			return false;
+		}
+		return true;
+	},
+	update: function(userId, appointment) {
+
+		if (Roles.userIsInRole(userId, 'provider') && appointment.providerName != Meteor.users.findOne(userId).providerName) {
+			throw new Meteor.Error (403, "Provider tried to edit appointment for user other than herself.");
+			return false;
+		}
+		return true;
+	},
+	remove:function(userId, appointment) {
+
+		if (Roles.userIsInRole(userId, 'provider') && appointment.providerName != Meteor.users.findOne(userId).providerName) {
+			throw new Meteor.Error (403, "Provider tried to delete appointment for user other than herself.");
+			return false;
+		}
+		return true;
+	},
+	fetch: ["providerName"]
+});
+
+Meteor.users.allow({
+	update: function(userId, user) {
+		if(Roles.userIsInRole(userId, 'admin')) {
+			return true;
+		}
+		throw new Meteor.Error(403, "Nice try punk. Only admins can edit users.")
+	},
+	insert: function(userId, user) {
+		if(Roles.userIsInRole(userId, 'admin')) {
+			return true;
+		}
+		throw new Meteor.Error(403, "Nice try punk. Only admins can add users.")
+	},
+	remove: function(userId, user) {
+		if(Roles.userIsInRole(userId, 'admin')) {
+			return true;
+		}
+		throw new Meteor.Error(403, "Nice try punk. Only admins can delete users.")
+	}
+});
+

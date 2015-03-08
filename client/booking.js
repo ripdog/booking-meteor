@@ -37,13 +37,13 @@ Template.navbar.helpers({
 Template.navbar.rendered = function() {
 	if($("#datetimepicker1").length != 0) {
 		$('#datetimepicker1').datetimepicker({
-			pickTime: false,
+			format: "YYYY-MM-DD"
 		});
-		$('#datetimepicker1').data("DateTimePicker").format = "YYYY-MM-DD";
+		//$('#datetimepicker1').data("DateTimePicker").format = "YYYY-MM-DD";
 // 	$('#datetimepicker1').data("DateTimePicker").setDate(moment(Session.get("date")));
 		Deps.autorun(function (comp) {
-			$('#datetimepicker1').data("DateTimePicker").setDate(moment(Session.get("date")));
-		})
+			$('#datetimepicker1').data("DateTimePicker").date(moment(Session.get("date")));
+		});
 		$('#datetimepicker1').on("dp.change", function(e) {
 			changeParams(e.date.toDate(), null);
 		})

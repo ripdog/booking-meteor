@@ -23,7 +23,7 @@ Meteor.publish(null, function() {
 	}
 	if (Roles.userIsInRole(this.userId, 'provider')) {
 		console.log("providerSubscription subscribed by provider");
-		return providers.find(Meteor.users.findOne(this.userId).providerName);
+		return providers.find({name: Meteor.users.findOne(this.userId).providerName});
 	}
 	console.log("providerSubscription subscribed by non-provider");
 	return providers.find();
@@ -66,14 +66,14 @@ Meteor.publish("blockouts", function(date, provider) {
 		console.log("blockouts subscribed without provider name");
 		//this.stop();
 		//return;
-	}//no providerID provided.
+	}
 	if(!this.userId) {
 		this.stop();
 		return;
 	}
 	var startDate = moment(date).startOf('day').toDate();
 	var endDate = moment(date).endOf('day').toDate();
-	console.log({date: {$gte: startDate, $lt: endDate}, providerID: provider});
+	console.log({date: {$gte: startDate, $lt: endDate}, providerName: provider});
 	//console.log(blockouts.find().fetch());
 	return blockouts.find({date: {$gte: startDate, $lt: endDate}, providerName: provider});
 });
