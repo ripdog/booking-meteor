@@ -114,7 +114,7 @@ Template.bookingTable.events({
 Template.bookingTable.rendered = function() {
 	console.log("rerendering");
 	rerenderDep.changed();
-	Tracker.autorun(function(asd) {
+	Tracker.autorun(function() {
 		// /appointToScrollTo
 		// var pos = $('div[data-id="'+Session.get("currentlyEditingDoc")+'"]')[0].offsetTop
 		var pos = Session.get("scrollToPoint");

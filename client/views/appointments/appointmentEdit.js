@@ -121,13 +121,14 @@ Template.insertAppointmentForm.helpers({
 AutoForm.hooks({
 	insertAppointmentFormInner: {
 		beginSubmit: function(fieldId, template) {
+			//console.log('running beginSubmit!');
 			$('#insertSuccessAlert')[0].innerHTML = "Submitting...";
 			$('#insertSuccessAlert').show("fast");
 			$('#saveAppointChanges').attr("disabled", true);
-			// appointmentList.simpleSchema().clean(doc);
 		},
 
 		onSuccess: function(operation, result, template) {
+			//console.log('running onSuccess!');
 			if(template.data.type === "update") {
 				$('#insertSuccessAlert')[0].innerHTML = "Appointment Successfully Edited.";
 			} else {
@@ -142,7 +143,7 @@ AutoForm.hooks({
 			}, 3000);
 		},
 		docToForm: function(doc){
-			console.log('running docToForm!');
+			//console.log('running docToForm!');
 			if (doc.date instanceof Date) {
 				doc.time = moment(doc.date).format("h:mm A");
 			}
@@ -155,6 +156,7 @@ AutoForm.hooks({
 			return doc;
 		},
 		formToDoc: function(doc){
+			//console.log('running formToDoc!');
 			if (typeof doc.time === "string") {
 				var datestring = moment(Session.get("date")).tz("Pacific/Auckland").format("YYYY-MM-DD ") + doc.time;
 				//the time is localtime, the date is utc. Set the date to localtime, add the time
@@ -165,6 +167,7 @@ AutoForm.hooks({
 			return doc;
 		},
 		onError: function(operation, error, template) {
+			//console.log('running onError!');
 			$('#saveAppointChanges').attr("disabled", false);
 			var alert = $('#insertSuccessAlert');
 			alert.removeClass('alert-danger alert-info alert-info alert-success');
@@ -214,6 +217,7 @@ AutoForm.hooks({
 		},
 		after: {
 			insert: function(error, result) {//TODO: When appointment is made, use the data-id var
+				//console.log('running after insert!');
 				//to find it in the appointment list and bounce it!
 				if (error) {
 					console.log("Insert Error:", error);

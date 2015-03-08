@@ -16,6 +16,7 @@ changeParams = function(newDate, newProv) {
 	}
 };
 newAppointment = function(newtime) {
+	console.log("newAppointment with time " + newtime);
 	var newparams = {};
 	if (newtime && newtime instanceof Date) {
 		newtime = moment(newtime).format('hh-mm-A');
@@ -27,7 +28,7 @@ newAppointment = function(newtime) {
 		newparams.date = Router.current().params.date;
 		newparams.provName = Router.current().params.provName;
 	} else if (Session.get('date') && Session.get("selectedProviderName")) {
-		newparams.date = Session.get('date');
+		newparams.date = moment(Session.get('date')).startOf('day').format('YYYY-MM-DD');
 		newparams.provName = Session.get("selectedProviderName");
 	} else {
 		newparams.date = moment().startOf('day').format('YYYY-MM-DD');
@@ -38,12 +39,13 @@ newAppointment = function(newtime) {
 	} else {
 		newparams.time = "12-00-AM"
 	}
+	console.log(newparams);
 	Router.go('newAppointment', newparams);
 };
 goHome = function(newDate, newProv) {//newDate is a date obj please
 	var newparams = {};
 	if (Session.get('date') && Session.get('selectedProviderName')) {
-		newparams.date = moment(Session.get('date')).format('YYYY-MM-DD') ;
+		newparams.date = moment(Session.get('date')).format('YYYY-MM-DD');
 		newparams.provName= Session.get('selectedProviderName');
 	} else {
 		Router.go('/'); //when moving from non-bookingtable pages.

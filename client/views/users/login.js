@@ -1,6 +1,10 @@
 Template.loginPage.rendered = function() {
-
 };
+Tracker.autorun(function() {
+	if(Meteor.user() && Router.current().route.getName() == "loginPage") {
+		Router.go('/'+Session.get('loginRedirect'))
+	}
+})
 
 AccountsTemplates.configure({
 	// homeRoutePath: function() {
@@ -10,7 +14,7 @@ AccountsTemplates.configure({
  //      return '/';
  //    // }
  //  },
-	redirectTimeout: 1000,
+	//redirectTimeout: 1000,
 	forbidClientAccountCreation: true,
 	showForgotPasswordLink: false
 });
@@ -47,8 +51,6 @@ AccountsTemplates.addFields([
     }
 
 ]);
-AccountsTemplates.init();
-
 // Accounts.ui.config({
 // 	passwordSignupFields: "USERNAME_ONLY",
 // })

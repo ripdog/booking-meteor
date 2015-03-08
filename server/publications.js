@@ -15,7 +15,7 @@ Meteor.publish("appointmentList", function (date, providerName) {
 		//return;
 	}
 	return appointmentList.find({"date": {$gte: startDate, $lt: endDate}, "providerName": providerName});
-})
+});
 Meteor.publish(null, function() {
 	if(!this.userId) {
 		this.stop();

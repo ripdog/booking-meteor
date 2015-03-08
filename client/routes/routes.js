@@ -11,6 +11,7 @@ Router.configure({
 });
 Router.onBeforeAction(mustBeSignedIn, {except: ['loginPage']});
 function mustBeSignedIn() {
+	console.log("mustBeSignedIn running");
 	if (Meteor.loggingIn()) {
 		console.log("currently logging in");
 		this.render('loading');
@@ -19,9 +20,11 @@ function mustBeSignedIn() {
 		if (!user) {
 			console.log("need to log in");
 			console.log(Router.current().route.path());
-			Router.go('loginPage', {redirect: Router.current().route.path()});
+			this.render("loginPage");
+			//Router.go('loginPage', {redirect: Router.current().route.path()});
+		} else {
+			this.next();
 		}
-		this.next();
 	}
 }
 //editDataLoader.load = function(id) {//thanks to Manuel Schoebel
@@ -62,7 +65,7 @@ returnStandardSubs = function(date, provName, appntId, blockId) {
 	} else if (typeof blockId === "string") {
 		list = list.concat(Meteor.subscribe('singleBlockout', blockId));
 	}
-	console.log(list);
+	//console.log(list);
 	return list;
 
 
@@ -87,15 +90,19 @@ Router.route('index', {
 
 
 Router.route('newAppointment', {
-	path: '/new/:date/:provName/:time?',//TODO: Where all is this set?
+	path: '/new/:date/:provName/:time?',
 	layoutTemplate: "sideEditMasterTemplate",
 	template: 'appointmentEdit',
-	waitOn: function() {
-		console.log("NewAppointment here, grabbing my standard subs!");
-		return returnStandardSubs(this.params.date, this.params.provName, null, null);
-	},
 	loadingTemplate: 'loading',
+	waitOn: function() {
+		if (Meteor.user()) {
+			console.log("NewAppointment here, grabbing my standard subs!");
+			return returnStandardSubs(this.params.date, this.params.provName, null, null);
+		}
+
+	},
 	onBeforeAction: function () {
+		console.log("new onbeforeaction")
 		if (typeof closeTimeout !== "undefined") {//form was used, then user started another
 			//appointment creation. Clean up the form.
 			$('#saveAppointChanges').attr("disabled", false);
@@ -154,14 +161,15 @@ Router.route('editAppointment', {
 			var handle = Meteor.subscribe('singleAppoint', this.params.id);
 			if (handle.ready()) {
 				var appoint = appointmentList.findOne(this.params.id);
-				console.log('found appointment');
+				if (!appoint) {this.render("notFound")}
+				//console.log('found appointment');
 				Session.set('date', moment(appoint.date).startOf('day').toDate());
 				Session.set('selectedProviderName', appoint.providerName);
-				//handle.stop();
-				var subs = returnStandardSubs(moment(appoint.date).startOf('day').format('YYYY-MM-DD'), appoint.providerName, null, null);
-				console.log(subs);
+				var subs = returnStandardSubs(moment(appoint.date).startOf('day').format('YYYY-MM-DD'),
+					appoint.providerName,
+					null,
+					null);
 				this.wait(subs);
-				//this.state.set('postGotten', true);
 				this.next();
 			}
 		Session.set("formForInsert", false);
@@ -176,9 +184,9 @@ Router.route('editAppointment', {
 		}
 	},
 	onAfterAction: function() {
-		if (this.ready()) {
-			AutoForm.resetForm("insertAppointmentFormInner");
-		}
+		//if (this.ready()) {
+		//	AutoForm.resetForm("insertAppointmentFormInner");
+		//}
 	},
 	onStop: function() {
 		Session.set("formForInsert", true);
@@ -190,8 +198,10 @@ Router.route('newBlockoutForm', {
 	layoutTemplate: "sideEditMasterTemplate",
 	template: 'blockoutEdit',
 	waitOn: function() {
-		console.log("newBlockout here, grabbing my standard subs!");
-		return returnStandardSubs(this.params.date, this.params.provName, null, null);
+		//console.log("newBlockout here, grabbing my standard subs!");
+		if (Meteor.user()) {
+			return returnStandardSubs(this.params.date, this.params.provName, null, null);
+		}
 	},
 	onBeforeAction: function() {
 		Session.set("formForInsert", true);
@@ -249,24 +259,24 @@ Router.route('editBlockout', {
 });
 Router.route('providerList', {
 	path: '/providers'
-	//waitOn: function() {
-	//	return Meteor.subscribe('providerSubscription');
-	//}
 });
 Router.route('userList', {
 	path: '/users',
 	waitOn: function() {
-		return Meteor.subscribe("userList");
+		if(Meteor.user()) {
+			return Meteor.subscribe("userList");
+		}
 	}
 });
 
 Router.route('loginPage', {
-	path: '/login/:redirect*',
+	path: '/login/(.*)',
 	template: 'loginPage',
 	onBeforeAction: function() {
-		if(this.params.redirect) {
-			Session.set('loginRedirect', this.params.redirect);
+		if(this.params) {
+			Session.set('loginRedirect', this.params[0]);
 		}
+		console.log(this.params[0]);
 		this.next();
 	}
 });
@@ -277,13 +287,15 @@ Router.route('loginPage', {
 Router.route('bookingTable', {
 	path: '/:date/:provName',
 	waitOn: function() {
-		subs = returnStandardSubs(this.params.date, this.params.provName);
-		return subs;
+		if(Meteor.user()) {
+			subs = returnStandardSubs(this.params.date, this.params.provName);
+			return subs;
+		}
 	},
-	onBeforeAction: function () {
-		Session.setDefault("formForInsert", true);
-		this.next();
-	},
+	//onBeforeAction: function () {
+	//	Session.setDefault("formForInsert", true);
+	//	this.next();
+	//},
 	action: function() {
 		if(this.ready()) {
 			this.render();

@@ -12,7 +12,7 @@ tableItemLeft = function(thisobj) {
 	return $(".rowHeader").css("width");
 }
 tableItemTop = function(thisobj) {
-	console.log(thisobj);
+	//console.log(thisobj);
 	if (!thisobj.date) {//this is a blockout
 		var datestring = moment(Session.get("date")).tz("Pacific/Auckland").format("YYYY-MM-DD ") + thisobj.time;
 		var thedate = moment(datestring, "YYYY-MM-DD hh:mm A");
@@ -36,8 +36,8 @@ tableItemTop = function(thisobj) {
 		 	untouchedAppntsFromTop < 0) {
 			//Protect against exceptions when system tries to render appointments
 			//on wrong days.
-			console.log(untouchedAppntsFromTop);
-			console.log("appointment item out of bounds, return 0 for top")
+			//console.log(untouchedAppntsFromTop);
+			//console.log("appointment item out of bounds, return 0 for top")
 			return 0;
 		}
 		var appntsFromTop = Math.floor(untouchedAppntsFromTop);
@@ -46,8 +46,8 @@ tableItemTop = function(thisobj) {
 			var pixelsFromTop = $(".timeRow:nth-child("+appntsFromTop+")")[0].offsetTop
 		}
 		catch (exc) {
-			console.log(appntsFromTop);
-			console.log("exception caught, rendering too early, hold off.");
+			//console.log(appntsFromTop);
+		//	console.log("exception caught, rendering too early, hold off.");
 			rerenderDep.changed();
 		}
 		// console.log("PixelsFromTop: "+pixelsFromTop);
@@ -58,9 +58,9 @@ tableItemTop = function(thisobj) {
 			pixelsFromTop += getRowHeight() *
 			(untouchedAppntsFromTop % 1);
 		}
-		console.log("Editing: "+Session.get("currentlyEditingDoc"))
+		//console.log("Editing: "+Session.get("currentlyEditingDoc"))
 		if(Session.equals("currentlyEditingDoc", thisobj._id) && thisobj._id)/*if _id is null we are a blockout*/ {
-			console.log("This is me, setting scrollToPoint");
+
 			Session.set("scrollToPoint", pixelsFromTop);
 		}
 		return pixelsFromTop + "px";

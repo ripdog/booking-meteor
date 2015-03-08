@@ -20,14 +20,14 @@
 	<nav class="navbar navbar-default" role="navigation">
 			<div class="container-fluid">
 				<a class="navbar-brand" href="{{pathFor 'bookingTable' date=homeLinkDate provName=homeLinkProv}}">Booking</a>
-				
+                {{#if loggedIn}}
 				<ul class="nav navbar-nav">
 					<li><a href="{{pathFor 'providerList'}}">Providers</a></li>
-				{{#if isInRole 'admin'}}
+				    {{#if isInRole 'admin'}}
 					<li><a href="{{pathFor 'userList'}}">Users</a></li>
-				{{/if}}
+                    {{/if}}
 				</ul>
-				
+                {{/if}}
 				<form class="navbar-form navbar-left">
 				{{#if loggedIn}}
 					<div class="form-group">
@@ -40,18 +40,17 @@
 					</div>
 					{{/if}}
 				</form>
+                {{#if loggedIn}}
 				<form class="navbar-form navbar-right" role="">
-					{{#if loggedIn}}
 					<a href={{newBlockLink}}>
 						<button type="button" id="newBlockButton" class="btn btn-warning">New Blockout</button>
 					</a>
 					<button type="button" id="newAppointButton" class="btn btn-primary">New Booking</button>
-					{{/if}}
-					
 				</form>
 				<div class="nav navbar-nav navbar-right">
 					{{> loginButtons}}
 				</div>
+                {{/if}}
 			</div>
 		</nav>
 </template>
