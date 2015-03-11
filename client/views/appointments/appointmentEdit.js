@@ -35,14 +35,13 @@ Template.insertAppointmentForm.events({
 Template.insertAppointmentForm.rendered = function() {
 	console.log("appointment edit rendered");
 	$('input[name="time"]').change(function() {
-		if (Router.current().route.getName() === "newAppointment" || 
+		if (Router.current().route.getName() === "newAppointment" ||
 			Router.current().route.getName() === "bookingTable") {
 			newAppointment($('input[name="time"]').val());
-			//Router.go("newAppointment", {time: $('input[name="time"]').val()});
 		}
 	});
-	$('#datetimepicker4').on("dp.change", function () {
-		if (Router.current().route.getName() === "newAppointment" || 
+	$('#datetimepicker').on("dp.change", function () {
+		if (Router.current().route.getName() === "newAppointment" ||
 			Router.current().route.getName() === "bookingTable") {
 			newAppointment($('input[name="time"]').val());
 		}
@@ -101,14 +100,14 @@ Template.insertAppointmentForm.helpers({
 	},
 	timePreset: function() {
 		if (Session.get("formForInsert")) {
-			// $('#datetimepicker4').data("DateTimePicker").setDate(moment().local().startOf('day').hours(12));
+			// $('#datetimepicker').data("DateTimePicker").setDate(moment().local().startOf('day').hours(12));
 			if (Session.get('newTime') && typeof Session.get('newTime') !== "undefined") {
 				return Session.get("newTime");
 			} else {
 				return "12:00 PM";
 			}
 		} else {
-			// $('#datetimepicker4').data("DateTimePicker").setDate(appointmentList.findOne(Session.get("currentlyEditingDoc")).date);
+			// $('#datetimepicker').data("DateTimePicker").setDate(appointmentList.findOne(Session.get("currentlyEditingDoc")).date);
 			return appointmentList.findOne(Session.get("currentlyEditingDoc")).time;
 		}
 	},
@@ -148,9 +147,9 @@ AutoForm.hooks({
 				doc.time = moment(doc.date).format("h:mm A");
 			}
 			try {
-				$('#datetimepicker4').data("DateTimePicker").setDate(moment(doc.date));
+				$('#datetimepicker').data("DateTimePicker").setDate(moment(doc.date));
 			} catch (e) {
-				$('#datetimepicker4 > input').val(moment(doc.date).format("h:mm A"));
+				$('#datetimepicker > input').val(moment(doc.date).format("h:mm A"));
 				//TODO: Fallback date setting
 			}
 			return doc;

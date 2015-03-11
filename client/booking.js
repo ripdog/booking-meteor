@@ -9,7 +9,10 @@ Template.navbar.events({
 		$('#datetimepicker1').data("DateTimePicker").show()
 	},
 	'click #newAppointButton': function() {
-		newAppointment('12:00 PM')
+		newAppointment('12:00 PM', false);
+	},
+	'click #newBlockButton': function() {
+		newAppointment('12:00 PM', true);
 	}
 });
 Template.navbar.helpers({
@@ -22,9 +25,6 @@ Template.navbar.helpers({
 	},
 	loggedIn: function() {
 		return Meteor.userId();
-	},
-	newBlockLink: function() {
-		return "/newBlockout/" + "12-00-PM";
 	},
 	homeLinkDate: function() {
 		//return moment(Session.get('date')).format('YYYY-MM-DD');

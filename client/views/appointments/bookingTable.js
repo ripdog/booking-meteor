@@ -75,7 +75,15 @@ Template.bookingTable.helpers({
 		try{
 			return unusualDays.findOne({date:Session.get('date'), providerName: Session.get("selectedProviderName")}).notes
 		} catch(e) {/*fails when there is no unusualDay for today.*/}
+	},
+	noneSelected: function() {
+		if (Session.get('selectedProviderName') === undefined || !Session.get('selectedProviderName')) {
+			return true
+		}
+		return false;
+
 	}
+
 });
 
 
@@ -129,7 +137,7 @@ Template.bookingTable.rendered = function() {
 		})
 		
 	})
-}
+};
 
 
 
@@ -145,10 +153,11 @@ Template.timeRow.helpers({
 		}
 		
 	}
-})
+
+});
 Template.timeRow.rendered = function(){
 	if(Session.equals("newTime", this.data.time)) {
 		Session.set("scrollToPoint", this.firstNode.offsetTop);
 	}
-}
+};
 

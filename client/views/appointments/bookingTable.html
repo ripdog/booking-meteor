@@ -7,6 +7,9 @@
 		<h2 class="pull-right">{{notes}}</h2>
 		<!-- </div> -->
 		<ul class="nav nav-tabs" role="tablist">
+            {{#if noneSelected}}
+                <div class="alert alert-info" role="alert">Pick a provider to display appointments.</div>
+            {{/if}}
 			{{#each providerNames}}
 				<li class="{{selected}}"><a data-name={{name}} class="providerTab"  href="#">{{name}}
 					</a></li>

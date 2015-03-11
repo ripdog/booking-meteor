@@ -36,6 +36,11 @@ Template.insertBlockoutForm.events({
 Template.insertBlockoutForm.rendered = function() {
 	console.log("rerendering");
 	rerenderDep.changed();
+	$('#datetimepicker').on("dp.change", function () {
+		if (Router.current().route.getName() === "newBlockoutForm") {
+			changeParams(null, null, $('input[name="time"]').val());
+		}
+	});
 };
 
 Template.insertBlockoutForm.helpers({
@@ -63,7 +68,7 @@ Template.insertBlockoutForm.helpers({
 	},
 	sessionDate: function(){return Session.get("date")},
 	length: function() {
-		var lol = Session.get("newTime");
+		Session.get("newTime");
 		if (Session.get("formForInsert")) {
 			var provObject = getProvObject(Session.get("date"), Session.get('selectedProviderName'));
 			try {return provObject.appointmentLength}
@@ -118,9 +123,9 @@ AutoForm.hooks({
 				doc.time = moment(doc.date).format("h:mm A");
 			}
 			try {
-				$('#datetimepicker4').data("DateTimePicker").setDate(moment(doc.date));
+				$('#datetimepicker').data("DateTimePicker").setDate(moment(doc.date));
 			} catch (e) {
-				$('#datetimepicker4 > input').val(moment(doc.date).format("h:mm A"))
+				$('#datetimepicker > input').val(moment(doc.date).format("h:mm A"));
 				//TODO: Fallback date setting
 			}
 			return doc;
@@ -169,11 +174,9 @@ AutoForm.hooks({
 				}
 				else if (invalidKey.type === "dateOutOfBounds") {
 					try {
-						var cleanDate = moment(template.data.doc.date).startOf("day");
 						var provObject = getProvObject(Session.get("date"), Session.get('selectedProviderName'));
 					} catch (e) {
-						cleanDate = moment(Session.get('date')).startOf('day');
-						var provObject = getProvObject(Session.get("date"), Session.get('selectedProviderName'));
+						provObject = getProvObject(Session.get("date"), Session.get('selectedProviderName'));
 					}
 
 					blockouts.simpleSchema().namedContext("insertBlockoutFormInner").addInvalidKeys([{
@@ -185,7 +188,7 @@ AutoForm.hooks({
 				else if (invalidKey.type === "overlappingBlockout") {
 					blockouts.simpleSchema().namedContext("insertBlockoutFormInner").addInvalidKeys([{
 						name: "time",
-						type: invalidKey.type,
+						type: invalidKey.type
 						//value: moment(invalidKey.value).format("h:mm A")
 					}])
 				}

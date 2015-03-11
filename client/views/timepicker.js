@@ -13,16 +13,31 @@ function addFormControlAtts() {
 Template.afInputTimePicker.atts = addFormControlAtts;
 
 Template.afInputTimePicker.rendered  = function() {
-	$('#datetimepicker4').datetimepicker({
-		format: "HH:mm A",
-		stepping:5,
-		defaultDate: moment($('#datetimepicker4 > input')[0].value, "HH:mm A")
-		// defaultDate: moment().startOf('day').hour(12).tz("Pacific/Auckland")
-		//TODO ^ should pick closest date to 1200 which isn't taken.
+
+	$('#datetimepicker').datetimepicker({
+		format: "h:mm A",
+		stepping:5
+		//defaultDate: function() {
+		//	if (Session.get("newTime") instanceof Date) {
+		//		return moment(Session.get("newTime"))
+		//	} else {
+		//		return moment().startOf('day').hour(12).tz("Pacific/Auckland")
+		//	}
+		//}
+		//defaultDate: moment($('#datetimepicker > input').value, "h:mm A").tz("Pacific/Auckland").toDate()
+		//defaultDate: moment().startOf('day').hour(12).tz("Pacific/Auckland")
 	});
+	Tracker.autorun(function() {
+		try{
+			if (Session.get("newTime")) {
+				$('#datetimepicker').data("DateTimePicker").date(moment(Session.get("newTime"), "h:mm A"))
+			}
+		}
+		catch (e) {}
+	})
 };
 Template.afInputTimePicker.events = {
-	'click #datetimepicker4': function (event){$('#datetimepicker4').data("DateTimePicker").show()}
+	'click #datetimepicker': function (event){$('#datetimepicker').data("DateTimePicker").show()}
 };
 Template.afInputTimePicker.destroyed = function() {
 	$("div.bootstrap-datetimepicker-widget").remove();

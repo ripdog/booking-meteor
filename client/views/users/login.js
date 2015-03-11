@@ -1,10 +1,13 @@
 Template.loginPage.rendered = function() {
 };
 Tracker.autorun(function() {
-	if(Meteor.user() && Router.current().route.getName() == "loginPage") {
-		Router.go('/'+Session.get('loginRedirect'))
+	try {
+		if(Meteor.user() && Router.current().route.getName() == "loginPage") {
+			Router.go('/'+Session.get('loginRedirect'))
+		}
 	}
-})
+	catch (e) {}
+});
 
 AccountsTemplates.configure({
 	// homeRoutePath: function() {

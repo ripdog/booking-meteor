@@ -7,10 +7,10 @@ Meteor.publish("appointmentList", function (date, providerName) {
 	var startDate = moment(date).startOf('day').toDate();
 	var endDate = moment(date).endOf('day').toDate();
 	try{
-		console.log("appointmentList subscribed by " + providers.findOne({name: providerName}).name);
-		console.log("query is "+JSON.stringify({"date": {$gte: startDate, $lt: endDate}, "providerName": providerName}))
+		console.log("appointmentList subscribed by " + providers.findOne({name: providerName}).name + " for date "+ date);
+		//console.log("query is "+JSON.stringify({"date": {$gte: startDate, $lt: endDate}, "providerName": providerName}))
 	} catch(e) {
-		console.log("!!!! appointmentList subscribed without providerName!");
+		console.error("!!!! appointmentList subscribed without providerName!");
 		//this.stop();
 		//return;
 	}
@@ -22,10 +22,10 @@ Meteor.publish(null, function() {
 		return;
 	}
 	if (Roles.userIsInRole(this.userId, 'provider')) {
-		console.log("providerSubscription subscribed by provider");
+	//	console.log("providerSubscription subscribed by provider");
 		return providers.find({name: Meteor.users.findOne(this.userId).providerName});
 	}
-	console.log("providerSubscription subscribed by non-provider");
+	//console.log("providerSubscription subscribed by non-provider");
 	return providers.find();
 });
 Meteor.publish("unusualDays", function(thedate) {
@@ -40,18 +40,17 @@ Meteor.publish(null, function (){
 		this.stop();
 		return;
 	}
-  return Meteor.roles.find({})//publish all roles without sub
+  return Meteor.roles.find({});//publish all roles without sub
 });
 Meteor.publish(null, function(){
 	if(!this.userId) {
 		this.stop();
-		return;
 	} else if (Roles.userIsInRole(this.userId, "provider")) {
 		return Meteor.users.find(this.userId, {fields: {providerName: 1}});
 	}
 });//DOES THIS DO ANYTHING WTF
 Meteor.publish("userList", function() {
-	console.log("userlist caller is admin? " + Roles.userIsInRole(this.userId, 'admin'))
+	console.log("userlist caller is admin? " + Roles.userIsInRole(this.userId, 'admin'));
 	if(!this.userId || !Roles.userIsInRole(this.userId, 'admin')) {
 		this.stop();
 		return;
@@ -60,10 +59,10 @@ Meteor.publish("userList", function() {
 });
 Meteor.publish("blockouts", function(date, provider) {
 	try {
-		console.log("blockouts subscribed for:  " + provider);
+	//	console.log("blockouts subscribed for:  " + provider);
 	}
 	catch(e) {
-		console.log("blockouts subscribed without provider name");
+		console.error("blockouts subscribed without provider name");
 		//this.stop();
 		//return;
 	}
@@ -73,7 +72,7 @@ Meteor.publish("blockouts", function(date, provider) {
 	}
 	var startDate = moment(date).startOf('day').toDate();
 	var endDate = moment(date).endOf('day').toDate();
-	console.log({date: {$gte: startDate, $lt: endDate}, providerName: provider});
+	//console.log({date: {$gte: startDate, $lt: endDate}, providerName: provider});
 	//console.log(blockouts.find().fetch());
 	return blockouts.find({date: {$gte: startDate, $lt: endDate}, providerName: provider});
 });

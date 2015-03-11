@@ -29,7 +29,6 @@ appointmentList.allow({
 	insert: function(userId, appointment) {
 		if (Roles.userIsInRole(userId, 'provider') && appointment.providerName != Meteor.users.findOne(userId).providerName) {
 			throw new Meteor.Error (403, "Provider tried to add appointment for user other than herself.")
-			return false;
 		}
 		return true;
 	},
@@ -37,7 +36,6 @@ appointmentList.allow({
 
 		if (Roles.userIsInRole(userId, 'provider') && appointment.providerName != Meteor.users.findOne(userId).providerName) {
 			throw new Meteor.Error (403, "Provider tried to edit appointment for user other than herself.");
-			return false;
 		}
 		return true;
 	},
@@ -45,7 +43,30 @@ appointmentList.allow({
 
 		if (Roles.userIsInRole(userId, 'provider') && appointment.providerName != Meteor.users.findOne(userId).providerName) {
 			throw new Meteor.Error (403, "Provider tried to delete appointment for user other than herself.");
-			return false;
+		}
+		return true;
+	},
+	fetch: ["providerName"]
+});
+
+blockouts.allow({
+	insert: function(userId, blockout) {
+		if (Roles.userIsInRole(userId, 'provider') && blockout.providerName != Meteor.users.findOne(userId).providerName) {
+			throw new Meteor.Error (403, "Provider tried to add blockout for user other than herself.")
+		}
+		return true;
+	},
+	update: function(userId, blockout) {
+
+		if (Roles.userIsInRole(userId, 'provider') && blockout.providerName != Meteor.users.findOne(userId).providerName) {
+			throw new Meteor.Error (403, "Provider tried to edit blockout for user other than herself.");
+		}
+		return true;
+	},
+	remove:function(userId, blockout) {
+
+		if (Roles.userIsInRole(userId, 'provider') && blockout.providerName != Meteor.users.findOne(userId).providerName) {
+			throw new Meteor.Error (403, "Provider tried to delete blockout for user other than herself.");
 		}
 		return true;
 	},
@@ -73,3 +94,26 @@ Meteor.users.allow({
 	}
 });
 
+unusualDays.allow({
+	insert: function(userId, unusualDay) {
+		if (Roles.userIsInRole(userId, 'provider') && unusualDay.providerName != Meteor.users.findOne(userId).providerName) {
+			throw new Meteor.Error (403, "Provider tried to add unusualDay for user other than herself.")
+		}
+		return true;
+	},
+	update: function(userId, unusualDay) {
+
+		if (Roles.userIsInRole(userId, 'provider') && unusualDay.providerName != Meteor.users.findOne(userId).providerName) {
+			throw new Meteor.Error (403, "Provider tried to edit blockout for user other than herself.");
+		}
+		return true;
+	},
+	remove:function(userId, unusualDay) {
+
+		if (Roles.userIsInRole(userId, 'provider') && unusualDay.providerName != Meteor.users.findOne(userId).providerName) {
+			throw new Meteor.Error (403, "Provider tried to delete blockout for user other than herself.");
+		}
+		return true;
+	},
+	fetch: ["providerName"]
+});

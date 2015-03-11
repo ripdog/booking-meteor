@@ -11,7 +11,6 @@ Router.configure({
 });
 Router.onBeforeAction(mustBeSignedIn, {except: ['loginPage']});
 function mustBeSignedIn() {
-	console.log("mustBeSignedIn running");
 	if (Meteor.loggingIn()) {
 		console.log("currently logging in");
 		this.render('loading');
@@ -27,11 +26,12 @@ function mustBeSignedIn() {
 		}
 	}
 }
-
+Router.onBeforeAction(correctProviderName, {except: ['loginPage']});
 function correctProviderName() {
-	if (Meteor.user() && Meteor.user().providerName !== Session.get("selectedProviderName")) {
+	if (Roles.userIsInRole(Meteor.user(), "provider") && Meteor.user().providerName !== Session.get("selectedProviderName")) {
 		Session.set("selectedProviderName",Meteor.user().providerName);
 	}
+	this.next();
 }
 //editDataLoader.load = function(id) {//thanks to Manuel Schoebel
 //	var handle, self;
@@ -57,6 +57,10 @@ function correctProviderName() {
 
 returnStandardSubs = function(date, provName, appntId, blockId) {
 	//date should be a string in YYYY-MM-DD format
+	if (!providers.findOne({name: provName})) {
+		provName = providers.findOne().name;
+		//throw new Meteor.Error("returnStandardSubs given invalid provName", provName);
+	}
 	var thedate = moment(date, 'YYYY-MM-DD').startOf('day').toDate();
 	var list = [];
 	if (typeof date === "string" && typeof provName === "string") {
@@ -119,8 +123,6 @@ Router.route('newAppointment', {
 		Session.set("currentlyEditingDoc", null);
 		
 		if (this.params.time) {
-			//var momentvar = moment(this.params.time, "hh-mm-A");
-			//Session.set("date", momentvar.startOf('day').toDate());
 			Session.set("newTime", this.params.time.replace('-', ':').replace('-', ' '));
 		}
 		this.next();
@@ -132,27 +134,26 @@ Router.route('newAppointment', {
 		}
 	},
 	onAfterAction: function() {
-		//if (this.ready()) {
-			//AutoForm.resetForm("insertAppointmentFormInner");
-		//}
 
-		if (this.params.time) {
-			if (this.ready()) {
-
-				var provObject = getProvObject(Session.get("date"), Session.get('selectedProviderName'));
-				try {//ensure there is a sane default for appointment length field.
-					$("#insertAppointmentFormInner [data-schema-key='length']").val(provObject.appointmentLength);
-				}
-				catch(e) {}
-				try {
-					$('#datetimepicker4').data("DateTimePicker").setDate(this.params.time);
-				} catch (e) {}
+		if (this.ready()) {
+			var provObject = getProvObject(Session.get("date"), Session.get('selectedProviderName'));
+			try {//ensure there is a sane default for appointment length field.
+				$("#insertAppointmentFormInner [data-schema-key='length']").val(provObject.appointmentLength);
 			}
+			catch(e) {}
+/*			if (this.params.time) {
+				try {
+					$('#datetimepicker').data("DateTimePicker").date(moment(this.params.time, "HH-mm-A"));
+				} catch (e) {}
+			}*/
 		}
 	},
 	onStop: function() {
 		//console.log("onStop for New Appointment");
 		Session.set("newTime", null);//remove Highlight
+		if (this.ready()) {
+			AutoForm.resetForm("insertAppointmentFormInner");
+		}
 	}
 });
 Router.route('editAppointment', {
@@ -168,18 +169,15 @@ Router.route('editAppointment', {
 			if (handle.ready()) {
 				var appoint = appointmentList.findOne(this.params.id);
 				if (!appoint) {this.render("notFound")}
-				//console.log('found appointment');
 				Session.set('date', moment(appoint.date).startOf('day').toDate());
 				Session.set('selectedProviderName', appoint.providerName);
-				//var subs = returnStandardSubs(moment(appoint.date).startOf('day').format('YYYY-MM-DD'),
-				//	appoint.providerName,
-				//	null,
-				//	null);
 				Tracker.autorun(function() {
 					var subs = returnStandardSubs(moment(Session.get('date')).startOf('day').format('YYYY-MM-DD'),
 						Session.get('selectedProviderName'),
 						null,
 						null);
+					console.log("EditAppointment now receiving standard subs.");
+					console.log(subs);
 				});
 				//this.wait(subs);
 				this.next();
@@ -218,6 +216,9 @@ Router.route('newBlockoutForm', {
 	onBeforeAction: function() {
 		Session.set("formForInsert", true);
 		Session.set("currentlyEditingDoc", null);
+		if (this.params.time) {
+			Session.set("newTime", this.params.time.replace('-', ':').replace('-', ' '));
+		}
 		this.next();
 	},
 	action: function() {
@@ -225,10 +226,22 @@ Router.route('newBlockoutForm', {
 		this.render();
 	},
 	onAfterAction: function() {
-		if (this.ready()) {
-			try {
-				$('#datetimepicker4').data("DateTimePicker").setDate(this.params.time);
-			} catch (e) {}
+		if (this.params.time) {
+			if (this.ready()) {
+
+				var provObject = getProvObject(Session.get("date"), Session.get('selectedProviderName'));
+				try {//ensure there is a sane default for blockout length field.
+					$("#insertBlockoutFormInner [data-schema-key='length']").val(provObject.appointmentLength);
+				}
+				catch(e) {}
+				//try {
+				//	//$('#datetimepicker').data("DateTimePicker").date(moment(this.params.time, "HH-mm-A"));
+				//	$('#datetimepicker > input').val(this.params.time);
+				//	console.log("succeeded to set default time for timepicker on newBlockout")
+				//} catch (e) {
+				//	console.error("failed to set default time for timepicker on newBlockout")
+				//}
+			}
 		}
 	}
 
