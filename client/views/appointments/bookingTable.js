@@ -115,7 +115,11 @@ Template.bookingTable.events({
 		unusualDays.remove(unusualDays.findOne({date:Session.get('date'), providerName: Session.get("selectedProviderName")})._id);
 	},
 	'dblclick .rowContent': function(event) {
-		newAppointment(event.currentTarget.previousElementSibling.innerHTML.replace(':','-'));
+		if (Router.current().route.getName() === "newBlockoutForm") {
+			newAppointment(event.currentTarget.previousElementSibling.innerHTML.replace(':','-'), true);
+		} else {
+			newAppointment(event.currentTarget.previousElementSibling.innerHTML.replace(':','-'));
+		}
 	}
 });
 

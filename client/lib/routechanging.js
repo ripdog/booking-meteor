@@ -1,28 +1,30 @@
 /**
  * Created by Mitchell on 2014-10-24.
  */
-changeParams = function(newDate, newProv, newTime) {
-	//TODO: Update this so a single object with named children is passed in
-	//also do row highlighting for newblockout
+changeParams = function(inputObj) {
+	// Call it like this: changeParams({time: "12:00 AM", date: Date(), provName: "Provider"})
 	//Provides non-destructive in-place changing of URL parameters
-	var possibleParams = ["date", "provName", "time", "id"];//keep this up to date with all possible param names
 	newparams = {};
-	for (i = 0; i <= possibleParams.length; i++) {
-		if (typeof Router.current().params[possibleParams[i]] === "string") {
-			newparams[possibleParams[i]] = Router.current().params[possibleParams[i]];
+	for (param in Router.current().params) { //first, copy out all old params
+		if (!Router.current().params.hasOwnProperty(param)) {
+			continue;//ignores BS properties
 		}
+		//console.log(Router.current().params[param]);
+		newparams[param] = Router.current().params[param];
 	}
-	if(newDate) {
-		newparams.date = moment(newDate).format('YYYY-MM-DD');
+	for (param in inputObj) {//then replace/add all input params
+		if (!Router.current().params.hasOwnProperty(param)) {
+			continue;//ignores BS properties
+		}
+		//console.log(inputObj[param]);
+		newparams[param] = inputObj[param];
 	}
-	if(newProv) {
-		newparams.provName = newProv;
+	if (inputObj.route) {//finally, change route if requested.
+		Router.go(inputObj.route, newparams);
+	} else {
+		Router.go(Router.current().route.getName(), newparams);
 	}
-	if (newTime) {
-		newparams.time = newTime;
-	}
-	//console.log(EJSON.stringify(newparams));
-	Router.go(Router.current().route.getName(), newparams);
+
 };
 newAppointment = function(newtime, block) {
 	//if block is true, we'll go to newBlockout instead
