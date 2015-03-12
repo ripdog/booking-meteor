@@ -22,12 +22,12 @@ function dayDelta(date) {
 Template.insertAppointmentForm.events({
 	'click #closeBookingEditor': function() {
 		$('td.rowContent.bg-success').removeClass('bg-success');
-		Router.go('/');
+		goHome();
 	},
 	'click #deleteAppointment': function() {
 		if (confirm("Are you sure you want to delete this appointment?")) {
 			appointmentList.remove(Session.get("currentlyEditingDoc"));
-			Router.go('/');
+			goHome();
 		}
 	}
 
@@ -138,16 +138,13 @@ AutoForm.hooks({
 			}
 			thealert.removeClass('alert-danger alert-info alert-info alert-success');
 			thealert.addClass('alert-success');
-			//thealert.css('position', 'fixed');
 			thealert.removeClass('bg-success');
 			closeTimeout = Meteor.setTimeout(function() {
 				//moment(Session.get('date')).format('YYYY-MM-DD'),
-				//thealert.css('position', 'inherit');
 				goHome();
 			}, 3000);
 		},
 		docToForm: function(doc){
-			//console.log('running docToForm!');
 			if (doc.date instanceof Date) {
 				doc.time = moment(doc.date).format("h:mm A");
 			}

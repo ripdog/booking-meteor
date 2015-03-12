@@ -1,0 +1,10 @@
+#datetimepicker1 {
+    max-width: 100px;
+    vertical-align: middle;
+    display: inline-block;
+    margin-top: 2px;
+    border-radius: 5px;
+}
+#nextDay, #prevDay {
+    display: inline-block;
+}

@@ -19,35 +19,44 @@
 <template name="navbar">
 	<nav class="navbar navbar-default" role="navigation">
 			<div class="container-fluid">
-				<a class="navbar-brand" href="{{pathFor 'bookingTable' date=homeLinkDate providerName=homeLinkProv}}">Booking</a>
-                {{#if loggedIn}}
-				<ul class="nav navbar-nav">
-					<li><a href="{{pathFor 'providerList'}}">Providers</a></li>
-				    {{#if isInRole 'admin'}}
-					<li><a href="{{pathFor 'userList'}}">Users</a></li>
-                    {{/if}}
-				</ul>
-                {{/if}}
-				<form class="navbar-form navbar-left">
-				{{#if loggedIn}}
-					<div class="form-group">
-						<button type="button" id="prevDay" class="btn btn-default">&lt;</button>
-						<div class='input-group date' id='datetimepicker1'>
-							<input type="text" id="dateField" class="form-control" />
-						</div>
-						<button type="button" id="nextDay" class="btn btn-default">&gt;</button>
-					</div>
-					{{/if}}
-				</form>
-                {{#if loggedIn}}
-				<form class="navbar-form navbar-right">
-					<button type="button" id="newBlockButton" class="btn btn-warning">New Blockout</button>
-					<button type="button" id="newAppointButton" class="btn btn-primary">New Booking</button>
-				</form>
-				<div class="nav navbar-nav navbar-right">
-					<!--{{> loginButtons}}-->
-				</div>
-                {{/if}}
-			</div>
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="{{pathFor 'bookingTable' date=homeLinkDate providerName=homeLinkProv}}">Booking</a>
+                    <!--{{#if loggedIn}}-->
+                </div>
+
+                    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                    <ul class="nav navbar-nav">
+                        <li><a href="{{pathFor 'providerList'}}">Providers</a></li>
+                        {{#if isInRole 'admin'}}
+                            <li><a href="{{pathFor 'userList'}}">Users</a></li>
+                        {{/if}}
+                    </ul>
+                    <form class="navbar-form navbar-left">
+                        <div class="form-group">
+                            <button type="button" id="prevDay" class="btn btn-default glyphicon glyphicon-chevron-left"></button>
+                            <div class='input-group date' id='datetimepicker1'>
+                                <input type="text" id="dateField" class="form-control" />
+                            </div>
+                            <button type="button" id="nextDay" class="btn btn-default glyphicon glyphicon-chevron-right"></button>
+                        </div>
+                    </form>
+                    <form class="navbar-form navbar-right">
+                        <button type="button" id="newBlockButton" class="btn btn-warning">New Blockout</button>
+                        <button type="button" id="newAppointButton" class="btn btn-primary">New Booking</button>
+                    </form>
+                    <!--{{/if}}-->
+                    <!--<div class="nav navbar-nav navbar-right">-->
+                        <!--&lt;!&ndash;{{> loginButtons}}&ndash;&gt;-->
+                    <!--</div>-->
+
+                    </div><!-- /.navbar-collapse -->
+
+			</div><!-- navbar-default -->
 		</nav>
 </template>

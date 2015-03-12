@@ -257,10 +257,6 @@ Router.route('editBlockout', {
 		Session.set("formForInsert", false);
 		Session.set("currentlyEditingDoc", this.params.id);
 		if (handle.ready()) {
-
-			//console.log('found blockout');
-			//
-			//console.log(subs);
 			Tracker.autorun(function () {
 				var block = blockouts.findOne(Session.get('currentlyEditingDoc'));
 				var subs = returnStandardSubs(moment(block.date).startOf('day').format('YYYY-MM-DD'),
