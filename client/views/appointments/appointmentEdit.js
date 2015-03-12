@@ -40,7 +40,7 @@ Template.insertAppointmentForm.rendered = function() {
 			newAppointment($('input[name="time"]').val());
 		}
 	});
-	$('#datetimepicker').on("dp.change", function () {
+	$('#datetimepicke4').on("dp.change", function () {
 		if (Router.current().route.getName() === "newAppointment" ||
 			Router.current().route.getName() === "bookingTable") {
 			newAppointment($('input[name="time"]').val());
@@ -100,14 +100,14 @@ Template.insertAppointmentForm.helpers({
 	},
 	timePreset: function() {
 		if (Session.get("formForInsert")) {
-			// $('#datetimepicker').data("DateTimePicker").setDate(moment().local().startOf('day').hours(12));
+			// $('#datetimepickr4').data("DateTimePicker").setDate(moment().local().startOf('day').hours(12));
 			if (Session.get('newTime') && typeof Session.get('newTime') !== "undefined") {
 				return Session.get("newTime");
 			} else {
 				return "12:00 PM";
 			}
 		} else {
-			// $('#datetimepicker').data("DateTimePicker").setDate(appointmentList.findOne(Session.get("currentlyEditingDoc")).date);
+			// $('#datetimepickr4').data("DateTimePicker").setDate(appointmentList.findOne(Session.get("currentlyEditingDoc")).date);
 			return appointmentList.findOne(Session.get("currentlyEditingDoc")).time;
 		}
 	},
@@ -120,24 +120,29 @@ Template.insertAppointmentForm.helpers({
 AutoForm.hooks({
 	insertAppointmentFormInner: {
 		beginSubmit: function(fieldId, template) {
-			//console.log('running beginSubmit!');
-			$('#insertSuccessAlert')[0].innerHTML = "Submitting...";
-			$('#insertSuccessAlert').show("fast");
-			$('#saveAppointChanges').attr("disabled", true);
+			//console.log('running beginSubmit!'
+			var thealert = $('#insertSuccessAlert');
+			thealert[0].innerHTML = "Submitting...";
+			thealert.show("fast");
+			//thealert.css('position', 'fixed');
+			thealert.attr("disabled", true);
 		},
 
 		onSuccess: function(operation, result, template) {
-			//console.log('running onSuccess!');
+			//console.log('running onSuccess!'
+			var thealert = $('#insertSuccessAlert');
 			if(template.data.type === "update") {
-				$('#insertSuccessAlert')[0].innerHTML = "Appointment Successfully Edited.";
+				thealert[0].innerHTML = "Appointment Successfully Edited.";
 			} else {
-				$('#insertSuccessAlert')[0].innerHTML = "New Appointment Created.";
+				thealert[0].innerHTML = "New Appointment Created.";
 			}
-			$('#insertSuccessAlert').removeClass('alert-danger alert-info alert-info alert-success');
-			$('#insertSuccessAlert').addClass('alert-success');
-			$('td.rowContent.bg-success').removeClass('bg-success');
+			thealert.removeClass('alert-danger alert-info alert-info alert-success');
+			thealert.addClass('alert-success');
+			//thealert.css('position', 'fixed');
+			thealert.removeClass('bg-success');
 			closeTimeout = Meteor.setTimeout(function() {
 				//moment(Session.get('date')).format('YYYY-MM-DD'),
+				//thealert.css('position', 'inherit');
 				goHome();
 			}, 3000);
 		},
@@ -147,9 +152,9 @@ AutoForm.hooks({
 				doc.time = moment(doc.date).format("h:mm A");
 			}
 			try {
-				$('#datetimepicker').data("DateTimePicker").setDate(moment(doc.date));
+				$('#datetimepickr4').data("DateTimePicker").setDate(moment(doc.date));
 			} catch (e) {
-				$('#datetimepicker > input').val(moment(doc.date).format("h:mm A"));
+				$('#datetimepickr4 > input').val(moment(doc.date).format("h:mm A"));
 				//TODO: Fallback date setting
 			}
 			return doc;

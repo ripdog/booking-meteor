@@ -19,7 +19,7 @@
 <template name="navbar">
 	<nav class="navbar navbar-default" role="navigation">
 			<div class="container-fluid">
-				<a class="navbar-brand" href="{{pathFor 'bookingTable' date=homeLinkDate provName=homeLinkProv}}">Booking</a>
+				<a class="navbar-brand" href="{{pathFor 'bookingTable' date=homeLinkDate providerName=homeLinkProv}}">Booking</a>
                 {{#if loggedIn}}
 				<ul class="nav navbar-nav">
 					<li><a href="{{pathFor 'providerList'}}">Providers</a></li>

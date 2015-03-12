@@ -92,7 +92,7 @@ Template.bookingTable.events({
 	'click .providerTab': function(event) {
 		event.preventDefault();
 		console.log($(event.currentTarget).data("name"));
-		changeParams(null,$(event.currentTarget).data("name"));
+		changeParams({providerName: $(event.currentTarget).data("name")});
 	},
 	'dblclick .appointmentItem': function(event) {
 		event.stopImmediatePropagation();

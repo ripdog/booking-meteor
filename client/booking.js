@@ -1,9 +1,9 @@
 Template.navbar.events({
 	'click #nextDay': function() {
-		changeParams(moment(Session.get("date")).add(1, 'day').toDate(), null);
+		changeParams({date: moment(Session.get("date")).add(1, 'day').format("YYYY-MM-DD")});
 	},
 	'click #prevDay': function() {
-		changeParams(moment(Session.get("date")).subtract(1, 'day').toDate(), null);
+		changeParams({date: moment(Session.get("date")).subtract(1, 'day').format("YYYY-MM-DD")});
 	},
 	'click #datetimepicker1': function() {
 		$('#datetimepicker1').data("DateTimePicker").show()
@@ -43,7 +43,7 @@ Template.navbar.rendered = function() {
 			$('#datetimepicker1').data("DateTimePicker").date(moment(Session.get("date")));
 		});
 		$('#datetimepicker1').on("dp.change", function(e) {
-			changeParams(e.date.toDate(), null);
+			changeParams({date: e.date.format("YYYY-MM-DD")});
 		})
 	}
 };

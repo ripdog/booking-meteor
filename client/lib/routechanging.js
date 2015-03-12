@@ -2,9 +2,10 @@
  * Created by Mitchell on 2014-10-24.
  */
 changeParams = function(inputObj) {
-	// Call it like this: changeParams({time: "12:00 AM", date: Date(), provName: "Provider"})
+	// Call it like this: changeParams({time: "12:00 AM", date: "2015-02-02", providerName: "Provider"})
+	//All input must be ready-for-url
 	//Provides non-destructive in-place changing of URL parameters
-	newparams = {};
+	var newparams = {};
 	for (param in Router.current().params) { //first, copy out all old params
 		if (!Router.current().params.hasOwnProperty(param)) {
 			continue;//ignores BS properties
@@ -19,7 +20,7 @@ changeParams = function(inputObj) {
 		//console.log(inputObj[param]);
 		newparams[param] = inputObj[param];
 	}
-	if (inputObj.route) {//finally, change route if requested.
+	if (inputObj.hasOwnProperty('route')) {//finally, change route if requested.
 		Router.go(inputObj.route, newparams);
 	} else {
 		Router.go(Router.current().route.getName(), newparams);
@@ -39,16 +40,16 @@ newAppointment = function(newtime, block) {
 		newtime = newtime.replace(':', "-").replace(' ', "-")
 		//change 12:40 PM to 12-40-PM
 	}
-	if (Router.current().params.provName && Router.current().params.date) {
+	if (Router.current().params.providerName && Router.current().params.date) {
 		newparams.date = Router.current().params.date;
-		newparams.provName = Router.current().params.provName;
+		newparams.providerName = Router.current().params.providerName;
 	} else if (Session.get('date') && Session.get("selectedProviderName")) {
 		newparams.date = moment(Session.get('date')).startOf('day').format('YYYY-MM-DD');
-		newparams.provName = Session.get("selectedProviderName");
+		newparams.providerName = Session.get("selectedProviderName");
 	} else {
 		console.error("newAppointment called without date or providerName set");
 		newparams.date = moment().startOf('day').format('YYYY-MM-DD');
-		newparams.provName = providers.findOne().name;
+		newparams.providerName = providers.findOne().name;
 	}
 	if (newtime) {
 		newparams.time = newtime;
@@ -66,7 +67,7 @@ goHome = function(newDate, newProv) {//newDate is a date obj please
 	var newparams = {};
 	if (Session.get('date') && Session.get('selectedProviderName')) {
 		newparams.date = moment(Session.get('date')).format('YYYY-MM-DD');
-		newparams.provName= Session.get('selectedProviderName');
+		newparams.providerName= Session.get('selectedProviderName');
 	} else {
 		Router.go('/'); //when moving from non-bookingtable pages.
 	}
@@ -74,7 +75,7 @@ goHome = function(newDate, newProv) {//newDate is a date obj please
 		newparams.date = moment(newDate).format('YYYY-MM-DD');
 	}
 	if(newProv) {
-		newparams.provName = newProv;
+		newparams.providerName = newProv;
 	}
 
 	Router.go('bookingTable', newparams);

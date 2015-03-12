@@ -55,17 +55,17 @@ function correctProviderName() {
 //	return handle;
 //};
 
-returnStandardSubs = function(date, provName, appntId, blockId) {
+returnStandardSubs = function(date, providerName, appntId, blockId) {
 	//date should be a string in YYYY-MM-DD format
-	if (!providers.findOne({name: provName})) {
-		provName = providers.findOne().name;
-		//throw new Meteor.Error("returnStandardSubs given invalid provName", provName);
+	if (!providers.findOne({name: providerName})) {
+		providerName = providers.findOne().name;
+		//throw new Meteor.Error("returnStandardSubs given invalid providerName", providerName);
 	}
 	var thedate = moment(date, 'YYYY-MM-DD').startOf('day').toDate();
 	var list = [];
-	if (typeof date === "string" && typeof provName === "string") {
+	if (typeof date === "string" && typeof providerName === "string") {
 		Session.set("date", thedate);
-		Session.set("selectedProviderName", provName);
+		Session.set("selectedProviderName", providerName);
 		list = list.concat([Meteor.subscribe('appointmentList', Session.get('date'), Session.get("selectedProviderName")),
 			Meteor.subscribe("unusualDays", Session.get("date")),
 			Meteor.subscribe('blockouts', Session.get('date'), Session.get("selectedProviderName"))]);
@@ -93,21 +93,21 @@ Router.route('index', {
 		if (this.ready()) {
 			Router.go('bookingTable',
 				{date: moment().startOf('day').format('YYYY-MM-DD'),
-					provName: providers.findOne().name});
+					providerName: providers.findOne().name});
 		}
 	}
 });
 
 
 Router.route('newAppointment', {
-	path: '/new/:date/:provName/:time?',
+	path: '/new/:date/:providerName/:time?',
 	layoutTemplate: "sideEditMasterTemplate",
 	template: 'appointmentEdit',
 	loadingTemplate: 'loading',
 	waitOn: function() {
 		if (Meteor.user()) {
 			console.log("NewAppointment here, grabbing my standard subs!");
-			return returnStandardSubs(this.params.date, this.params.provName, null, null);
+			return returnStandardSubs(this.params.date, this.params.providerName, null, null);
 		}
 
 	},
@@ -149,11 +149,8 @@ Router.route('newAppointment', {
 		}
 	},
 	onStop: function() {
-		//console.log("onStop for New Appointment");
 		Session.set("newTime", null);//remove Highlight
-		if (this.ready()) {
-			AutoForm.resetForm("insertAppointmentFormInner");
-		}
+		AutoForm.resetForm("insertAppointmentFormInner");
 	}
 });
 Router.route('editAppointment', {
@@ -204,13 +201,13 @@ Router.route('editAppointment', {
 	}
 });
 Router.route('newBlockoutForm', {
-	path: '/newBlockout/:date/:provName/:time',
+	path: '/newBlockout/:date/:providerName/:time',
 	layoutTemplate: "sideEditMasterTemplate",
 	template: 'blockoutEdit',
 	waitOn: function() {
 		//console.log("newBlockout here, grabbing my standard subs!");
 		if (Meteor.user()) {
-			return returnStandardSubs(this.params.date, this.params.provName, null, null);
+			return returnStandardSubs(this.params.date, this.params.providerName, null, null);
 		}
 	},
 	onBeforeAction: function() {
@@ -243,6 +240,10 @@ Router.route('newBlockoutForm', {
 				//}
 			}
 		}
+	},
+	onStop: function() {
+		Session.set("newTime", null);//remove Highlight
+		AutoForm.resetForm("insertBlockoutFormInner")
 	}
 
 });
@@ -253,16 +254,23 @@ Router.route('editBlockout', {
 	loadingTemplate: 'loading',
 	onBeforeAction: function () {
 		var handle = Meteor.subscribe('singleBlockout', this.params.id);
-		if (handle.ready()) {
-			var block = blockouts.findOne(this.params.id);
-			console.log('found blockout');
-			var subs = returnStandardSubs(moment(block.date).startOf('day').format('YYYY-MM-DD'), block.providerName, null, null);
-			console.log(subs);
-			this.wait(subs);
-			this.next();
-		}
 		Session.set("formForInsert", false);
 		Session.set("currentlyEditingDoc", this.params.id);
+		if (handle.ready()) {
+
+			//console.log('found blockout');
+			//
+			//console.log(subs);
+			Tracker.autorun(function () {
+				var block = blockouts.findOne(Session.get('currentlyEditingDoc'));
+				var subs = returnStandardSubs(moment(block.date).startOf('day').format('YYYY-MM-DD'),
+					block.providerName,
+					null,
+					null);
+			});
+			this.next();
+		}
+
 
 
 	},
@@ -272,13 +280,14 @@ Router.route('editBlockout', {
 			this.render();
 		}
 	},
-	onAfterAction: function() {
-		if (this.ready()) {
-			AutoForm.resetForm("insertBlockoutFormInner");
-		}
-	},
+	//onAfterAction: function() {
+	//	if (this.ready()) {
+	//
+	//	}
+	//},
 	onStop: function() {
 		Session.set("formForInsert", true);
+		AutoForm.resetForm("insertBlockoutFormInner");
 		Session.set("currentlyEditingDoc", null);
 	}
 });
@@ -310,10 +319,10 @@ Router.route('loginPage', {
 //items always render after the table itself. Also allow cleanup so less
 //stuff disappears when changing date. Add date to url.
 Router.route('bookingTable', {
-	path: '/:date/:provName',
+	path: '/:date/:providerName',
 	waitOn: function() {
 		if(Meteor.user()) {
-			subs = returnStandardSubs(this.params.date, this.params.provName);
+			subs = returnStandardSubs(this.params.date, this.params.providerName);
 			return subs;
 		}
 	},
