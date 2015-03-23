@@ -101,7 +101,16 @@ Template.bookingTable.events({
 	},
 	'dblclick .blockoutItem': function(event) {
 		event.stopImmediatePropagation();
-		Router.go('editBlockout', {id: $(event.currentTarget).data("id")});
+		try{
+			if($(event.currentTarget).data("id")) {
+				Router.go('editBlockout', {id: $(event.currentTarget).data("id")});
+				return;
+			}
+		} catch (e) {}
+		if(confirm('This is a repeating blockout, and must be edited from the providers menu. Go there?')){
+			Router.go('/providers');
+		}
+
 	},
 	'click #customTimesButton': function(event) {
 		var provObject = providers.findOne({name: Session.get("selectedProviderName")});

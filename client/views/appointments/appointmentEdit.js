@@ -46,6 +46,9 @@ Template.insertAppointmentForm.rendered = function() {
 			newAppointment($('input[name="time"]').val());
 		}
 	});
+	//if(Session.get('formForInsert')) {
+	//	AutoForm.resetForm("insertAppointmentFormInner");
+	//}
 	// $('tr.timeRow.bg-success').removeClass('bg-success');
 	// $("td:contains("+$('input[name="time"]').val()+")").parent().addClass('bg-success');
 };
@@ -100,14 +103,12 @@ Template.insertAppointmentForm.helpers({
 	},
 	timePreset: function() {
 		if (Session.get("formForInsert")) {
-			// $('#datetimepickr4').data("DateTimePicker").setDate(moment().local().startOf('day').hours(12));
 			if (Session.get('newTime') && typeof Session.get('newTime') !== "undefined") {
 				return Session.get("newTime");
 			} else {
 				return "12:00 PM";
 			}
 		} else {
-			// $('#datetimepickr4').data("DateTimePicker").setDate(appointmentList.findOne(Session.get("currentlyEditingDoc")).date);
 			return appointmentList.findOne(Session.get("currentlyEditingDoc")).time;
 		}
 	},
@@ -120,17 +121,13 @@ Template.insertAppointmentForm.helpers({
 AutoForm.hooks({
 	insertAppointmentFormInner: {
 		beginSubmit: function(fieldId, template) {
-			//console.log('running beginSubmit!'
 			var thealert = $('#insertSuccessAlert');
 			thealert[0].innerHTML = "Submitting...";
 			thealert.show("fast");
-			//thealert.css('position', 'fixed');
 			thealert.attr("disabled", true);
 		},
 
 		onSuccess: function(formType, result) {
-			console.log('running onSuccess!');
-			console.debug(formType);
 			var thealert = $('#insertSuccessAlert');
 			if(formType === "update") {
 				thealert[0].innerHTML = "Appointment Successfully Edited.";
@@ -140,20 +137,16 @@ AutoForm.hooks({
 			thealert.removeClass('alert-danger alert-info alert-info alert-success');
 			thealert.addClass('alert-success');
 			thealert.removeClass('bg-success');
+			this.resetForm();
 			closeTimeout = Meteor.setTimeout(function() {
-				//moment(Session.get('date')).format('YYYY-MM-DD'),
+				$('#insertSuccessAlert').hide("slow");
 				goHome();
 			}, 3000);
 		},
 		docToForm: function(doc){
+			console.log('running docToForm on route: '+Router.current().route.getName());
 			if (doc.date instanceof Date) {
 				doc.time = moment(doc.date).format("h:mm A");
-			}
-			try {
-				$('#datetimepickr4').data("DateTimePicker").setDate(moment(doc.date));
-			} catch (e) {
-				$('#datetimepickr4 > input').val(moment(doc.date).format("h:mm A"));
-				//TODO: Fallback date setting
 			}
 			return doc;
 		},
@@ -221,7 +214,7 @@ AutoForm.hooks({
 				//to find it in the appointment list and bounce it!
 				if (error) {
 					console.log("Insert Error:", error);
-					$("#insertSuccessAlert").alert();
+					//$("#insertSuccessAlert").alert();
 				} else {
 					console.log("Insert Result:", result);
 				}

@@ -18,7 +18,7 @@ function mustBeSignedIn() {
 		user = Meteor.user();
 		if (!user) {
 			console.log("need to log in");
-			console.log(Router.current().route.path());
+			console.log(Router.current().route.getName());
 			this.render("loginPage");
 			//Router.go('loginPage', {redirect: Router.current().route.path()});
 		} else {
@@ -33,27 +33,15 @@ function correctProviderName() {
 	}
 	this.next();
 }
-//editDataLoader.load = function(id) {//thanks to Manuel Schoebel
-//	var handle, self;
-//	self = this;
-//	if (!this._subs[sub]) {
-//		this._subs[sub] = {
-//			src: sub,
-//			ready: false,
-//			readyDeps: new Tracker.Dependency
-//		};
-//		Meteor.call('getAppointmentById', id)
-//	}
-//	handle = {
-//		ready: function() {
-//			var sub;
-//			sub = self._libs[src];
-//			lib.readyDeps.depend();
-//			return lib.ready;
-//		}
-//	};
-//	return handle;
-//};
+Router.onBeforeAction(cleanupTimer);
+function cleanupTimer() {
+	if (typeof closeTimeout !== "undefined") {//ensure time and alert is goneburgers on new route changes.
+		$('#saveAppointChanges').attr("disabled", false);
+		Meteor.clearTimeout(closeTimeout);
+		$('#insertSuccessAlert').hide('fast');
+	}
+	this.next();
+}
 
 returnStandardSubs = function(date, providerName, appntId, blockId) {
 	//date should be a string in YYYY-MM-DD format
@@ -85,8 +73,6 @@ returnStandardSubs = function(date, providerName, appntId, blockId) {
 Tracker.autorun(function() {
 	console.log("session date has changed! " + Session.get('date'));
 });
-/*TODO: Links to / should choose whether to default to today or existing date
-based on Session.get('date')*/
 Router.route('index', {
 	path: '/',
 	action: function() {
@@ -112,13 +98,8 @@ Router.route('newAppointment', {
 
 	},
 	onBeforeAction: function () {
-		console.log("new onbeforeaction")
-		if (typeof closeTimeout !== "undefined") {//form was used, then user started another
-			//appointment creation. Clean up the form.
-			$('#saveAppointChanges').attr("disabled", false);
-			Meteor.clearTimeout(closeTimeout);
-			$('#insertSuccessAlert').hide('fast');
-		}
+		console.log("new onbeforeaction");
+
 		Session.set("formForInsert", true);
 		Session.set("currentlyEditingDoc", null);
 		
@@ -134,23 +115,14 @@ Router.route('newAppointment', {
 		}
 	},
 	onAfterAction: function() {
-
+		console.log("new onafteraction");
 		if (this.ready()) {
-			var provObject = getProvObject(Session.get("date"), Session.get('selectedProviderName'));
-			try {//ensure there is a sane default for appointment length field.
-				$("#insertAppointmentFormInner [data-schema-key='length']").val(provObject.appointmentLength);
-			}
-			catch(e) {}
-/*			if (this.params.time) {
-				try {
-					$('#datetimepicker').data("DateTimePicker").date(moment(this.params.time, "HH-mm-A"));
-				} catch (e) {}
-			}*/
 		}
 	},
 	onStop: function() {
 		Session.set("newTime", null);//remove Highlight
-		AutoForm.resetForm("insertAppointmentFormInner");
+		//console.log("resetting appointment form");
+
 	}
 });
 Router.route('editAppointment', {
@@ -162,6 +134,7 @@ Router.route('editAppointment', {
 	//},
 	loadingTemplate: 'loading',
 	onBeforeAction: function () {
+		console.log("edit onbeforeaction");
 			var handle = Meteor.subscribe('singleAppoint', this.params.id);
 			if (handle.ready()) {
 				var appoint = appointmentList.findOne(this.params.id);
@@ -173,14 +146,13 @@ Router.route('editAppointment', {
 						Session.get('selectedProviderName'),
 						null,
 						null);
-					console.log("EditAppointment now receiving standard subs.");
-					console.log(subs);
 				});
 				//this.wait(subs);
+				Session.set("formForInsert", false);
+				Session.set("currentlyEditingDoc", this.params.id);
 				this.next();
 			}
-		Session.set("formForInsert", false);
-		Session.set("currentlyEditingDoc", this.params.id);
+
 
 
 	},
@@ -191,13 +163,13 @@ Router.route('editAppointment', {
 		}
 	},
 	onAfterAction: function() {
-		//if (this.ready()) {
-		//	AutoForm.resetForm("insertAppointmentFormInner");
-		//}
+		console.log("edit onafteraction");
 	},
 	onStop: function() {
+		console.log("edit onstop");
 		Session.set("formForInsert", true);
 		Session.set("currentlyEditingDoc", null);
+		AutoForm.resetForm("insertAppointmentFormInner");
 	}
 });
 Router.route('newBlockoutForm', {

@@ -14,7 +14,7 @@ Template.afInputTimePicker.atts = addFormControlAtts;
 
 Template.afInputTimePicker.rendered  = function() {
 
-	$('#datetimepicker').datetimepicker({
+	this.$('#datetimepicker').datetimepicker({
 		format: "h:mm A",
 		stepping:5
 		//defaultDate: function() {
@@ -30,14 +30,18 @@ Template.afInputTimePicker.rendered  = function() {
 	Tracker.autorun(function() {
 		try{
 			if (Session.get("newTime")) {
-				$('#datetimepicker').data("DateTimePicker").date(moment(Session.get("newTime"), "h:mm A"))
+				this.$('#datetimepicker').data("DateTimePicker").date(moment(Session.get("newTime"), "h:mm A"))
 			}
 		}
 		catch (e) {}
 	})
 };
 Template.afInputTimePicker.events = {
-	'click #datetimepicker': function (event){$('#datetimepicker').data("DateTimePicker").show()}
+	'click #datetimepicker': function (event){
+		console.log(event);
+		$(event.currentTarget).data("DateTimePicker").show();
+		//$('#datetimepicker').data("DateTimePicker").show()
+	}
 };
 Template.afInputTimePicker.destroyed = function() {
 	$("div.bootstrap-datetimepicker-widget").remove();
