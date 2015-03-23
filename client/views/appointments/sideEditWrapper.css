@@ -4,5 +4,5 @@
 	transition: width 0.5s;
 }
 #insertSuccessAlert {
-    position: fixed;
+    position: absolute;
 }

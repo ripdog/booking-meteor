@@ -6,9 +6,8 @@
 meteor-platform
 aldeed:autoform
 aldeed:collection2
-ian:accounts-ui-bootstrap-3
 tsega:bootstrap3-datetimepicker
-meteorhacks:kadira
+meteorhacks:kadira@2.20.1
 less
 accounts-password
 alanning:roles
@@ -24,3 +23,4 @@ momentjs:moment
 twbs:bootstrap
 useraccounts:bootstrap
 multiply:iron-router-progress
+msavin:mongol

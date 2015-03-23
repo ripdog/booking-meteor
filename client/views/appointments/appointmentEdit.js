@@ -128,10 +128,11 @@ AutoForm.hooks({
 			thealert.attr("disabled", true);
 		},
 
-		onSuccess: function(operation, result, template) {
-			//console.log('running onSuccess!'
+		onSuccess: function(formType, result) {
+			console.log('running onSuccess!');
+			console.debug(formType);
 			var thealert = $('#insertSuccessAlert');
-			if(template.data.type === "update") {
+			if(formType === "update") {
 				thealert[0].innerHTML = "Appointment Successfully Edited.";
 			} else {
 				thealert[0].innerHTML = "New Appointment Created.";
@@ -167,7 +168,7 @@ AutoForm.hooks({
 			doc.providerName = Session.get("selectedProviderName");
 			return doc;
 		},
-		onError: function(operation, error, template) {
+		onError: function(formtype, error) {
 			//console.log('running onError!');
 			$('#saveAppointChanges').attr("disabled", false);
 			var alert = $('#insertSuccessAlert');
@@ -182,8 +183,6 @@ AutoForm.hooks({
 			//This is hacky code to transfer error from the date, where they are detected, to the time, where they are displayed
 			//for the user.
 			_.each(error.invalidKeys, function(invalidKey) {
-				//console.log('looking at');
-				//console.log(invalidKey);
 				if (invalidKey.type === "overlappingDates") {
 					appointmentList.simpleSchema().namedContext("insertAppointmentFormInner").addInvalidKeys([{
 						name: "time",

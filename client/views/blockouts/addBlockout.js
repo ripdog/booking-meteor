@@ -140,8 +140,8 @@ AutoForm.hooks({
 			doc.providerName = Session.get("selectedProviderName");
 			return doc;
 		},
-		onSuccess: function(operation, result, template) {
-			if(template.data.type === "update") {
+		onSuccess: function(operation, result) {
+			if(operation === "update") {
 				$('#insertSuccessAlert')[0].innerHTML = "Blockout Successfully Edited.";
 			} else {
 				$('#insertSuccessAlert')[0].innerHTML = "New Blockout Created.";
@@ -154,7 +154,7 @@ AutoForm.hooks({
 				goHome();
 			}, 3000);
 		},
-		onError: function(operation, error, template) {
+		onError: function(operation, error) {
 			$('#saveAppointChanges').attr("disabled", false);
 			var alert = $('#insertSuccessAlert');
 			alert.removeClass('alert-danger alert-info alert-info alert-success');
