@@ -13,6 +13,9 @@ Template.navbar.events({
 	},
 	'click #newBlockButton': function() {
 		newAppointment('12:00 PM', true);
+	},
+	'click #signOutButton': function() {
+		Meteor.logout();
 	}
 });
 Template.navbar.helpers({

@@ -1,6 +1,6 @@
 <head>
-	<title>Booking</title>
-	<meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Booking</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 
 <body>
@@ -8,55 +8,56 @@
 
 
 <template name="singlePageMasterLayout">
-	<div class="container">
-			{{> navbar}}
-		<div id="main">
-			{{> yield}}
-		</div>
-	</div>
+    <div class="container">
+        {{> navbar}}
+        <div id="main">
+            {{> yield}}
+        </div>
+    </div>
 </template>
 
 <template name="navbar">
-	<nav class="navbar navbar-default" role="navigation">
-			<div class="container-fluid">
-                <div class="navbar-header">
-                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-                        <span class="sr-only">Toggle navigation</span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                    </button>
-                    <a class="navbar-brand" href="{{pathFor 'bookingTable' date=homeLinkDate providerName=homeLinkProv}}">Booking</a>
-                    <!--{{#if loggedIn}}-->
+    <nav class="navbar navbar-default" role="navigation">
+        <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="{{pathFor 'bookingTable' date=homeLinkDate providerName=homeLinkProv}}">Booking</a>
+                <!---->
+        </div>
+        {{#if loggedIn}}
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+                <li><a href="{{pathFor 'providerList'}}">Providers</a></li>
+                {{#if isInRole 'admin'}}
+                    <li><a href="{{pathFor 'userList'}}">Users</a></li>
+                {{/if}}
+            </ul>
+            <form class="navbar-form navbar-left">
+                <div class="form-group">
+                    <button type="button" id="prevDay" class="btn btn-default glyphicon glyphicon-chevron-left"></button>
+                    <div class='input-group date' id='datetimepicker1'>
+                        <input type="text" id="dateField" class="form-control" />
+                    </div>
+                    <button type="button" id="nextDay" class="btn btn-default glyphicon glyphicon-chevron-right"></button>
                 </div>
+            </form>
+            <form class="navbar-form navbar-right">
+                <button type="button" id="newBlockButton" class="btn btn-warning">New Blockout</button>
+                <button type="button" id="newAppointButton" class="btn btn-primary">New Booking</button>
+                <button type="button" id="signOutButton" class="btn">Sign Out</button>
+            </form>
 
-                    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                    <ul class="nav navbar-nav">
-                        <li><a href="{{pathFor 'providerList'}}">Providers</a></li>
-                        {{#if isInRole 'admin'}}
-                            <li><a href="{{pathFor 'userList'}}">Users</a></li>
-                        {{/if}}
-                    </ul>
-                    <form class="navbar-form navbar-left">
-                        <div class="form-group">
-                            <button type="button" id="prevDay" class="btn btn-default glyphicon glyphicon-chevron-left"></button>
-                            <div class='input-group date' id='datetimepicker1'>
-                                <input type="text" id="dateField" class="form-control" />
-                            </div>
-                            <button type="button" id="nextDay" class="btn btn-default glyphicon glyphicon-chevron-right"></button>
-                        </div>
-                    </form>
-                    <form class="navbar-form navbar-right">
-                        <button type="button" id="newBlockButton" class="btn btn-warning">New Blockout</button>
-                        <button type="button" id="newAppointButton" class="btn btn-primary">New Booking</button>
-                    </form>
-                    <!--{{/if}}-->
-                    <!--<div class="nav navbar-nav navbar-right">-->
-                        <!--&lt;!&ndash;{{> loginButtons}}&ndash;&gt;-->
-                    <!--</div>-->
+            <!--<div class="nav navbar-nav navbar-right">-->
 
-                    </div><!-- /.navbar-collapse -->
+            <!--</div>-->
 
-			</div><!-- navbar-default -->
-		</nav>
+        </div><!-- /.navbar-collapse -->
+        {{/if}}
+        </div><!-- navbar-default -->
+    </nav>
 </template>
