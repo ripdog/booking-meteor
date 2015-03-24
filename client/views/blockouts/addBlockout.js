@@ -38,7 +38,7 @@ Template.insertBlockoutForm.rendered = function() {
 	rerenderDep.changed();
 	$('#datetimepicker').on("dp.change", function () {
 		if (Router.current().route.getName() === "newBlockoutForm") {
-			changeParams({time: $('input[name="time"]').val()});
+			changeParams({time: moment($('input[name="time"]').val(), "h:mm A").format("h-mm-A")});
 		}
 	});
 };
