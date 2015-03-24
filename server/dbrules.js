@@ -117,3 +117,27 @@ unusualDays.allow({
 	},
 	fetch: ["providerName"]
 });
+
+providers.allow({
+	insert: function(userId, provider) {
+		if (Roles.userIsInRole(userId, 'provider') && provider.name != Meteor.users.findOne(userId).providerName) {
+			throw new Meteor.Error (403, "Provider tried to add provider for user other than herself.")
+		}
+		return true;
+	},
+	update: function(userId, provider) {
+
+		if (Roles.userIsInRole(userId, 'provider') && provider.name != Meteor.users.findOne(userId).providerName) {
+			throw new Meteor.Error (403, "Provider tried to edit provider for user other than herself.");
+		}
+		return true;
+	},
+	remove:function(userId, provider) {
+
+		if (Roles.userIsInRole(userId, 'provider') && provider.name != Meteor.users.findOne(userId).providerName) {
+			throw new Meteor.Error (403, "Provider tried to delete provider for user other than herself.");
+		}
+		return true;
+	},
+	fetch: ["name"]
+});

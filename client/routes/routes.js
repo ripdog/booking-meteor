@@ -121,7 +121,9 @@ Router.route('newAppointment', {
 	},
 	onStop: function() {
 		Session.set("newTime", null);//remove Highlight
-		//console.log("resetting appointment form");
+		Tracker.afterFlush(function () {
+			AutoForm.resetForm("insertAppointmentFormInner");
+		});
 
 	}
 });
@@ -169,7 +171,9 @@ Router.route('editAppointment', {
 		console.log("edit onstop");
 		Session.set("formForInsert", true);
 		Session.set("currentlyEditingDoc", null);
-		AutoForm.resetForm("insertAppointmentFormInner");
+		Tracker.afterFlush(function () {
+			AutoForm.resetForm("insertAppointmentFormInner");
+		});
 	}
 });
 Router.route('newBlockoutForm', {

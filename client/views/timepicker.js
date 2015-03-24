@@ -27,10 +27,13 @@ Template.afInputTimePicker.rendered  = function() {
 		//defaultDate: moment($('#datetimepicker > input').value, "h:mm A").tz("Pacific/Auckland").toDate()
 		//defaultDate: moment().startOf('day').hour(12).tz("Pacific/Auckland")
 	});
+	self = this;
 	Tracker.autorun(function() {
 		try{
-			if (Session.get("newTime")) {
-				this.$('#datetimepicker').data("DateTimePicker").date(moment(Session.get("newTime"), "h:mm A"))
+			if (Session.get("newTime") &&
+				(Router.current().route.getName() === "newAppointment" ||
+				Router.current().route.getName() === "newBlockout")) {
+				self.$('#datetimepicker').data("DateTimePicker").date(moment(Session.get("newTime"), "h:mm A"))
 			}
 		}
 		catch (e) {}
@@ -38,9 +41,7 @@ Template.afInputTimePicker.rendered  = function() {
 };
 Template.afInputTimePicker.events = {
 	'click #datetimepicker': function (event){
-		console.log(event);
 		$(event.currentTarget).data("DateTimePicker").show();
-		//$('#datetimepicker').data("DateTimePicker").show()
 	}
 };
 Template.afInputTimePicker.destroyed = function() {

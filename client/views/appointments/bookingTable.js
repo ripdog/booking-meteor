@@ -158,11 +158,10 @@ Template.bookingTable.rendered = function() {
 
 Template.timeRow.helpers({
 	rowHighlightClass: function() {
-		if (Session.get("newTime") !== "undefined" && Session.get("formForInsert") === true) {
-			if(Session.get("newTime") == this.time) {
-				console.log(this);
-				return "bg-success";
-			}
+		if (moment(Session.get("newTime"), "hh:mm A").format("h:mm A") == this.time && Session.get("formForInsert") === true) {
+			console.log("highlighting row "+ Session.get("newTime"));
+
+			return "bg-success";
 		}
 		
 	}
