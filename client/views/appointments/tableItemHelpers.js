@@ -1,3 +1,5 @@
+
+
 tableItemHeight = function(thisobj) {
 		if (thisobj.length == Session.get("appntlength"))
 		{

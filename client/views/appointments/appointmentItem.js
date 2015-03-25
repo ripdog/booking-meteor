@@ -1,16 +1,4 @@
 Template.appointmentItem.helpers({
-	appointmentName: function () {
-		return this.firstname + " " + this.lastname;
-	},
-	appointmentTime: function() {
-		return this.time;
-	},
-	appointmentPhone: function() {
-		return this.phone;
-	},
-	appointmentLength: function() {
-		return this.length;
-	},
 	inbetween: function() {
 		//WARNING DIRTY HACK
 		//WILL FAIL IF DEFAULT APPNT LENGTH CHANGED

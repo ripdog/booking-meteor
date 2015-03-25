@@ -1,4 +1,4 @@
-var subs = new SubsManager({
+subs = new SubsManager({
 	cacheLimit: 20,//number of subs to cache
 	expireIn: 20//minutes to hold on to subs
 });
@@ -54,14 +54,14 @@ returnStandardSubs = function(date, providerName, appntId, blockId) {
 	if (typeof date === "string" && typeof providerName === "string") {
 		Session.set("date", thedate);
 		Session.set("selectedProviderName", providerName);
-		list = list.concat([Meteor.subscribe('appointmentList', Session.get('date'), Session.get("selectedProviderName")),
-			Meteor.subscribe("unusualDays", Session.get("date")),
-			Meteor.subscribe('blockouts', Session.get('date'), Session.get("selectedProviderName"))]);
+		list = list.concat([subs.subscribe('appointmentList', Session.get('date'), Session.get("selectedProviderName")),
+			subs.subscribe("unusualDays", Session.get("date")),
+			subs.subscribe('blockouts', Session.get('date'), Session.get("selectedProviderName"))]);
 	}
 	if (typeof appntId === "string") {
-		list = list.concat(Meteor.subscribe('singleAppoint', appntId));
+		list = list.concat(subs.subscribe('singleAppoint', appntId));
 	} else if (typeof blockId === "string") {
-		list = list.concat(Meteor.subscribe('singleBlockout', blockId));
+		list = list.concat(subs.subscribe('singleBlockout', blockId));
 	}
 	//console.log(list);
 	return list;
@@ -137,7 +137,7 @@ Router.route('editAppointment', {
 	loadingTemplate: 'loading',
 	onBeforeAction: function () {
 		console.log("edit onbeforeaction");
-			var handle = Meteor.subscribe('singleAppoint', this.params.id);
+			var handle = subs.subscribe('singleAppoint', this.params.id);
 			if (handle.ready()) {
 				var appoint = appointmentList.findOne(this.params.id);
 				if (!appoint) {this.render("notFound")}
@@ -229,7 +229,7 @@ Router.route('editBlockout', {
 	template: 'blockoutEdit',//TODO: If not on correct date for appointment, change
 	loadingTemplate: 'loading',
 	onBeforeAction: function () {
-		var handle = Meteor.subscribe('singleBlockout', this.params.id);
+		var handle = subs.subscribe('singleBlockout', this.params.id);
 		Session.set("formForInsert", false);
 		Session.set("currentlyEditingDoc", this.params.id);
 		if (handle.ready()) {
@@ -267,7 +267,7 @@ Router.route('userList', {
 	path: '/users',
 	waitOn: function() {
 		if(Meteor.user()) {
-			return Meteor.subscribe("userList");
+			return subs.subscribe("userList");
 		}
 	}
 });
@@ -291,8 +291,7 @@ Router.route('bookingTable', {
 	path: '/:date/:providerName',
 	waitOn: function() {
 		if(Meteor.user()) {
-			subs = returnStandardSubs(this.params.date, this.params.providerName);
-			return subs;
+			return returnStandardSubs(this.params.date, this.params.providerName);
 		}
 	},
 	//onBeforeAction: function () {
@@ -301,7 +300,7 @@ Router.route('bookingTable', {
 	//},
 	action: function() {
 		if(this.ready()) {
-			console.log("ready to render! "+performance.now());
+			//console.log("ready to render! "+performance.now());
 			this.render();
 		}
 	}
