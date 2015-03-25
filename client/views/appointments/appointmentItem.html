@@ -1,9 +1,5 @@
  <template name="appointmentItem">
-	<div class="tableItem appointmentItem bg-primary {{itemHighlightClass}}" data-id={{_id}} style="width:{{width}};
-												   max-height:{{height}};
-													   height:{{height}};
-												   left:{{left}};
-												   top:{{top}};">
+	<div class="tableItem appointmentItem bg-primary {{itemHighlightClass}}" data-id={{_id}} style={{appointmentStyle}}>
 		<h5 class="tableItemData"><span class="glyphicon glyphicon-user"></span>
 			{{firstname}} {{lastname}}</h5>{{{inbetween}}}
 		<p class="tableItemData"><span class="glyphicon glyphicon-time"></span>

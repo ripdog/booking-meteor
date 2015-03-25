@@ -10,6 +10,7 @@
 	-ms-user-select: none;
 	user-select: none;
 	cursor: default;
+    /*border: 1px inset red;*/
 }
 .tableItemData {
 	display: inline-block;

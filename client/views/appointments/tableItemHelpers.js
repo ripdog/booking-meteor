@@ -1,70 +1,102 @@
+jquerycache = {};//cache the jquery calls because they're slow. do em once per route, clearing on every new route.
+fillJqueryCache = function() {
+	Tracker.autorun (function() {
+		Session.get("date");
+		Session.get('selectedProviderName');
+		console.log('filling the jquery cache');
+		jquerycache.theadth = $("thead th").css("height");//table header height
+		jquerycache.rowHeight = $(".timeRow")[1].clientHeight;//the first row is different height between browsers.
+		jquerycache.headerWidth = parseInt($(".rowHeader").css("width"));
+		jquerycache.tableItemHeight = parseInt($('.tableItemData').css('height'));
+		// see https://github.com/twbs/bootstrap/issues/16149
+	});
+};
 
+buildTableItemStyle = function(thisobj) {//centralizing this function improves DRY and
+	//allows us to avoid doing any of this expensive stuff until the times table is rendered
+	if (!Session.get('timesRendered')) {
+		return 0;
+	}
+	if (typeof jquerycache.theadth === "undefined") {
+		fillJqueryCache();
+	}
+	var height = tableItemHeight(thisobj);
+	return "style=\"" +
+		"width:auto;max-height:" +height+
+		";height:" + height +
+		";left:" + tableItemLeft(thisobj) +
+		";top:" + tableItemTop(thisobj) +
+		";\""
+};
+
+highlightItemHelper = function(thisobj) {
+	if(typeof Session.get('currentlyEditingDoc') !== "undefined"
+		&& Session.get("currentlyEditingDoc") === thisobj._id) {
+
+		return "being-edited";
+	}
+};
+
+inBetween = function(thisobj) {
+	if (!Session.get('timesRendered')) {
+		return 0;
+	}
+	if (typeof jquerycache.theadth === "undefined") {
+		fillJqueryCache();
+	}
+	var provObj = getProvObject(Session.get("date"), Session.get('selectedProviderName'));
+	if (((jquerycache.rowHeight/provObj.appointmentLength)*thisobj.length) >= (jquerycache.tableItemHeight * 4)) {
+		return '<br/>'
+	}
+	else {
+		return " - "
+	}
+};
 
 tableItemHeight = function(thisobj) {
 		if (thisobj.length == Session.get("appntlength"))
 		{
-			return getRowHeight() +"px";
+			return jquerycache.rowHeight +"px";
 		}
 		var provObject = getProvObject(Session.get("date"), Session.get('selectedProviderName'));
-		var defaultHeight = getRowHeight();
+		var defaultHeight = jquerycache.rowHeight;
 		var pxPerMinute = defaultHeight/provObject.appointmentLength;
 		return Math.ceil(pxPerMinute * thisobj.length) + "px";
 };
 tableItemLeft = function(thisobj) {
-	return $(".rowHeader").css("width");
+	return jquerycache.headerWidth + "px";
 };
 tableItemTop = function(thisobj) {
-	//console.log(thisobj);
-	if (!Session.get('timesRendered')) {
-		return 0;
-	}
 	console.log("TableItemTop being run.");
 	if (!thisobj.date) {//this is a blockout
 		var datestring = moment(Session.get("date")).tz("Pacific/Auckland").format("YYYY-MM-DD ") + thisobj.time;
-		var thedate = moment(datestring, "YYYY-MM-DD hh:mm A");
+		var thedate = moment(datestring, "YYYY-MM-DD hh:mm A").toDate();
 		// console.log(thedate);
 	} else {
-		thedate = moment(thisobj.date);
+		thedate = thisobj.date
 	}
-
 	var provObject = getProvObject(Session.get("date"), Session.get('selectedProviderName'));
 
+	var startTime = Session.get("date");
+	startTime.setHours(provObject.startTime);
 	//numFromTop is the number of minutes from the beginning of the day this item is
-	var numFromTop = (moment(thedate).unix() -
-				  moment(Session.get("date")).hours(provObject.startTime).unix())/60;
+	var numFromTop = (thedate.getTime() -
+				  startTime.getTime())/1000/60;
+
 
 	if(numFromTop/provObject.appointmentLength === 0){//special case for first item of the day.
-		return "37px";
-		//return $("thead th").css("height");
+		return jquerycache.theadth;
 	}
 	else
 	{
 		var untouchedAppntsFromTop = (numFromTop/provObject.appointmentLength)+1;
-		if (untouchedAppntsFromTop > $(".timeRow").length+1 || //if the appointment is after today, it will
-				//be on a row too 'low'
-			untouchedAppntsFromTop < 0) { //or too 'high' (above 0)
-			//This protects against exceptions when system tries to render appointments
-			//on wrong days.
-			return 0;
-		}
 
 		var appntsFromTop = Math.floor(untouchedAppntsFromTop);
-	 		// console.log(this.date + " is  " + untouchedAppntsFromTop + " appoints from the top.");
-		//try {
-			//var pixelsFromTop = $(".timeRow:nth-child("+appntsFromTop+")")[0].offsetTop;
-			var pixelsFromTop = 37*appntsFromTop;
-		//}
-		//catch (exc) {
-		//	//console.log(appntsFromTop);
-		////	console.log("exception caught, rendering too early, hold off.");
-		//	rerenderDep.changed();
-		//}
-		// console.log("PixelsFromTop: "+pixelsFromTop);
+		var pixelsFromTop = jquerycache.rowHeight*appntsFromTop;
+
 		if (untouchedAppntsFromTop % 1 !== 0){
-//// 				console.log(untouchedAppntsFromTop % 1);
 //			//if the appnt doesn't align with standard boundries - i.e, 15 mins
-//// 				console.log(extraPixels);
-			pixelsFromTop += getRowHeight() *
+			pixelsFromTop += jquerycache.rowHeight *
 			(untouchedAppntsFromTop % 1);
 		}
 		//console.log("Editing: "+Session.get("currentlyEditingDoc"))

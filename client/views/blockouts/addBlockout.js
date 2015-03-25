@@ -27,8 +27,8 @@ Template.insertBlockoutForm.events({
 	},
 	'click #deleteBlockoutButton': function() {
 		if (confirm("Are you sure you want to delete this blockout?")) {
-			blockouts.remove(Session.get("currentlyEditingDoc"));
 			goHome();
+			blockouts.remove(Session.get("currentlyEditingDoc"));
 		}
 	}
 
