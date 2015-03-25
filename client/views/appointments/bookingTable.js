@@ -34,10 +34,9 @@ Template.bookingTable.helpers({
 		var finalTime = dateCounter.format("h:mm A");
 		// console.log(JSON.stringify({time: finalTime}));
 		ret.push({time: finalTime, rowTimeId:finalTime});
-		console.log("times has finished. Rerendering.");
-		// rerenderDep.changed()
 		return ret;
 	},
+
 	blockouts: function() {
 		return getBlockouts(Session.get("selectedProviderName"), Session.get('date'));
 	},
@@ -132,9 +131,14 @@ Template.bookingTable.events({
 	}
 });
 
+Template.bookingTable.created = function() {
+	Session.set('timesRendered', false);
+};
+
 Template.bookingTable.rendered = function() {
-	console.log("rerendering");
-	rerenderDep.changed();
+	//console.log("rerendering");
+	//rerenderDep.changed();
+	Session.set('timesRendered', true);
 	Tracker.autorun(function() {
 		// /appointToScrollTo
 		// var pos = $('div[data-id="'+Session.get("currentlyEditingDoc")+'"]')[0].offsetTop

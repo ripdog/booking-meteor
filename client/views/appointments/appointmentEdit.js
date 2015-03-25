@@ -84,7 +84,7 @@ Template.insertAppointmentForm.helpers({
 			try {return provObject.appointmentLength}
 			catch (e) {
 				console.log("looking for appointment length too early.");
-				return 0;
+				return 15;
 			}//this error doesn't matter, it means the unusualDays
 			// and Providers collections aren't filled yet.
 			//will be fixed for real when iron router is used for appointment editing

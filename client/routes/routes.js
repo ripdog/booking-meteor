@@ -12,12 +12,12 @@ Router.configure({
 Router.onBeforeAction(mustBeSignedIn, {except: ['loginPage']});
 function mustBeSignedIn() {
 	if (Meteor.loggingIn()) {
-		console.log("currently logging in");
+		//console.log("currently logging in");
 		this.render('loading');
 	} else {
 		user = Meteor.user();
 		if (!user) {
-			console.log("need to log in");
+			//console.log("need to log in");
 			console.log(Router.current().route.getName());
 			this.render("loginPage");
 			//Router.go('loginPage', {redirect: Router.current().route.path()});
@@ -242,9 +242,6 @@ Router.route('editBlockout', {
 			});
 			this.next();
 		}
-
-
-
 	},
 	action: function() {
 		if(this.ready()) {
@@ -304,6 +301,7 @@ Router.route('bookingTable', {
 	//},
 	action: function() {
 		if(this.ready()) {
+			console.log("ready to render! "+performance.now());
 			this.render();
 		}
 	}

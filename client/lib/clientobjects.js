@@ -2,18 +2,16 @@ closeTimeout = "";//the handle to the timeout which closes appointmentEdit after
 //declared here for globallity.
 rerenderDep = new Deps.Dependency();
 getRowHeight = function() {
-	var ret = parseInt($(".timeRow").css("height"));
-	if (ret === 38) {//OH GOD DIRTY HACK
-	//Firefox overreports the height of rows by 1px. Wat?
-		return ret-1;
-	}
-	else {
-		return ret;
-	}
-}
-getDate = function (){
-	return Session.get("date");
-}
+	//var ret = parseInt($(".timeRow").css("height"));
+	//if (ret === 38) {//OH GOD DIRTY HACK
+	////Firefox overreports the height of rows by 1px. Wat?
+	//	return ret-1;
+	//}
+	//else {
+	//	return ret;
+	//}
+	return 37;
+};
 dayDelta = function (date) {
 	var diff = moment(date).diff(moment().startOf('day'), "days");
 	if (diff===1){

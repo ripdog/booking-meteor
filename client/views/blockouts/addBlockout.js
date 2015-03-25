@@ -23,12 +23,12 @@ function dayDelta(date) {
 Template.insertBlockoutForm.events({
 	'click #closeBlockoutEditor': function() {
 		$('td.rowContent.bg-success').removeClass('bg-success');
-		Router.go('/');
+		goHome();
 	},
 	'click #deleteBlockoutButton': function() {
 		if (confirm("Are you sure you want to delete this blockout?")) {
 			blockouts.remove(Session.get("currentlyEditingDoc"));
-			Router.go('/');
+			goHome();
 		}
 	}
 
@@ -73,7 +73,6 @@ Template.insertBlockoutForm.helpers({
 			var provObject = getProvObject(Session.get("date"), Session.get('selectedProviderName'));
 			try {return provObject.appointmentLength}
 			catch (e) {
-				// console.log("looking for appointment length too early.")
 				return 0;
 			}//this error doesn't matter, it means the unusualDays
 			// and Providers collections aren't filled yet.
