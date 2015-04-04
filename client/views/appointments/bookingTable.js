@@ -156,7 +156,9 @@ Template.bookingTable.rendered = function() {
 	})
 };
 
-
+Template.bookingTable.onDestroyed(function() {
+	jquerycache = {}; //clear the jquery cache
+});
 
 
 
