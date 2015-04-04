@@ -24,3 +24,5 @@ twbs:bootstrap
 useraccounts:bootstrap
 multiply:iron-router-progress
 msavin:mongol
+msavin:jetsetter
+reactive-var
