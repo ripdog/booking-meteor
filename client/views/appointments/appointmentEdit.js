@@ -150,16 +150,12 @@ AutoForm.hooks({
 			}
 			return doc;
 		},
-		formToDoc: function(doc){
-			//console.log('running formToDoc!');
-			if (typeof doc.time === "string") {
-				var datestring = moment(Session.get("date")).tz("Pacific/Auckland").format("YYYY-MM-DD ") + doc.time;
-				//the time is localtime, the date is utc. Set the date to localtime, add the time
-				//then convert back to utc.
-				doc.date = moment(datestring, "YYYY-MM-DD hh:mm A").utc().toDate();
-			}
-			doc.providerName = Session.get("selectedProviderName");
-			return doc;
+		formToDoc: function(doc) {
+			prepareDocForDB(doc)
+		},
+		formToModifier: function(doc) {
+			console.log(doc);
+			prepareDocForDB(doc)
 		},
 		onError: function(formtype, error) {
 			//console.log('running onError!');
@@ -222,3 +218,15 @@ AutoForm.hooks({
 		}
 	}
 });
+
+prepareDocForDB = function(doc) {
+	//console.log('running formToDoc!');
+	if (typeof doc.time === "string") {
+		var datestring = moment(Session.get("date")).tz("Pacific/Auckland").format("YYYY-MM-DD ") + doc.time;
+		//the time is localtime, the date is utc. Set the date to localtime, add the time
+		//then convert back to utc.
+		doc.date = moment(datestring, "YYYY-MM-DD hh:mm A").utc().toDate();
+	}
+	doc.providerName = Session.get("selectedProviderName");
+	return doc;
+};

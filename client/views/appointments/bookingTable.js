@@ -7,8 +7,13 @@ Template.bookingTable.helpers({
 		var ret = momentobj.format("dddd, MMMM Do GGGG");
 		return ret + " -"+ dayDelta(Session.get("date"));
 	},
-	loggedIn: function() {
-		return Meteor.userId();
+	bookingTableWrapperStyle: function() {
+		if (Router.current().route.getName() !== "printout") {
+			return {style: "height:700px; overflow-y:auto;"}
+		}
+	},
+	notPrintout: function() {
+		return Router.current().route.getName() !== "printout";
 	},
 	times: function(){
 		if (Roles.userIsInRole(Meteor.userId(), "provider")) {
@@ -138,6 +143,7 @@ Template.bookingTable.created = function() {
 Template.bookingTable.rendered = function() {
 	//console.log("rerendering");
 	//rerenderDep.changed();
+	fillJqueryCache();
 	Session.set('timesRendered', true);
 	Tracker.autorun(function() {
 		// /appointToScrollTo

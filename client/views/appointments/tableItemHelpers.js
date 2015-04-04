@@ -1,24 +1,20 @@
 jquerycache = {};//cache the jquery calls because they're slow. do em once per route, clearing on every new route.
 fillJqueryCache = function() {
-	Tracker.autorun (function() {
-		Session.get("date");
-		Session.get('selectedProviderName');
-		console.log('filling the jquery cache');
-		jquerycache.theadth = $("thead th").css("height");//table header height
-		jquerycache.rowHeight = $(".timeRow")[1].clientHeight;//the first row is different height between browsers.
-		jquerycache.headerWidth = parseInt($(".rowHeader").css("width"));
-		jquerycache.tableItemHeight = parseInt($('.tableItemData').css('height'));
-		// see https://github.com/twbs/bootstrap/issues/16149
-	});
+	Session.get("date");
+	Session.get('selectedProviderName');
+	console.log('filling the jquery cache');
+	jquerycache.theadth = $("thead th").css("height");//table header height
+	jquerycache.rowHeight = $(".timeRow")[1].clientHeight;//the first row is different height between browsers.
+	jquerycache.headerWidth = parseInt($(".rowHeader").css("width"));
+	jquerycache.tableItemHeight = parseInt($('.tableItemData').css('height'));
+	// see https://github.com/twbs/bootstrap/issues/16149
+
 };
 
 buildTableItemStyle = function(thisobj) {//centralizing this function improves DRY and
 	//allows us to avoid doing any of this expensive stuff until the times table is rendered
 	if (!Session.get('timesRendered')) {
 		return 0;
-	}
-	if (typeof jquerycache.theadth === "undefined") {
-		fillJqueryCache();
 	}
 	var height = tableItemHeight(thisobj);
 	return "style=\"" +
@@ -40,9 +36,6 @@ highlightItemHelper = function(thisobj) {
 inBetween = function(thisobj) {
 	if (!Session.get('timesRendered')) {
 		return 0;
-	}
-	if (typeof jquerycache.theadth === "undefined") {
-		fillJqueryCache();
 	}
 	var provObj = getProvObject(Session.get("date"), Session.get('selectedProviderName'));
 	if (((jquerycache.rowHeight/provObj.appointmentLength)*thisobj.length) >= (jquerycache.tableItemHeight * 4)) {

@@ -1,5 +1,4 @@
 <template name="bookingTable">
-	{{#if loggedIn}}
 	<div id="bookingTable">
 		<!-- <div class="row">
 			<div class="" -->
@@ -15,7 +14,7 @@
 					</a></li>
 			{{/each}}
 		</ul>
-		<div id="bookingTableWrapper" style="height:700px; overflow-y:auto;">
+		<div id="bookingTableWrapper" {{bookingTableWrapperStyle}}>
 			<table class="table">
 				<thead>
 					<tr>
@@ -43,6 +42,7 @@
 
 			</table>
 		</div>
+		{{#if notPrintout}}
 		<div class="pull-right" id="customTimeChanger">
 			<button type="button" style="{{buttonStyle}}" id="customTimesButton" class="btn">Set Custom Times</button>
 			{{#if unusualDays}}
@@ -58,8 +58,8 @@
 				{{/autoForm}}
 			{{/if}}
 		</div>
+		{{/if}}
 	</div>
-	{{/if}}
 </template>
 
 <template name="timeRow">

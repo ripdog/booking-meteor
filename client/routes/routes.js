@@ -284,9 +284,23 @@ Router.route('loginPage', {
 	}
 });
 
-//TODO: Split up the bookingTable so that the appointment
-//items always render after the table itself. Also allow cleanup so less
-//stuff disappears when changing date. Add date to url.
+Router.route('printout', {
+	template: "bookingTable",
+	layoutTemplate: "blank",
+	path: '/printout/:date/:providerName',
+	waitOn: function() {
+		if(Meteor.user()) {
+			return returnStandardSubs(this.params.date, this.params.providerName);
+		}
+	},
+	action: function() {
+		if(this.ready()) {
+			//console.log("ready to render! "+performance.now());
+			this.render();
+		}
+	}
+});
+
 Router.route('bookingTable', {
 	path: '/:date/:providerName',
 	waitOn: function() {
