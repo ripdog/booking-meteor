@@ -2,7 +2,7 @@ jquerycache = {};//cache the jquery calls because they're slow. do em once per r
 fillJqueryCache = function() {
 	Session.get("date");
 	Session.get('selectedProviderName');
-	console.log('filling the jquery cache');
+	//console.log('filling the jquery cache');
 	jquerycache.theadth = $("thead th").css("height");//table header height
 	jquerycache.rowHeight = $(".timeRow")[1].clientHeight;//the first row is different height between browsers.
 	jquerycache.headerWidth = parseInt($(".rowHeader").css("width"));
@@ -60,7 +60,6 @@ tableItemLeft = function(thisobj) {
 	return jquerycache.headerWidth + "px";
 };
 tableItemTop = function(thisobj) {
-	console.log("TableItemTop being run.");
 	if (!thisobj.date) {//this is a blockout
 		var datestring = moment(Session.get("date")).tz("Pacific/Auckland").format("YYYY-MM-DD ") + thisobj.time;
 		var thedate = moment(datestring, "YYYY-MM-DD hh:mm A").toDate();

@@ -42,9 +42,11 @@ Template.navbar.rendered = function() {
 		$('#datetimepicker1').datetimepicker({
 			format: "YYYY-MM-DD"
 		});
-		Deps.autorun(function (comp) {
-			$('#datetimepicker1').data("DateTimePicker").date(moment(Session.get("date")));
-		});
+		try {
+			Deps.autorun(function (comp) {
+				$('#datetimepicker1').data("DateTimePicker").date(moment(Session.get("date")));
+			});
+		} catch (e) {}
 		$('#datetimepicker1').on("dp.change", function(e) {
 			changeParams({date: e.date.format("YYYY-MM-DD")});
 		})

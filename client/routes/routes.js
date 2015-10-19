@@ -165,10 +165,10 @@ Router.route('editAppointment', {
 		}
 	},
 	onAfterAction: function() {
-		console.log("edit onafteraction");
+		//console.log("edit onafteraction");
 	},
 	onStop: function() {
-		console.log("edit onstop");
+		//console.log("edit onstop");
 		Session.set("formForInsert", true);
 		Session.set("currentlyEditingDoc", null);
 		Tracker.afterFlush(function () {
@@ -279,7 +279,7 @@ Router.route('loginPage', {
 		if(this.params) {
 			Session.set('loginRedirect', this.params[0]);
 		}
-		console.log(this.params[0]);
+		//console.log(this.params[0]);
 		this.next();
 	}
 });
