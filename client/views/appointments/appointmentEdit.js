@@ -134,14 +134,14 @@ AutoForm.hooks({
 			} else {
 				thealert[0].innerHTML = "New Appointment Created.";
 			}
-			thealert.removeClass('alert-danger alert-info alert-info alert-success');
-			thealert.addClass('alert-success');
-			thealert.removeClass('bg-success');
-			this.resetForm();
-			closeTimeout = Meteor.setTimeout(function() {
-				$('#insertSuccessAlert').hide("slow");
-				goHome();
-			}, 3000);
+			//thealert.removeClass('alert-danger alert-info alert-info alert-success');
+			//thealert.addClass('alert-success');
+			//thealert.removeClass('bg-success');
+			//this.resetForm();
+			//closeTimeout = Meteor.setTimeout(function() {
+			//	$('#insertSuccessAlert').hide("slow");
+			goHome();
+			//}, 3000);
 		},
 		docToForm: function(doc){
 			console.log('running docToForm on route: '+Router.current().route.getName());
