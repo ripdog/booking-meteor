@@ -1,5 +1,6 @@
 Template.navbar.events({
 	'click #nextDay': function() {
+		//if current route == calendar then change current month
 		changeParams({date: moment(Session.get("date")).add(1, 'day').format("YYYY-MM-DD")});
 	},
 	'click #prevDay': function() {
@@ -34,7 +35,11 @@ Template.navbar.helpers({
 		return moment().format('YYYY-MM-DD');
 	},
 	homeLinkProv: function() {
-		return Session.get('selectedProviderName');
+		var returnitem;
+		try {
+			returnitem = Session.get('selectedProviderName') || providers.findOne().name;
+		}catch (e){}
+		return returnitem;
 	}
 });
 Template.navbar.rendered = function() {

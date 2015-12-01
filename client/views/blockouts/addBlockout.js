@@ -153,6 +153,16 @@ AutoForm.hooks({
 				goHome();
 			}, 3000);
 		},
+		formToModifier: function(doc) {
+			if (typeof doc.$set.time === "string") {
+				var datestring = moment(Session.get("date")).tz("Pacific/Auckland").format("YYYY-MM-DD ").concat(doc.$set.time);
+				//the time is localtime, the date is utc. Set the date to localtime, add the time
+				//then convert back to utc.
+				doc.$set.date = moment(datestring, "YYYY-MM-DD hh:mm A").utc().toDate();
+			}
+			doc.$set.providerName = Session.get("selectedProviderName");
+			return doc;
+		},
 		onError: function(operation, error) {
 			$('#saveAppointChanges').attr("disabled", false);
 			var alert = $('#insertSuccessAlert');

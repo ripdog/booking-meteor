@@ -35,6 +35,13 @@ Meteor.publish("unusualDays", function(thedate) {
 	}
 	return unusualDays.find({date:thedate})
 });
+Meteor.publish("unusualDaysRange", function(dateRangeStart, dateRangeEnd) {
+	if(!this.userId) {
+		this.stop();
+		return;
+	}
+	return unusualDays.find({date: {$gte: dateRangeStart, $lt: dateRangeEnd}})
+});
 Meteor.publish(null, function (){ 
 	if(!this.userId) {
 		this.stop();

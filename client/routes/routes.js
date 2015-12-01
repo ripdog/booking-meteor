@@ -301,6 +301,15 @@ Router.route('printout', {
 	}
 });
 
+Router.route('calendar', {
+	template:"calendar",
+	//waitOn: function() {
+	//	if(Meteor.user()) {
+	//
+	//	}
+	//},
+});
+
 Router.route('bookingTable', {
 	path: '/:date/:providerName',
 	waitOn: function() {
