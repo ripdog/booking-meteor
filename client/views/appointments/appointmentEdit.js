@@ -140,6 +140,7 @@ AutoForm.hooks({
 			//this.resetForm();
 			//closeTimeout = Meteor.setTimeout(function() {
 			//	$('#insertSuccessAlert').hide("slow");
+			Session.set("changedAppointmentID", result);
 			goHome();
 			//}, 3000);
 		},

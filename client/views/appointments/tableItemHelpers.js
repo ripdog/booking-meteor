@@ -95,6 +95,8 @@ tableItemTop = function(thisobj) {
 		if(Session.equals("currentlyEditingDoc", thisobj._id) && thisobj._id)/*if _id is null we are a blockout*/ {
 
 			Session.set("scrollToPoint", pixelsFromTop);
+		} else if (Session.equals("changedAppointmentID", thisobj._id)) {
+			Session.set("scrollToPoint", pixelsFromTop);
 		}
 		return pixelsFromTop + "px";
 	}
