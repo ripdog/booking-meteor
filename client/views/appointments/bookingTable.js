@@ -171,8 +171,7 @@ Template.bookingTable.onDestroyed(function() {
 Template.timeRow.helpers({
 	rowHighlightClass: function() {
 		if (moment(Session.get("newTime"), "hh:mm A").format("h:mm A") == this.time && Session.get("formForInsert") === true) {
-			console.log("highlighting row "+ Session.get("newTime"));
-
+			//console.log("highlighting row "+ Session.get("newTime"));
 			return "bg-success";
 		}
 		
@@ -181,8 +180,8 @@ Template.timeRow.helpers({
 });
 Template.timeRow.rendered = function(){
 	if(Session.equals("newTime", this.data.time) || Session.equals("changedAppointmentTime", this.data.time)) {
-		console.log("Newtime is : "+ Session.get("newTime"));
-		console.log("changedAppointmentTime is: "+ Session.get("changedAppointmentTime"));
+		//console.log("Newtime is : "+ Session.get("newTime"));
+		//console.log("changedAppointmentTime is: "+ Session.get("changedAppointmentTime"));
 		Session.set("scrollToPoint", this.firstNode.offsetTop);
 	}
 };

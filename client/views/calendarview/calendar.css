@@ -1,0 +1,16 @@
+#calendarHeader {
+    text-align:center;
+    width: 100%;
+}
+#calendarHeader > div {
+    display: inline-block;
+}
+#prevMonth {
+    float:left;
+}
+#nextMonth {
+    float:right;
+}
+h2#month {
+    margin-top: 0;
+}

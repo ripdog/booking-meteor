@@ -1,5 +1,18 @@
 <template name="calendar">
+    <div id="calendarHeader">
+        <div role="presentation" id="prevMonth">
+            <button class="btn btn-default btn-primary" role="button"><span class="glyphicon glyphicon-arrow-left"></span> {{prevmonth}}</button>
+        </div>
+        <div role="presentation">
+            <div id="centre">
+                <h2 id="month" class="">{{dateString}}</h2>
+            </div>
+        </div>
+        <div role="presentation" id="nextMonth">
+            <button class="btn btn-default btn-primary" role="button"><span class="glyphicon glyphicon-arrow-right"></span> {{nextmonth}}</button>
+        </div>
+    </div>
     <div id="thecalendar">
-        {{> fullcalendar id="innercalendar" timezone="Pacific/Auckland" }}
+        {{> fullcalendar id="innercalendar" timezone="Pacific/Auckland" header=false}}
     </div>
 </template>

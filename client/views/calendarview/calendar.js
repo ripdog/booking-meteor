@@ -1,36 +1,59 @@
+Template.calendar.helpers({
+	dateString: function() {
+		return moment(Session.get("calendarStart")).format("MMMM YYYY");
+	},
+	prevmonth: function() {
+		return moment(Session.get("calendarStart")).subtract(1, "month").format("MMMM")
+	},
+	nextmonth: function() {
+		return moment(Session.get("calendarStart")).add(1, "month").format("MMMM")
+	},
+});
+
 Template.calendar.rendered = function() {
 	var currentView = $("#innercalendar").fullCalendar("getView");
-	var currentSub;
-	currentSub = Meteor.subscribe("unusualDaysRange", currentView.start.toDate(), currentView.end.toDate());
-	Session.set('date', moment().startOf('day').format('YYYY-MM-DD'));
+	$("#innercalendar").fullCalendar('gotoDate', Session.get("calendarStart"));
+	//$("#innercalendar").on('viewRender', function(view, element) {
+	//	console.log('jquery event triggered');
+	//	console.log(view.start);
+	//})
+	Tracker.autorun(function() {
+		try {
+			if (Router.current().route.getName() == "calendar") {
+				$('#innercalendar').fullCalendar("removeEvents");
+				console.log("populating calendar - " + unusualDays.find().count());
+				var containingObject = { events: []};
+				_.forEach(unusualDays.find().fetch(), function(day) {
+					var title = day.providerName;
+					if (typeof day.notes !== "undefined") {
+						title = title + " \n" + day.notes;
+					}
+					containingObject.events.push({title:title, start: day.date, allDay: true })
+				});
+				$('#innercalendar').fullCalendar("addEventSource", containingObject)
+			}
+		}
+		catch (e) {
+			console.error("caught error while populating calendar");
+			console.log(e);
+		}
 
-	$("#innercalendar").on('viewRender', function(view, element) {
-		console.log('jquery event triggered');
-		console.log(view.start);
-	})
+	});
+
 };
 Template.calendar.events({
 	'viewRender #innercalendar': function(event, view, element) {
 		console.log('meteor event triggered');
 		console.log(view.start);
-	}
-});
-
-Tracker.autorun(function() {
-	try {
-		if (Router.current().route.getName() == "calendar") {
-			console.log("populating calendar");
-			var containingObject = { events: []};
-			_.forEach(unusualDays.find().fetch(), function(day) {
-				containingObject.events.push({title:day.notes, start: day.date, allday: true })
-			});
-			$('#innercalendar').fullCalendar("addEventSource", containingObject)
-		}
-	}
-	catch (e) {}
-
-});
-
-Tracker.autorun(function() {
-
+	},
+	'click div#nextMonth button': function(event) {
+		event.stopImmediatePropagation();
+		var newdate = moment(Session.get("date")).add(1, "month");
+		Router.go("/calendar/"+newdate.format("YYYY")+"/"+newdate.format("MMMM"))
+	},
+	'click div#prevMonth button': function(event) {
+		event.stopImmediatePropagation();
+		var newdate = moment(Session.get("date")).subtract(1, "month");
+		Router.go("/calendar/"+newdate.format("YYYY")+"/"+newdate.format("MMMM"))
+	},
 });

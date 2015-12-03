@@ -295,7 +295,6 @@ Router.route('printout', {
 	},
 	action: function() {
 		if(this.ready()) {
-			//console.log("ready to render! "+performance.now());
 			this.render();
 		}
 	}
@@ -303,11 +302,18 @@ Router.route('printout', {
 
 Router.route('calendar', {
 	template:"calendar",
-	//waitOn: function() {
-	//	if(Meteor.user()) {
-	//
-	//	}
-	//},
+	path: '/calendar/:year/:month',
+	waitOn: function() {
+		var startDate = moment().year(this.params.year).month(this.params.month).startOf('month').subtract(5, "days");
+		var endDate = moment().year(this.params.year).month(this.params.month).endOf('month').add(10, "days");
+		return Meteor.subscribe("unusualDaysRange", startDate.toDate(), endDate.toDate());
+	},
+	onBeforeAction: function() {
+		Session.set("calendarStart", moment().year(this.params.year).month(this.params.month).startOf('month').toDate());
+		Session.set("calendarEnd", moment().year(this.params.year).month(this.params.month).endOf('month').toDate());
+		Session.set("date", moment().year(this.params.year).month(this.params.month).startOf('month').toDate());
+		this.next();
+	}
 });
 
 Router.route('bookingTable', {
