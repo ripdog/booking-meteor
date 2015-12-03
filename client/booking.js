@@ -20,13 +20,15 @@ Template.navbar.events({
 	}
 });
 Template.navbar.helpers({
-	//theDate: function() {
-	//	// if (typeof Session.get("date") === 'undefined'){
-	//	// 	var thedate = moment().startOf("day").toDate();
-	//	// 	Session.set("date", thedate);
-	//	// }
-	//	return moment(Session.get("date")).format("YYYY-MM-DD");
-	//},
+	isCalendar: function() {
+		return Router.current().route.getName() === "calendar";
+	},
+	calendarMonth: function() {
+		return moment(Session.get('date')).format("MMMM");
+	},
+	calendarYear: function() {
+		return moment(Session.get('date')).format("YYYY");
+	},
 	loggedIn: function() {
 		return Meteor.userId();
 	},
@@ -47,11 +49,11 @@ Template.navbar.rendered = function() {
 		$('#datetimepicker1').datetimepicker({
 			format: "YYYY-MM-DD"
 		});
-		try {
-			Deps.autorun(function (comp) {
+		Tracker.autorun(function (comp) {
+			try {
 				$('#datetimepicker1').data("DateTimePicker").date(moment(Session.get("date")));
-			});
-		} catch (e) {}
+			} catch (e) {}
+		});
 		$('#datetimepicker1').on("dp.change", function(e) {
 			changeParams({date: e.date.format("YYYY-MM-DD")});
 		})
