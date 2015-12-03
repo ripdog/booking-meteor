@@ -44,19 +44,3 @@ Template.navbar.helpers({
 		return returnitem;
 	}
 });
-Template.navbar.rendered = function() {
-	if($("#datetimepicker1").length != 0) {
-		$('#datetimepicker1').datetimepicker({
-			format: "YYYY-MM-DD"
-		});
-		Tracker.autorun(function (comp) {
-			try {
-				$('#datetimepicker1').data("DateTimePicker").date(moment(Session.get("date")));
-			} catch (e) {}
-		});
-		$('#datetimepicker1').on("dp.change", function(e) {
-			changeParams({date: e.date.format("YYYY-MM-DD")});
-		})
-	}
-};
-
