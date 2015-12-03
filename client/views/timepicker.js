@@ -28,7 +28,7 @@ Template.afInputTimePicker.rendered  = function() {
 		//defaultDate: moment().startOf('day').hour(12).tz("Pacific/Auckland")
 	});
 	self = this;
-	Tracker.autorun(function() {
+	Tracker.autorun(function(comp) {
 		try{
 			if (Session.get("newTime") &&
 				(Router.current().route.getName() === "newAppointment" ||
@@ -36,7 +36,10 @@ Template.afInputTimePicker.rendered  = function() {
 				self.$('#datetimepicker').data("DateTimePicker").date(moment(Session.get("newTime"), "h:mm A"))
 			}
 		}
-		catch (e) {}
+		catch (e) {
+			comp.invalidated = true;
+			comp.stopped = false;
+		}
 	})
 };
 Template.afInputTimePicker.events = {

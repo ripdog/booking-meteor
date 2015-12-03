@@ -4,7 +4,6 @@
 Template.datepicker.rendered = function() {
 
 	if($("#datetimepicker1").is(":visible")) {
-		console.log("init datepicker");
 		$('#datetimepicker1').datetimepicker({
 			format: "YYYY-MM-DD"
 		});

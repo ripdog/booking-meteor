@@ -179,9 +179,8 @@ Template.timeRow.helpers({
 
 });
 Template.timeRow.rendered = function(){
-	if(Session.equals("newTime", this.data.time) || Session.equals("changedAppointmentTime", this.data.time)) {
+	if(Session.equals("newTime", this.data.time)) {
 		//console.log("Newtime is : "+ Session.get("newTime"));
-		//console.log("changedAppointmentTime is: "+ Session.get("changedAppointmentTime"));
 		Session.set("scrollToPoint", this.firstNode.offsetTop);
 	}
 };
