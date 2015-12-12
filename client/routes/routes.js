@@ -304,9 +304,11 @@ Router.route('calendar', {
 	template:"calendar",
 	path: '/calendar/:year/:month',
 	waitOn: function() {
-		var startDate = moment().year(this.params.year).month(this.params.month).startOf('month').subtract(5, "days");
-		var endDate = moment().year(this.params.year).month(this.params.month).endOf('month').add(10, "days");
-		return Meteor.subscribe("unusualDaysRange", startDate.toDate(), endDate.toDate());
+		if (Meteor.user()) {
+			var startDate = moment().year(this.params.year).month(this.params.month).startOf('month').subtract(5, "days");
+			var endDate = moment().year(this.params.year).month(this.params.month).endOf('month').add(10, "days");
+			return Meteor.subscribe("unusualDaysRange", startDate.toDate(), endDate.toDate());
+		}
 	},
 	onBeforeAction: function() {
 		Session.set("calendarStart", moment().year(this.params.year).month(this.params.month).startOf('month').toDate());
