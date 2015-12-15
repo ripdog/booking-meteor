@@ -35,11 +35,11 @@ function correctProviderName() {
 }
 Router.onBeforeAction(cleanupTimer);
 function cleanupTimer() {
-	if (typeof closeTimeout !== "undefined") {//ensure time and alert is goneburgers on new route changes.
-		$('#saveAppointChanges').attr("disabled", false);
-		Meteor.clearTimeout(closeTimeout);
-		$('#insertSuccessAlert').hide('fast');
-	}
+	//if (typeof closeTimeout !== "undefined") {//ensure time and alert is goneburgers on new route changes.
+	//	$('#saveAppointChanges').attr("disabled", false);
+	//	Meteor.clearTimeout(closeTimeout);
+	//	$('#insertSuccessAlert').hide('fast');
+	//}
 	this.next();
 }
 
@@ -311,6 +311,8 @@ Router.route('bookingTable', {
 	onBeforeAction: function () {
 		Session.setDefault("formForInsert", true);
 		AutoForm.resetForm("insertAppointmentFormInner");
+		AutoForm.resetForm("insertBlockoutFormInner");
+		Session.set("newTime", null);
 		this.next();
 	},
 	action: function() {

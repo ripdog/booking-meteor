@@ -128,9 +128,9 @@ AutoForm.hooks({
 			succAlert.removeClass('alert-danger alert-info alert-info alert-success');
 			succAlert.addClass('alert-success');
 			$('td.rowContent.bg-success').removeClass('bg-success');
-			closeTimeout = Meteor.setTimeout(function() {
-				goHome();
-			}, 3000);
+			//closeTimeout = Meteor.setTimeout(function() {
+			goHome();
+			//}, 3000);
 		},
 		formToModifier: function(doc) {
 			doc.$set.providerName = Session.get("selectedProviderName");
