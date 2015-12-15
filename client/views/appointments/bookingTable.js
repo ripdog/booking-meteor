@@ -81,10 +81,7 @@ Template.bookingTable.helpers({
 		} catch(e) {/*fails when there is no unusualDay for today.*/}
 	},
 	noneSelected: function() {
-		if (Session.get('selectedProviderName') === undefined || !Session.get('selectedProviderName')) {
-			return true
-		}
-		return false;
+		return Session.get('selectedProviderName') === undefined || !Session.get('selectedProviderName')
 
 	}
 
@@ -101,7 +98,6 @@ Template.bookingTable.events({
 	'dblclick .appointmentItem': function(event) {
 		event.stopImmediatePropagation();
 		Router.go('editAppointment', {id: $(event.currentTarget).data("id")});
-		// Session.set("currentlyEditingDoc", );
 	},
 	'dblclick .blockoutItem': function(event) {
 		event.stopImmediatePropagation();
@@ -127,11 +123,11 @@ Template.bookingTable.events({
 	'click #deleteCustomTimes': function(event) {
 		unusualDays.remove(unusualDays.findOne({date:Session.get('date'), providerName: Session.get("selectedProviderName")})._id);
 	},
-	'dblclick .rowContent': function(event) {
+	'dblclick td.rowContent': function(event) {
 		if (Router.current().route.getName() === "newBlockoutForm") {
-			newAppointment(event.currentTarget.previousElementSibling.innerHTML.replace(':','-'), true);
+			newAppointment(event.currentTarget.id, true);
 		} else {
-			newAppointment(event.currentTarget.previousElementSibling.innerHTML.replace(':','-'));
+			newAppointment(event.currentTarget.id);
 		}
 	}
 });

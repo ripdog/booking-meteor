@@ -35,10 +35,9 @@ Template.insertBlockoutForm.events({
 });
 Template.insertBlockoutForm.rendered = function() {
 	console.log("rerendering");
-	rerenderDep.changed();
 	$('#datetimepicker').on("dp.change", function () {
 		if (Router.current().route.getName() === "newBlockoutForm") {
-			changeParams({time: moment($('input[name="time"]').val(), "h:mm A").format("h-mm-A")});
+			changeParams({time: moment($('input[name="date"]').val(), "h:mm A").format("h-mm-A")});
 		}
 	});
 };
@@ -115,27 +114,7 @@ AutoForm.hooks({
 			succAlert.show("fast");//possible race condition? If error occours and form is correctly submitted within 3000ms
 			$('#saveAppointChanges').attr("disabled", true);
 		},
-		//endSubmit: function(fieldId, template) {
-		//},
-		docToForm: function(doc){
-			if (doc.date instanceof Date) {
-				doc.time = moment(doc.date).format("h:mm A");
-			}
-			try {
-				$('#datetimepicker').data("DateTimePicker").setDate(moment(doc.date));
-			} catch (e) {
-				$('#datetimepicker > input').val(moment(doc.date).format("h:mm A"));
-				//TODO: Fallback date setting
-			}
-			return doc;
-		},
 		formToDoc: function(doc){
-			if (typeof doc.time === "string") {
-				var datestring = moment(Session.get("date")).tz("Pacific/Auckland").format("YYYY-MM-DD ") + doc.time;
-				//the time is localtime, the date is utc. Set the date to localtime, add the time
-				//then convert back to utc.
-				doc.date = moment(datestring, "YYYY-MM-DD hh:mm A").utc().toDate();
-			}
 			doc.providerName = Session.get("selectedProviderName");
 			return doc;
 		},
@@ -154,12 +133,6 @@ AutoForm.hooks({
 			}, 3000);
 		},
 		formToModifier: function(doc) {
-			if (typeof doc.$set.time === "string") {
-				var datestring = moment(Session.get("date")).tz("Pacific/Auckland").format("YYYY-MM-DD ").concat(doc.$set.time);
-				//the time is localtime, the date is utc. Set the date to localtime, add the time
-				//then convert back to utc.
-				doc.$set.date = moment(datestring, "YYYY-MM-DD hh:mm A").utc().toDate();
-			}
 			doc.$set.providerName = Session.get("selectedProviderName");
 			return doc;
 		},
@@ -173,35 +146,7 @@ AutoForm.hooks({
 			Meteor.setTimeout(function() {
 				$('#insertSuccessAlert').hide("slow");
 			}, 3000);
-			_.each(error.invalidKeys, function(invalidKey) {
-				if (invalidKey.type === "overlappingDates") {
-					blockouts.simpleSchema().namedContext("insertBlockoutFormInner").addInvalidKeys([{
-						name: "time",
-						type: invalidKey.type,
-						value: moment(invalidKey.value).format("h:mm A")
-					}])
-				}
-				else if (invalidKey.type === "dateOutOfBounds") {
-					try {
-						var provObject = getProvObject(Session.get("date"), Session.get('selectedProviderName'));
-					} catch (e) {
-						provObject = getProvObject(Session.get("date"), Session.get('selectedProviderName'));
-					}
 
-					blockouts.simpleSchema().namedContext("insertBlockoutFormInner").addInvalidKeys([{
-						name: "time",
-						type: invalidKey.type,
-						value: provObject.startTime + " and " + provObject.endTime
-					}])
-				}
-				else if (invalidKey.type === "overlappingBlockout") {
-					blockouts.simpleSchema().namedContext("insertBlockoutFormInner").addInvalidKeys([{
-						name: "time",
-						type: invalidKey.type
-						//value: moment(invalidKey.value).format("h:mm A")
-					}])
-				}
-			});
 		},
 		after: {
 			insert: function(error, result) {

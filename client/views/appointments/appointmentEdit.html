@@ -12,11 +12,10 @@
 		<h6>{{subtitle}}</h6>
 		{{> afQuickField name='firstname'}}
         {{> afQuickField name='lastname'}}
-		{{> afQuickField name='time' value=timePreset type='timePicker'}}
+		{{> afQuickField name='date'  type='timePicker'}}
 		{{> afQuickField name='phone'}}
 		{{> afQuickField name='notes' rows=2}}
-		{{> afQuickField name='length' step=5}}
-		{{> afFieldInput name='date' value=sessionDate type="hidden"}}
+		{{> afQuickField name='length' default=15 step=5}}
 	</fieldset>
 	<div class="footer" style="height:50px;">
 		<button type="button" class="btn btn-default pull-left" id="closeBookingEditor">Close</button>

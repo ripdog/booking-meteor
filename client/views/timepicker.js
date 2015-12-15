@@ -52,8 +52,16 @@ Template.afInputTimePicker.destroyed = function() {
 };
 AutoForm.addInputType("timePicker", {
 	template: "afInputTimePicker",
-	//valueIn: function() {}
+	valueIn: function() {
+		if (typeof this.value !== "undefined") {
+			$('#datetimepicker').data("DateTimePicker").date(this.value);
+		}
+	},
 	valueOut: function() {
-		return this.val()
+		try {
+			return $('#datetimepicker').data("DateTimePicker").date().toDate();
+		} catch (e) {
+
+		}
 	}
 });

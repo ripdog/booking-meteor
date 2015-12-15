@@ -34,23 +34,18 @@ Template.insertAppointmentForm.events({
 });
 Template.insertAppointmentForm.rendered = function() {
 	console.log("appointment edit rendered");
-	$('input[name="time"]').change(function() {
+	$('input[name="date"]').change(function() {
 		if (Router.current().route.getName() === "newAppointment" ||
 			Router.current().route.getName() === "bookingTable") {
-			newAppointment($('input[name="time"]').val());
+			newAppointment($('input[name="date"]').val());
 		}
 	});
 	$('#datetimepicke4').on("dp.change", function () {
 		if (Router.current().route.getName() === "newAppointment" ||
 			Router.current().route.getName() === "bookingTable") {
-			newAppointment($('input[name="time"]').val());
+			newAppointment($('input[name="date"]').val());
 		}
 	});
-	//if(Session.get('formForInsert')) {
-	//	AutoForm.resetForm("insertAppointmentFormInner");
-	//}
-	// $('tr.timeRow.bg-success').removeClass('bg-success');
-	// $("td:contains("+$('input[name="time"]').val()+")").parent().addClass('bg-success');
 };
 Template.insertAppointmentForm.helpers({
 	appointmentList: appointmentList,
@@ -109,7 +104,7 @@ Template.insertAppointmentForm.helpers({
 				return "12:00 PM";
 			}
 		} else {
-			return appointmentList.findOne(Session.get("currentlyEditingDoc")).time;
+			return appointmentList.findOne(Session.get("currentlyEditingDoc")).date;
 		}
 	},
 	currentDoc: function() {return appointmentList.findOne(Session.get("currentlyEditingDoc"))},
@@ -144,30 +139,18 @@ AutoForm.hooks({
 			goHome();
 			//}, 3000);
 		},
-		docToForm: function(doc){
-			console.log('running docToForm on route: '+Router.current().route.getName());
-			if (doc.date instanceof Date) {
-				doc.time = moment(doc.date).format("h:mm A");
-			}
-			return doc;
-		},
+		//docToForm: function(doc){
+		//	console.log('running docToForm on route: '+Router.current().route.getName());
+		//	if (doc.date instanceof Date) {
+		//		doc.time = moment(doc.date).format("h:mm A");
+		//	}
+		//	return doc;
+		//},
 		formToDoc: function(doc) {
-			if (typeof doc.time === "string") {
-				var datestring = moment(Session.get("date")).tz("Pacific/Auckland").format("YYYY-MM-DD ") + doc.time;
-				//the time is localtime, the date is utc. Set the date to localtime, add the time
-				//then convert back to utc.
-				doc.date = moment(datestring, "YYYY-MM-DD hh:mm A").utc().toDate();
-			}
 			doc.providerName = Session.get("selectedProviderName");
 			return doc;
 		},
 		formToModifier: function(doc) {
-			if (typeof doc.$set.time === "string") {
-				var datestring = moment(Session.get("date")).tz("Pacific/Auckland").format("YYYY-MM-DD ").concat(doc.$set.time);
-				//the time is localtime, the date is utc. Set the date to localtime, add the time
-				//then convert back to utc.
-				doc.$set.date = moment(datestring, "YYYY-MM-DD hh:mm A").utc().toDate();
-			}
 			doc.$set.providerName = Session.get("selectedProviderName");
 			return doc;
 		},
@@ -182,41 +165,6 @@ AutoForm.hooks({
 			Meteor.setTimeout(function() {
 				$('#insertSuccessAlert').hide("slow");
 			}, 3000);
-			//	console.log(appointmentList.simpleSchema().namedContext("insertAppointmentFormInner").invalidKeys())
-			//This is hacky code to transfer error from the date, where they are detected, to the time, where they are displayed
-			//for the user.
-			_.each(error.invalidKeys, function(invalidKey) {
-				if (invalidKey.type === "overlappingDates") {
-					appointmentList.simpleSchema().namedContext("insertAppointmentFormInner").addInvalidKeys([{
-						name: "time",
-						type: invalidKey.type,
-						value: moment(invalidKey.value).format("h:mm A")
-					}])
-				}
-				else if (invalidKey.type === "dateOutOfBounds") {
-					var provObject;
-					try {
-						//var cleanDate = moment(template.data.doc.date).startOf("day");
-						provObject = getProvObject(Session.get("date"), Session.get('selectedProviderName'));
-					} catch (e) {
-						//cleanDate = moment(Session.get('date')).startOf('day');
-						provObject = getProvObject(Session.get("date"), Session.get('selectedProviderName'));
-					}
-
-					appointmentList.simpleSchema().namedContext("insertAppointmentFormInner").addInvalidKeys([{
-						name: "time",
-						type: invalidKey.type,
-						value: provObject.startTime + " and " + provObject.endTime
-					}])
-				}
-				else if (invalidKey.type === "overlappingBlockout") {
-					appointmentList.simpleSchema().namedContext("insertAppointmentFormInner").addInvalidKeys([{
-						name: "time",
-						type: invalidKey.type
-						//value: moment(invalidKey.value).format("h:mm A")
-					}])
-				}
-			});
 		},
 		after: {
 			insert: function(error, result) {//TODO: When appointment is made, use the data-id var

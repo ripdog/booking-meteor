@@ -7,5 +7,8 @@ Template.appointmentItem.helpers({
 	},
 	itemHighlightClass: function() {
 		return highlightItemHelper(this);
+	},
+	time: function() {
+		return moment(this.date).format("h:mm A");
 	}
 });

@@ -114,17 +114,8 @@ Router.route('newAppointment', {
 			this.render();
 		}
 	},
-	onAfterAction: function() {
-		console.log("new onafteraction");
-		if (this.ready()) {
-		}
-	},
 	onStop: function() {
 		Session.set("newTime", null);//remove Highlight
-		Tracker.afterFlush(function () {
-			AutoForm.resetForm("insertAppointmentFormInner");
-		});
-
 	}
 });
 Router.route('editAppointment', {
@@ -171,9 +162,6 @@ Router.route('editAppointment', {
 		//console.log("edit onstop");
 		Session.set("formForInsert", true);
 		Session.set("currentlyEditingDoc", null);
-		Tracker.afterFlush(function () {
-			AutoForm.resetForm("insertAppointmentFormInner");
-		});
 	}
 });
 Router.route('newBlockoutForm', {
@@ -200,26 +188,22 @@ Router.route('newBlockoutForm', {
 	},
 	onAfterAction: function() {
 		if (this.params.time) {
-			if (this.ready()) {
-
-				var provObject = getProvObject(Session.get("date"), Session.get('selectedProviderName'));
-				try {//ensure there is a sane default for blockout length field.
-					$("#insertBlockoutFormInner [data-schema-key='length']").val(provObject.appointmentLength);
-				}
-				catch(e) {}
-				//try {
-				//	//$('#datetimepicker').data("DateTimePicker").date(moment(this.params.time, "HH-mm-A"));
-				//	$('#datetimepicker > input').val(this.params.time);
-				//	console.log("succeeded to set default time for timepicker on newBlockout")
-				//} catch (e) {
-				//	console.error("failed to set default time for timepicker on newBlockout")
-				//}
+			var provObject = getProvObject(Session.get("date"), Session.get('selectedProviderName'));
+			try {//ensure there is a sane default for blockout length field.
+				$("#insertBlockoutFormInner [data-schema-key='length']").val(provObject.appointmentLength);
 			}
+			catch(e) {}
+			//try {
+			//	//$('#datetimepicker').data("DateTimePicker").date(moment(this.params.time, "HH-mm-A"));
+			//	$('#datetimepicker > input').val(this.params.time);
+			//	console.log("succeeded to set default time for timepicker on newBlockout")
+			//} catch (e) {
+			//	console.error("failed to set default time for timepicker on newBlockout")
+			//}
 		}
 	},
 	onStop: function() {
 		Session.set("newTime", null);//remove Highlight
-		AutoForm.resetForm("insertBlockoutFormInner")
 	}
 
 });
@@ -256,7 +240,6 @@ Router.route('editBlockout', {
 	//},
 	onStop: function() {
 		Session.set("formForInsert", true);
-		AutoForm.resetForm("insertBlockoutFormInner");
 		Session.set("currentlyEditingDoc", null);
 	}
 });
@@ -325,13 +308,13 @@ Router.route('bookingTable', {
 			return returnStandardSubs(this.params.date, this.params.providerName);
 		}
 	},
-	//onBeforeAction: function () {
-	//	Session.setDefault("formForInsert", true);
-	//	this.next();
-	//},
+	onBeforeAction: function () {
+		Session.setDefault("formForInsert", true);
+		AutoForm.resetForm("insertAppointmentFormInner");
+		this.next();
+	},
 	action: function() {
 		if(this.ready()) {
-			//console.log("ready to render! "+performance.now());
 			this.render();
 		}
 	}
