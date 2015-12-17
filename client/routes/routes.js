@@ -54,14 +54,14 @@ returnStandardSubs = function(date, providerName, appntId, blockId) {
 	if (typeof date === "string" && typeof providerName === "string") {
 		Session.set("date", thedate);
 		Session.set("selectedProviderName", providerName);
-		list = list.concat([subs.subscribe('appointmentList', Session.get('date'), Session.get("selectedProviderName")),
-			subs.subscribe("unusualDays", Session.get("date")),
-			subs.subscribe('blockouts', Session.get('date'), Session.get("selectedProviderName"))]);
+		list = list.concat([Meteor.subscribe('appointmentList', Session.get('date'), Session.get("selectedProviderName")),
+			Meteor.subscribe("unusualDays", Session.get("date")),
+			Meteor.subscribe('blockouts', Session.get('date'), Session.get("selectedProviderName"))]);
 	}
 	if (typeof appntId === "string") {
-		list = list.concat(subs.subscribe('singleAppoint', appntId));
+		list = list.concat(Meteor.subscribe('singleAppoint', appntId));
 	} else if (typeof blockId === "string") {
-		list = list.concat(subs.subscribe('singleBlockout', blockId));
+		list = list.concat(Meteor.subscribe('singleBlockout', blockId));
 	}
 	//console.log(list);
 	return list;
@@ -109,7 +109,9 @@ Router.route('newAppointment', {
 		this.next();
 	},
 	action: function() {
+		console.log("newAppointment action");
 		if(this.ready()) {
+			console.log("newAppointment ready");
 			this.render('bookingTable', {to: "right"});
 			this.render();
 		}
@@ -128,7 +130,7 @@ Router.route('editAppointment', {
 	loadingTemplate: 'loading',
 	onBeforeAction: function () {
 		console.log("edit onbeforeaction");
-			var handle = subs.subscribe('singleAppoint', this.params.id);
+			var handle = Meteor.subscribe('singleAppoint', this.params.id);
 			if (handle.ready()) {
 				var appoint = appointmentList.findOne(this.params.id);
 				if (!appoint) {this.render("notFound")}
@@ -213,7 +215,7 @@ Router.route('editBlockout', {
 	template: 'blockoutEdit',//TODO: If not on correct date for appointment, change
 	loadingTemplate: 'loading',
 	onBeforeAction: function () {
-		var handle = subs.subscribe('singleBlockout', this.params.id);
+		var handle = Meteor.subscribe('singleBlockout', this.params.id);
 		Session.set("formForInsert", false);
 		Session.set("currentlyEditingDoc", this.params.id);
 		if (handle.ready()) {
@@ -250,7 +252,7 @@ Router.route('userList', {
 	path: '/users',
 	waitOn: function() {
 		if(Meteor.user()) {
-			return subs.subscribe("userList");
+			return Meteor.subscribe("userList");
 		}
 	}
 });

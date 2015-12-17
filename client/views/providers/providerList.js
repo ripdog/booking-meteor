@@ -1,6 +1,6 @@
 Template.providerList.helpers({
 	providerList: function() {return providers.find();}
-})
+});
 Template.providerList.events({
 	'click .providerName': function(event){
 		try {
@@ -24,4 +24,4 @@ Template.providerList.events({
 			Session.set("selectedProviderName", providers.findOne(id).name);
 		});
 	}
-})
+});

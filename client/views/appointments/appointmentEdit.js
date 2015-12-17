@@ -32,6 +32,9 @@ Template.insertAppointmentForm.events({
 	}
 
 });
+Template.insertAppointmentForm.created = function() {
+	console.log("appointmentEdit created");
+};
 Template.insertAppointmentForm.rendered = function() {
 	console.log("appointment edit rendered");
 	$('input[name="date"]').change(function() {

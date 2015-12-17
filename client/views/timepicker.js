@@ -17,17 +17,8 @@ Template.afInputTimePicker.rendered  = function() {
 	this.$('#datetimepicker').datetimepicker({
 		format: "h:mm A",
 		stepping:5
-		//defaultDate: function() {
-		//	if (Session.get("newTime") instanceof Date) {
-		//		return moment(Session.get("newTime"))
-		//	} else {
-		//		return moment().startOf('day').hour(12).tz("Pacific/Auckland")
-		//	}
-		//}
-		//defaultDate: moment($('#datetimepicker > input').value, "h:mm A").tz("Pacific/Auckland").toDate()
-		//defaultDate: moment().startOf('day').hour(12).tz("Pacific/Auckland")
 	});
-	self = this;
+	//self = this;
 	Tracker.autorun(function(comp) {
 		try{
 			if (Session.get("newTime") &&
@@ -52,10 +43,15 @@ Template.afInputTimePicker.destroyed = function() {
 };
 AutoForm.addInputType("timePicker", {
 	template: "afInputTimePicker",
-	valueIn: function() {
-		if (typeof this.value !== "undefined") {
-			$('#datetimepicker').data("DateTimePicker").date(this.value);
+	valueIn: function(val) {
+		try {
+
+			$('#datetimepicker').data("DateTimePicker").date(val);
+			console.log("managed to set timePicker time from ValueIn, "+ val)
+		} catch(e) {
+			console.log("failed to set timePicker time from ValueIn")
 		}
+		return val;
 	},
 	valueOut: function() {
 		try {
