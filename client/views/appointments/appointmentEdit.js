@@ -32,21 +32,18 @@ Template.insertAppointmentForm.events({
 	}
 
 });
-Template.insertAppointmentForm.created = function() {
-	console.log("appointmentEdit created");
-};
 Template.insertAppointmentForm.rendered = function() {
 	console.log("appointment edit rendered");
-	$('input[name="date"]').change(function() {
+	//$('input[name="date"]').change(function() {
+	//	if (Router.current().route.getName() === "newAppointment" ||
+	//		Router.current().route.getName() === "bookingTable") {
+	//		newAppointment($('input[name="date"]').val());
+	//	}
+	//});
+	$('#datetimepicker').on("dp.change", function (e, date) {
 		if (Router.current().route.getName() === "newAppointment" ||
 			Router.current().route.getName() === "bookingTable") {
-			newAppointment($('input[name="date"]').val());
-		}
-	});
-	$('#datetimepicke4').on("dp.change", function () {
-		if (Router.current().route.getName() === "newAppointment" ||
-			Router.current().route.getName() === "bookingTable") {
-			newAppointment($('input[name="date"]').val());
+			newAppointment(date);
 		}
 	});
 };

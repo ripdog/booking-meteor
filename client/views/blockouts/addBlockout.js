@@ -34,7 +34,6 @@ Template.insertBlockoutForm.events({
 
 });
 Template.insertBlockoutForm.rendered = function() {
-	console.log("rerendering");
 	$('#datetimepicker').on("dp.change", function (date, oldDate) {
 		//if (Session.equals("newTime", moment(date).format("h:mm A"))) {return;}//prevent loops
 		if (Router.current().route.getName() === "newBlockoutForm") {
@@ -42,7 +41,6 @@ Template.insertBlockoutForm.rendered = function() {
 		}
 	});
 };
-
 Template.insertBlockoutForm.helpers({
 	title: function(){
 		if (Session.get("formForInsert")) {
