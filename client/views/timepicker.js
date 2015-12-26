@@ -50,7 +50,7 @@ Template.afInputTimePicker.events = {
 		$(event.currentTarget).data("DateTimePicker").show();
 	}
 };
-Template.afInputTimePicker.destroyed = function() {
+Template.afInputTimePicker.onDestroyed = function() {
 	$("div.bootstrap-datetimepicker-widget").remove();
 };
 AutoForm.addInputType("timePicker", {

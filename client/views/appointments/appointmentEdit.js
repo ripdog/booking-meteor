@@ -40,10 +40,10 @@ Template.insertAppointmentForm.rendered = function() {
 	//		newAppointment($('input[name="date"]').val());
 	//	}
 	//});
-	$('#datetimepicker').on("dp.change", function (e, date) {
+	$('#datetimepicker').on("dp.change", function (e) {
 		if (Router.current().route.getName() === "newAppointment" ||
 			Router.current().route.getName() === "bookingTable") {
-			newAppointment(date);
+			newAppointment(e.date.format("h:mm A"));
 		}
 	});
 };

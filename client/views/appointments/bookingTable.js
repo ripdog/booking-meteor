@@ -145,7 +145,7 @@ Template.bookingTable.rendered = function() {
 		// /appointToScrollTo
 		// var pos = $('div[data-id="'+Session.get("currentlyEditingDoc")+'"]')[0].offsetTop
 		var pos = Session.get("scrollToPoint");
-		if (pos === null) {return;}
+		if (pos === null || typeof pos === "undefined") {return;}
 		console.log("Scrolling to :" + pos);
 		$("#bookingTableWrapper").animate({
 			scrollTop: pos,
@@ -158,7 +158,7 @@ Template.bookingTable.rendered = function() {
 	})
 };
 
-Template.bookingTable.destroyed(function() {
+Template.bookingTable.onDestroyed(function() {
 	jquerycache = {}; //clear the jquery cache
 });
 
