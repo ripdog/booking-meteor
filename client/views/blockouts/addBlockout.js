@@ -34,10 +34,10 @@ Template.insertBlockoutForm.events({
 
 });
 Template.insertBlockoutForm.rendered = function() {
-	$('#datetimepicker').on("dp.change", function (date, oldDate) {
+	$('#datetimepicker').on("dp.change", function (e) {
 		//if (Session.equals("newTime", moment(date).format("h:mm A"))) {return;}//prevent loops
-		if (Router.current().route.getName() === "newBlockoutForm") {
-			changeParams({time: moment($('input[name="date"]').val(), "h:mm A").format("h-mm-A")});
+		if (Router.current().route.getName() === "newBlockout") {
+			newAppointment(e.date.format("h:mm A"), true);
 		}
 	});
 };

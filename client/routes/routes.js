@@ -166,7 +166,7 @@ Router.route('editAppointment', {
 		Session.set("currentlyEditingDoc", null);
 	}
 });
-Router.route('newBlockoutForm', {
+Router.route('newBlockout', {
 	path: '/newBlockout/:date/:providerName/:time',
 	layoutTemplate: "sideEditMasterTemplate",
 	template: 'blockoutEdit',
@@ -187,22 +187,6 @@ Router.route('newBlockoutForm', {
 	action: function() {
 		this.render('bookingTable', {to: "right"});
 		this.render();
-	},
-	onAfterAction: function() {
-		if (this.params.time) {
-			var provObject = getProvObject(Session.get("date"), Session.get('selectedProviderName'));
-			try {//ensure there is a sane default for blockout length field.
-				$("#insertBlockoutFormInner [data-schema-key='length']").val(provObject.appointmentLength);
-			}
-			catch(e) {}
-			//try {
-			//	//$('#datetimepicker').data("DateTimePicker").date(moment(this.params.time, "HH-mm-A"));
-			//	$('#datetimepicker > input').val(this.params.time);
-			//	console.log("succeeded to set default time for timepicker on newBlockout")
-			//} catch (e) {
-			//	console.error("failed to set default time for timepicker on newBlockout")
-			//}
-		}
 	},
 	onStop: function() {
 		Session.set("newTime", null);//remove Highlight

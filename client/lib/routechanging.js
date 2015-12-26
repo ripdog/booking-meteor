@@ -37,7 +37,7 @@ newAppointment = function(newtime, block) {
 	if (newtime && newtime instanceof Date) {
 		newtime = moment(newtime).format('h-mm-A');
 	} else if (newtime && typeof newtime === "string") {
-		newtime = newtime.replace(':', "-").replace(' ', "-")
+		newtime = newtime.replace(':', "-").replace(' ', "-");
 		//change 12:40 PM to 12-40-PM
 	}
 	if (Router.current().params.providerName && Router.current().params.date) {
@@ -60,7 +60,7 @@ newAppointment = function(newtime, block) {
 	if (!block) {
 		Router.go('newAppointment', newparams);
 	} else {
-		Router.go('newBlockoutForm', newparams);
+		Router.go('newBlockout', newparams);
 	}
 };
 goHome = function(newDate, newProv) {//newDate is a date obj please
